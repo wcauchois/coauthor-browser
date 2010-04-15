@@ -96,6 +96,7 @@ public class UIPrototype implements ActionListener {
         frame.setJMenuBar(proto.createMenuBar());
         frame.setContentPane(proto.createContentPane());
 
+        frame.setSize(500, 300);
         frame.setVisible(true);
     }
     public static void main(String[] args) {
