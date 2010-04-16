@@ -1,7 +1,9 @@
 // i know these imports are bad style :(
 import javax.swing.*;
+import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.*;
 
 public class UIPrototype implements ActionListener {
     private JFrame mainFrame;
@@ -12,6 +14,39 @@ public class UIPrototype implements ActionListener {
         if(evt.getActionCommand().equals("Quit")) {
             // XXX: is this the right way to exit the app?
             mainFrame.dispose();
+        }
+    }
+    private static class Author {
+        public Author(String firstName, String lastName) {
+            this.firstName = firstName;
+            this.lastName = lastName;
+        }
+        public String firstName, lastName;
+    }
+    private static class AuthorsListModel extends AbstractListModel {
+        public ArrayList<Author> data = new ArrayList<Author>();
+        public void add(Author author) { data.add(author); }
+        public Object getElementAt(int i) { return data.get(i); }
+        public int getSize() { return data.size(); }
+    }
+    private static class AuthorCellRenderer extends JLabel
+                                            implements ListCellRenderer {
+        public Component getListCellRendererComponent(
+          JList list, Object value, int index,
+          boolean isSelected, boolean cellHasFocus) {
+            Author author = (Author)value;
+            setText(author.lastName + ", " + author.firstName);
+            if(isSelected) {
+                setBackground(list.getSelectionBackground());
+                setForeground(list.getSelectionForeground());
+            } else {
+                setBackground(list.getBackground());
+                setForeground(list.getForeground());
+            }
+            setEnabled(list.isEnabled());
+            setFont(list.getFont());
+            setOpaque(true);
+            return this;
         }
     }
     public JMenuBar createMenuBar() {
@@ -62,12 +97,19 @@ public class UIPrototype implements ActionListener {
     
         left.setLayout(new BoxLayout(left, BoxLayout.PAGE_AXIS));
         final JTextField filterBar = new JTextField("Filter");
-        String[] authors = {"Notkin, David",
+        /*String[] authors = {"Notkin, David",
                             "Murphey, Gail C",
                             "Aldrich, Jonathan",
                             "Chambers, Craig",
-                            "VanHilst, Michael"};
+                            "VanHilst, Michael"};*/
+        AuthorsListModel authors = new AuthorsListModel();
+        authors.add(new Author("David", "Notkin"));
+        authors.add(new Author("Gail C", "Murphey"));
+        authors.add(new Author("Jonathan", "Aldrich"));
+        authors.add(new Author("Craig", "Chambers"));
+        authors.add(new Author("Michael", "VanHilst"));
         final JList authorsList = new JList(authors);
+        authorsList.setCellRenderer(new AuthorCellRenderer());
         filterBar.setForeground(Color.LIGHT_GRAY);
         filterBar.setEditable(false);
         left.add(filterBar);
@@ -84,6 +126,17 @@ public class UIPrototype implements ActionListener {
         });
         // this is just to fire the componentResized event
         left.setSize(left.getPreferredSize());
+
+        final JLabel authorName = new JLabel("David Notkin");
+        authorName.setFont(authorName.getFont().deriveFont(Font.BOLD, 24));
+        right.add(authorName);
+
+        authorsList.addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent evt) {
+                Author author = (Author)authorsList.getSelectedValue();
+                authorName.setText(author.firstName + " " + author.lastName);
+            }
+        });
 
         pane.add(split);
         return pane;
