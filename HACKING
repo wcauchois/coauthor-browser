@@ -1,17 +1,35 @@
 Setup Instructions for Windows
 ==============================
 
- - First, you'll need to install Eclipse <http://www.eclipse.org/downloads/> and TortoiseHg (http://tortoisehg.bitbucket.org/), if you haven't already done so.
+ - First, you'll need to install Eclipse <http://www.eclipse.org/downloads/>
+   and TortoiseHg (http://tortoisehg.bitbucket.org/), if you haven't already done so.
  
- - Now navigate to the folder where you keep your source code and create a new directory called "coauthor-browser". Right click on the directory and select "Clone..." from the TortoiseHg context menu. For the source path, put "https://coauthor-browser.googlecode.com/hg/". Click the Clone button to transfer files from the Google Code repository. You won't be prompted for authentication yet.
+ - Now navigate to the folder where you keep your source code and create a new
+   directory called "coauthor-browser". Right click on the directory and select
+   "Clone..." from the TortoiseHg context menu. For the source path, put
+   "https://coauthor-browser.googlecode.com/hg/". Click the Clone button to transfer
+   files from the Google Code repository. You won't be prompted for authentication yet.
  
- - Now launch Eclipse, and I'm going to assume you've set your workspace directory to be the folder where you put coauthor-browser (mine is C:\Users\Billy\Code). Select File -> New -> Java Project
+ - Now launch Eclipse, and I'm going to assume you've set your workspace directory
+  to be the folder where you put coauthor-browser (mine is C:\Users\Billy\Code).
+  Select File -> New -> Java Project.
  
- - For the project name, put "coauthor-browser". Eclipse will automatically import the source code from the folder you created. Click next and make sure everything looks OK, then click finish.
+ - For the project name, put "coauthor-browser". Eclipse will automatically
+  import the source code from the folder you created. Click next and make sure
+  everything looks OK, then click finish.
  
- - Now you should be ready to rock & roll! Open Program.java from the package explorer (under cs.washington.edu.cse403d.uiprototype) and hit Alt+Shit+X,J to run it.
+ - Now you should be ready to rock & roll! Open Program.java from the package
+   explorer (under cs.washington.edu.cse403d.uiprototype) and hit
+   Alt+Shit+X,J to run it.
  
 Notes on Using Mercurial
 ========================
 
-- Remember that Mercurial is a Distributed VCS, so your coauthor-browser is really a local repository. This means that when you commit changes, they won't get uploaded to Google Code right away. You'll need to "push" those changes to the remote repo. After you've made as many commits as you want, you should synchronize with the remote repo. Select "Synchronzie" from the TortoiseHg context menu and then click Push. Command-line users can simply type "hg push". Pull is the symmetric operation that gets changesets from the remote repo and applies them locally.
+- Remember that Mercurial is a Distributed VCS, so your coauthor-browser is
+  really a local repository. This means that when you commit changes, they won't
+  get uploaded to Google Code right away. You'll need to "push" those changes to
+  the remote repo. After you've made as many commits as you want, you should
+  synchronize with the remote repo. Select "Synchronzie" from the TortoiseHg context
+  menu and then click Push. Command-line users can simply type "hg push". Pull is
+  the symmetric operation that gets changesets from the remote repo and applies
+  them locally.
