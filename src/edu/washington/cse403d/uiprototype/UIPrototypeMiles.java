@@ -1,4 +1,7 @@
-package cs.washington.edu.cse403d.uiprototype;
+// This class requires BreezySwing, which can be found at:
+// <http://faculty.cs.wwu.edu/martin/software%20packages/BreezyGUI/legal_stuff.htm>
+
+package edu.washington.cse403d.uiprototype;
 import javax.swing.*;
 import javax.swing.event.*;
 import java.awt.*;

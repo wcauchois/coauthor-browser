@@ -1,4 +1,4 @@
-package cs.washington.edu.cse403d.uiprototype;
+package edu.washington.cse403d.uiprototype;
 
 //i know these imports are bad style :(
 import javax.swing.*;
@@ -53,7 +53,7 @@ public class Program implements ActionListener {
 	}
 	public JMenuBar createMenuBar() {
 		JMenuBar menuBar = new JMenuBar();
-		JMenu menu, submenu;
+		JMenu menu;
 		JMenuItem menuItem;
 		JRadioButtonMenuItem rbMenuItem;
 
