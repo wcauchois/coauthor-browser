@@ -14,7 +14,7 @@ import edu.washington.cs.cse403d.coauthor.dataservice.CoauthorDataServiceInterfa
  * @author Jeff Prouty
  */
 public class ExampleCoauthorDataClient {
-	public static final String HOSTNAME = "localhost";
+	public static final String HOSTNAME = "attu2.cs.washington.edu";
 
 	public static void main(String[] args) {
 		// TODO(prouty): Adding security manager and reflection on the received
