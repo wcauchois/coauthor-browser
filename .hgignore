@@ -1,2 +1,5 @@
 \.*.swp # ignore vim backup files
 .*\.class
+
+syntax: regexp
+^neo4j-store$
