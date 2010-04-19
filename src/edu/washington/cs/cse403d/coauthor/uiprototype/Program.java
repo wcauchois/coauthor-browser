@@ -1,11 +1,36 @@
-package edu.washington.cse403d.uiprototype;
+package edu.washington.cs.cse403d.coauthor.uiprototype;
 
-//i know these imports are bad style :(
-import javax.swing.*;
-import javax.swing.event.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+// Try Ctrl+Shift+O in windows; Apple+alt+O (or shift) on mac -Jeff
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+
+import javax.swing.AbstractListModel;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JSplitPane;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+import javax.swing.ListCellRenderer;
+import javax.swing.UIManager;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 public class Program implements ActionListener {
 	private JFrame mainFrame;

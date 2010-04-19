@@ -1,13 +1,23 @@
 // This class requires BreezySwing, which can be found at:
 // <http://faculty.cs.wwu.edu/martin/software%20packages/BreezyGUI/legal_stuff.htm>
 
-package edu.washington.cse403d.uiprototype;
-import javax.swing.*;
-import javax.swing.event.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import BreezySwing.*;
+package edu.washington.cs.cse403d.coauthor.uiprototype;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+
+import BreezySwing.GBFrame;
 
 public class UIPrototypeMiles extends GBFrame implements ActionListener
 {
