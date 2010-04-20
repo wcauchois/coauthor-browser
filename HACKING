@@ -1,0 +1,39 @@
+Setup Instructions for Windows
+==============================
+
+ - First, you'll need to install Eclipse <http://www.eclipse.org/downloads/>
+   and TortoiseHg (http://tortoisehg.bitbucket.org/), if you haven't already done so.
+ 
+ - Now navigate to the folder where you keep your source code and create a new
+   directory called "coauthor-browser". Right click on the directory and select
+   "Clone..." from the TortoiseHg context menu. For the source path, put
+   "https://coauthor-browser.googlecode.com/hg/". Click the Clone button to transfer
+   files from the Google Code repository. You won't be prompted for authentication yet.
+ 
+ - Now launch Eclipse, and I'm going to assume you've set your workspace directory
+   to be the folder where you put coauthor-browser (mine is C:\Users\Billy\Code).
+   Select File -> New -> Java Project.
+ 
+ - For the project name, put "coauthor-browser". Eclipse will automatically
+   import the source code from the folder you created. Click next and make sure
+   everything looks OK, then click finish.
+ 
+ - Now you should be ready to rock & roll! Open Program.java from the package
+   explorer (under cs.washington.edu.cse403d.uiprototype) and hit
+   Alt+Shit+X,J to run it.
+ 
+Notes on Using Mercurial
+========================
+
+ - SET YOUR USERNAME!! In the TortoiseHg context menu, click Global Settings and
+   set your username in the "Commit" section. It should be something like
+   "Real Name <email.address@gmail.com>".
+   
+ - REMEMBER TO SYNCHRONIZE with the remote repository. Select "Synchronize..."
+   from the context menu.
+   
+   * Pull - pull changes from the remote repository. After pulling, remember to
+     UPDATE your working copy, or changes won't be reflected on the filesystem.
+   * Incoming - previews what would happen if you performed a pull operation.
+   * Push - push your commits to the remote repository.
+   * Outgoing - previews what would happen if you performed a push operation.
