@@ -33,7 +33,10 @@ public class ExampleCoauthorDataClient {
 
 		long start = System.currentTimeMillis();
 		try {
-			System.out.println(c.getShortestPathBetweenAuthors("Thomas E. Anderson", "David D. Clark"));
+			System.out.println(c.getAuthors("+Tom +Anderson"));
+			System.out.println(c.getCoauthors("Vinton G. Cerf"));
+			System.out.println(c.getPublicationsForAnyAuthor("Edward D. Lazowska"));
+			System.out.println(c.getShortestPathBetweenAuthors("Brian N. Bershad", "David D. Clark"));
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
