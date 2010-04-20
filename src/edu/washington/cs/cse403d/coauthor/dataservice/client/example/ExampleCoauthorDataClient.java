@@ -14,7 +14,9 @@ import edu.washington.cs.cse403d.coauthor.dataservice.CoauthorDataServiceInterfa
  * @author Jeff Prouty
  */
 public class ExampleCoauthorDataClient {
-	public static final String HOSTNAME = "attu2.cs.washington.edu";
+	public static final String HOSTNAME = "localhost";
+
+	// public static final String HOSTNAME = "attu2.cs.washington.edu";
 
 	public static void main(String[] args) {
 		// TODO(prouty): Adding security manager and reflection on the received
@@ -33,7 +35,10 @@ public class ExampleCoauthorDataClient {
 
 		long start = System.currentTimeMillis();
 		try {
-			System.out.println(c.getShortestPathBetweenAuthors("Thomas E. Anderson", "David D. Clark"));
+			System.out.println(c.getAuthors("+Tom +Anderson"));
+			System.out.println(c.getCoauthors("Vinton G. Cerf"));
+			System.out.println(c.getPublicationsForAnyAuthor("Edward D. Lazowska"));
+			System.out.println(c.getShortestPathBetweenAuthors("Brian N. Bershad", "David D. Clark"));
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
