@@ -10,7 +10,7 @@ import java.util.List;
  * were viewed before the current one (and if we have already gone backwards in
  * history, which pages were after the current one).
  * @see BrowserPage 
- * @author Bill Cauchois
+ * @author William Cauchois
  */
 public class BrowserHistory {
 	public static final int MAX = 5;

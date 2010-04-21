@@ -1,13 +1,14 @@
 package edu.washington.cs.cse403d.coauthor.uiprototype;
 
+// Used to keep track of a global instance of Browser.
 public class BrowserService {
-	private static Browser browse;
+	private static Browser browser;
 	public static Browser getBrowser() {
-		if(browse == null)
+		if(browser == null)
 			throw new RuntimeException("there is no available browser");
-		return browse;
+		return browser;
 	}
 	public static void provideBrowser(Browser theBrowser) {
-		browse = theBrowser;
+		browser = theBrowser;
 	}
 }
