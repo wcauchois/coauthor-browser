@@ -88,16 +88,6 @@ public class BrowserHistory {
 		public List<BrowserPage> list() {
 			return Arrays.asList(data);
 		}
-		public int convertListIndex(int i, boolean makeNegative) {
-			if(!makeNegative)
-				throw new UnsupportedOperationException("not implemented");
-			else {
-				i = i - head;
-				if(i >= 0)
-					i = -(size - (i + 1)) - 1;
-				return i;
-			}
-		}
 	}
 	// INVARIANT: This array can never be empty
 	private CircularArray pages = new CircularArray(MAX);
@@ -171,12 +161,6 @@ public class BrowserHistory {
 	 */
 	public BrowserPage getCurrent() {
 		return pages.get(cursor);
-	}
-	public void setCurrent(BrowserPage page) {
-		int i = pages.list().indexOf(page);
-		if(i < 0)
-			throw new RuntimeException("page doesn't exist in history");
-		cursor = pages.convertListIndex(i, true);
 	}
 	/**
 	 * Returns whether the history is full.
