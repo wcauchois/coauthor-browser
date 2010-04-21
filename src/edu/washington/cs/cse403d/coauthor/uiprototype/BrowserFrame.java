@@ -63,17 +63,6 @@ public class BrowserFrame extends JFrame implements Browser {
 		validate();
 		pagePane.repaint();
 	}
-	public boolean go(BrowserPage page, boolean useHistory) {
-		if(useHistory) {
-			if(history.contains(page)) {
-				history.setCurrent(page);
-				update();
-				return true;
-			}
-		}
-		go(page);
-		return false;
-	}
 	public void go(BrowserPage page) {
 		history.push(page);
 		update();
