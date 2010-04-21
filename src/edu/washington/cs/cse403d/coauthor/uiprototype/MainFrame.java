@@ -71,7 +71,7 @@ public class MainFrame extends BrowserFrame {
 //			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 //		} catch(Exception e) { }
 		MainFrame frame = new MainFrame();
-		frame.setSize(500, 500);
+		frame.setSize(700, 400);
 		frame.setVisible(true);
 	}
 }

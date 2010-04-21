@@ -2,6 +2,8 @@ package edu.washington.cs.cse403d.coauthor.uiprototype;
 
 import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Encapsulates the "history" of a browser type system -- that is, which pages
@@ -83,6 +85,19 @@ public class BrowserHistory {
 		public int size() {
 			return size;
 		}
+		public List<BrowserPage> list() {
+			return Arrays.asList(data);
+		}
+		public int convertListIndex(int i, boolean makeNegative) {
+			if(!makeNegative)
+				throw new UnsupportedOperationException("not implemented");
+			else {
+				i = i - head;
+				if(i >= 0)
+					i = -(size - (i + 1)) - 1;
+				return i;
+			}
+		}
 	}
 	// INVARIANT: This array can never be empty
 	private CircularArray pages = new CircularArray(MAX);
@@ -157,10 +172,38 @@ public class BrowserHistory {
 	public BrowserPage getCurrent() {
 		return pages.get(cursor);
 	}
+	public void setCurrent(BrowserPage page) {
+		int i = pages.list().indexOf(page);
+		if(i < 0)
+			throw new RuntimeException("page doesn't exist in history");
+		cursor = pages.convertListIndex(i, true);
+	}
 	/**
 	 * Returns whether the history is full.
 	 */
 	public boolean isFull() {
 		return pages.size() == MAX;
+	}
+	
+	private class BackwardsIterator implements Iterator<BrowserPage> {
+		private int pos;
+		public BackwardsIterator() {
+			pos = cursor;
+		}
+		@Override public boolean hasNext() {
+			return pos >= -pages.size();
+		}
+		@Override public BrowserPage next() {
+			return pages.get(pos--);
+		}
+		@Override public void remove() {
+			throw new UnsupportedOperationException();
+		}
+	}
+	public Iterator<BrowserPage> backwardsIterator() {
+		return new BackwardsIterator();
+	}
+	public boolean contains(BrowserPage page) {
+		return pages.list().contains(page);
 	}
 }
