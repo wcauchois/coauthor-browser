@@ -38,8 +38,8 @@ public class MainFrame extends BrowserFrame {
 		menuItem = new JMenuItem("Back");
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				if(browse.canGoBack())
-					browse.goBack();
+				if(canGoBack())
+					goBack();
 				else
 					JOptionPane.showMessageDialog(null, "You can't go back");
 			}
@@ -49,8 +49,8 @@ public class MainFrame extends BrowserFrame {
 		menuItem = new JMenuItem("Forward");
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				if(browse.canGoForward())
-					browse.goForward();
+				if(canGoForward())
+					goForward();
 				else
 					JOptionPane.showMessageDialog(null, "You can't go forward");
 			}
@@ -59,10 +59,9 @@ public class MainFrame extends BrowserFrame {
 
 		return menuBar;
 	}
-	private static Browser browse;
 	public MainFrame() {
 		super(new StartPage());
-		browse = this;
+		BrowserService.provideBrowser(this);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("Coauthor Browser");
 		setJMenuBar(createMenuBar());
