@@ -111,11 +111,13 @@ public class BrowserHistory {
 	 * @return the passed-in page
 	 */
 	public BrowserPage push(BrowserPage page) {
-		while(cursor < -1) {
-			pages.pop();
-			cursor++;
+		if(page != getCurrent()) {
+			while(cursor < -1) {
+				pages.pop();
+				cursor++;
+			}
+			pages.add(page);
 		}
-		pages.add(page);
 		return page;
 	}
 	/**
