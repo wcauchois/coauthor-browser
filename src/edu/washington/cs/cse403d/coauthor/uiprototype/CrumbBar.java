@@ -9,6 +9,13 @@ import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
+/**
+ * A widget that presents a series of buttons to the user representing pages
+ * that are previous in the history AND upwards in the hierarchy. The hierarchy
+ * is implied by the current BrowserPage's getCrumbs() method.
+ * @see BrowserPage#getCrumbs()
+ * @author William Cauchois
+ */
 public class CrumbBar extends JPanel {
 	private static class HistoryAction extends AbstractAction {
 		private BrowserPage page;
@@ -20,6 +27,10 @@ public class CrumbBar extends JPanel {
 			putValue(NAME, page.getTitle() + " >");
 		}
 	}
+	/**
+	 * Update the set of buttons in this CrumbBar.
+	 * @param history a BrowserHistory object from which to derive the crumbs.
+	 */
 	@SuppressWarnings("unchecked")
 	public void update(BrowserHistory history) {
 		List<BrowserPage> crumbs = new ArrayList<BrowserPage>();
