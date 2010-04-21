@@ -9,4 +9,11 @@ import javax.swing.JPanel;
  * @author Bill Cauchois
  */
 public abstract class BrowserPage extends JPanel {
+	public String getTitle() {
+		return "Untitled";
+	}
+	@SuppressWarnings("unchecked")
+	public Class[] getCrumbs() {
+		return null;
+	}
 }
