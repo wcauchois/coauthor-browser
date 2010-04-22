@@ -11,6 +11,15 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+/**
+ * A frame that displays one BrowserPage at a time, and includes controls for
+ * going forwards and backwards in history (like a web browser). Instantiating
+ * an instance of this class will provide an instance of a Browser to the
+ * BrowserService, so that subsequent calls to BrowserService.getBrowser() will
+ * return the most recently instantiated BrowserFrame.
+ * @see BrowserService
+ * @author William Cauchois
+ */
 public class BrowserFrame extends JFrame implements Browser {
 	private BrowserHistory history;
 	private JPanel pagePane = new JPanel();
