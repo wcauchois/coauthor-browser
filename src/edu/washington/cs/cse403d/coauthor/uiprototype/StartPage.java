@@ -23,7 +23,7 @@ import javax.swing.JTextPane;
 
 
 public class StartPage extends BrowserPage {
-	private JButton authorS;
+ 	private JButton authorS;
 	private JButton articleS;
 	private JButton graphV;
 	private JButton llsr; //load last search result
@@ -100,7 +100,8 @@ public class StartPage extends BrowserPage {
 		//add(questionMark1, c);
 		//this is where the JButton created with capAction is inserted.
 		//Enable add(questionMark1, c) to display JLabel instead, if you want to.
-		add(button, c);
+		//add(button, c);
+		add(new HelpButton("Hello world"), c);
 		
 	    c.gridx = 1;
 	    c.gridy = 3;
