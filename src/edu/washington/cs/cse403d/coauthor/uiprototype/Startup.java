@@ -17,7 +17,7 @@ import javax.swing.KeyStroke;
 
 public class Startup extends BrowserFrame {
 	
-	public JMenuBar initMenu() {
+	public JMenuBar createMenuBar() {
 		JMenuBar menuBar;
 		JMenu menu;
 		JMenuItem menuItem;
@@ -32,7 +32,7 @@ public class Startup extends BrowserFrame {
 		
 		menuItem = new JMenuItem("Start A New Search");
 		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
-		//need to add actinoLister		
+		//need to add actionListener
 		menu.add(menuItem);
 		
 		menu.addSeparator();
@@ -55,8 +55,7 @@ public class Startup extends BrowserFrame {
 		
 		menu.addSeparator();
 		
-		menuItem = new JMenuItem("Close");
-		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, ActionEvent.ALT_MASK));
+		menuItem = new JMenuItem("Quit");
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				System.exit(1);
@@ -89,7 +88,7 @@ public class Startup extends BrowserFrame {
 		menu.setMnemonic(KeyEvent.VK_T);
 		menuBar.add(menu);
 		
-		menuItem = new JMenuItem("Preference");
+		menuItem = new JMenuItem("Preferences");
 		//need to add actionListner
 		menu.add(menuItem);
 		
@@ -116,7 +115,7 @@ public class Startup extends BrowserFrame {
 		super(new MainPage());
 		setTitle("Co-author Browser");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setJMenuBar(initMenu());
+		setJMenuBar(createMenuBar());
 	}
 	
 	public static void main(String[] args) {
