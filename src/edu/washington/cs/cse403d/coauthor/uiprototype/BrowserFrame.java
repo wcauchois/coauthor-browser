@@ -62,6 +62,7 @@ public class BrowserFrame extends JFrame implements Browser {
 		getContentPane().add(navPane, BorderLayout.NORTH);
 		getContentPane().add(pagePane, BorderLayout.CENTER);
 		update();
+		BrowserService.provideBrowser(this);
 	}
 	private void update() {
 		pagePane.removeAll();

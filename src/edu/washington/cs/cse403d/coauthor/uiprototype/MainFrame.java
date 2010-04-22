@@ -61,7 +61,6 @@ public class MainFrame extends BrowserFrame {
 	}
 	public MainFrame() {
 		super(new StartPage());
-		BrowserService.provideBrowser(this);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("Coauthor Browser");
 		setJMenuBar(createMenuBar());
