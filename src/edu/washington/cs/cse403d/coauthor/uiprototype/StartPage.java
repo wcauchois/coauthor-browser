@@ -33,7 +33,7 @@ public class StartPage extends BrowserPage {
 	private JLabel questionMark4;
 	
 	//Test variable for displaying caption!
-	private String caption = "Caption";
+	private String caption = "This is the help text displayed";
 	
 	// returns ImageIcon object
 	private ImageIcon createImageIcon(String path, String description) {
@@ -89,7 +89,7 @@ public class StartPage extends BrowserPage {
 		Icon icon = createImageIcon("images/questionmark.gif", "Question Mark");
 		captionAction capAction = new captionAction(icon, caption);
 		JButton button = new JButton(capAction);
-		
+		HelpButton hb = new HelpButton(caption);
 		
 		//Insert question marks
 		c = new GridBagConstraints();
@@ -161,6 +161,7 @@ public class StartPage extends BrowserPage {
 	public StartPage() {
 		initialize();
 		position();
+		createFrame();
 	}
 		
 	
@@ -182,7 +183,15 @@ public class StartPage extends BrowserPage {
 		}
 	}
 	
-	
-	
+	//Internal frame tester
+	protected void createFrame() {
+        MyInternalFrame frame = new MyInternalFrame("Test"); //Frame title
+        frame.setVisible(true); 
+        this.add(frame);  //add internal frame to container
+        frame.add(new JLabel("Test"));  //frame content
+        try {
+            frame.setSelected(true);
+        } catch (java.beans.PropertyVetoException e) {}
+    }
 	
 }
