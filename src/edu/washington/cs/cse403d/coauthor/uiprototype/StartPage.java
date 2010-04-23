@@ -161,7 +161,7 @@ public class StartPage extends BrowserPage {
 	public StartPage() {
 		initialize();
 		position();
-		createFrame();
+		//createFrame();
 	}
 		
 	
