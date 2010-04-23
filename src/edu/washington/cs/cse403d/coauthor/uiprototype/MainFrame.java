@@ -133,7 +133,6 @@ public class MainFrame extends BrowserFrame {
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				createFrame();
-				//JOptionPane.showMessageDialog(null, "Test");
 			}
 		});
 		menu.add(menuItem);
