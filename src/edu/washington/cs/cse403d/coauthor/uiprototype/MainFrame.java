@@ -130,6 +130,12 @@ public class MainFrame extends BrowserFrame {
 		
 		menuItem = new JMenuItem("About");
 		//need to add actionListner
+		menuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				createFrame();
+				//JOptionPane.showMessageDialog(null, "Test");
+			}
+		});
 		menu.add(menuItem);
 		
 		
@@ -148,4 +154,15 @@ public class MainFrame extends BrowserFrame {
 		frame.setSize(480, 500);
 		frame.setVisible(true);
 	}
+	
+	//creating internal frame
+	protected void createFrame() {
+        MyInternalFrame frame = new MyInternalFrame("Test"); //Frame title
+        frame.setVisible(true); 
+        this.add(frame);  //add internal frame to container
+        frame.add(new JLabel("Test"));  //frame content
+        try {
+            frame.setSelected(true);
+        } catch (java.beans.PropertyVetoException e) {}
+    }
 }
