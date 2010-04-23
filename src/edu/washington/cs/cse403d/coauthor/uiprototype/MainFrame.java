@@ -16,7 +16,13 @@ import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
 
+
+/* Latest Changes
+	-Created global variable mainframe
+	-Search-Author Search button action implemented
+*/
 public class MainFrame extends BrowserFrame {
+	private static MainFrame mainframe;
 	
 	public JMenuBar createMenuBar() {
 		JMenuBar menuBar;
@@ -72,6 +78,12 @@ public class MainFrame extends BrowserFrame {
 		
 		menuItem = new JMenuItem("Author Search");
 		//need to add actionListner
+		menuItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				BrowserService.getBrowser().go(new SearchPage());				
+			}
+		});
+		
 		menu.add(menuItem);
 		
 		menuItem = new JMenuItem("Article Search");
@@ -92,7 +104,7 @@ public class MainFrame extends BrowserFrame {
 				if(canGoBack())
 					goBack();
 				else
-					JOptionPane.showMessageDialog(null, "You can't go back");
+					JOptionPane.showMessageDialog(mainframe, "You can't go back");
 			}
 		});
 		menu.add(menuItem);
@@ -103,7 +115,7 @@ public class MainFrame extends BrowserFrame {
 				if(canGoForward())
 					goForward();
 				else
-					JOptionPane.showMessageDialog(null, "You can't go forward");
+					JOptionPane.showMessageDialog(mainframe, "You can't go forward");
 			}
 		});
 		menu.add(menuItem);
@@ -132,7 +144,7 @@ public class MainFrame extends BrowserFrame {
 		//need to add actionListner
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				createFrame();
+				JOptionPane.showMessageDialog(mainframe, "About");
 			}
 		});
 		menu.add(menuItem);
@@ -149,9 +161,9 @@ public class MainFrame extends BrowserFrame {
 	}
 	
 	public static void main(String[] args) {
-		MainFrame frame = new MainFrame();
-		frame.setSize(480, 500);
-		frame.setVisible(true);
+		mainframe = new MainFrame();
+		mainframe.setSize(480, 500);
+		mainframe.setVisible(true);
 	}
 	
 	//creating internal frame
