@@ -181,17 +181,5 @@ public class StartPage extends BrowserPage {
 			// the cursor over the icon does the job.
 			
 		}
-	}
-	
-	//Internal frame tester
-	protected void createFrame() {
-        MyInternalFrame frame = new MyInternalFrame("Test"); //Frame title
-        frame.setVisible(true); 
-        this.add(frame);  //add internal frame to container
-        frame.add(new JLabel("Test"));  //frame content
-        try {
-            frame.setSelected(true);
-        } catch (java.beans.PropertyVetoException e) {}
-    }
-	
+	}	
 }
