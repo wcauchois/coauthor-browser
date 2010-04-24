@@ -144,7 +144,11 @@ public class MainFrame extends BrowserFrame {
 		//need to add actionListner
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				JOptionPane.showMessageDialog(mainframe, "About");
+				JOptionPane.showMessageDialog(mainframe, 
+						"Co-Author Browser v.0.9\n"
+						+ "by CTA Inc.",
+						"About",
+						JOptionPane.PLAIN_MESSAGE);
 			}
 		});
 		menu.add(menuItem);
@@ -165,15 +169,4 @@ public class MainFrame extends BrowserFrame {
 		mainframe.setSize(480, 500);
 		mainframe.setVisible(true);
 	}
-	
-	//creating internal frame
-	protected void createFrame() {
-        MyInternalFrame frame = new MyInternalFrame("Test"); //Frame title
-        frame.setVisible(true); 
-        this.add(frame);  //add internal frame to container
-        frame.add(new JLabel("Test"));  //frame content
-        try {
-            frame.setSelected(true);
-        } catch (java.beans.PropertyVetoException e) {}
-    }
 }
