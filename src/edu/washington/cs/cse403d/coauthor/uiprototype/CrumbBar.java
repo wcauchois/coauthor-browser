@@ -20,7 +20,7 @@ public class CrumbBar extends JPanel {
 	private static class HistoryAction extends AbstractAction {
 		private BrowserPage page;
 		@Override public void actionPerformed(ActionEvent evt) {
-			BrowserService.getBrowser().go(page);
+			Services.getBrowser().go(page);
 		}
 		public HistoryAction(BrowserPage page) {
 			this.page = page;

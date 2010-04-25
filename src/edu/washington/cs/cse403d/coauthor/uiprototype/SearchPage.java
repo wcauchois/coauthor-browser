@@ -26,7 +26,7 @@ public class SearchPage extends BrowserPage {
 					JOptionPane.showMessageDialog(null, "Please enter a query");
 				else {
 					query.setText("");
-					BrowserService.getBrowser().go(
+					Services.getBrowser().go(
 						new SearchResultsPage(theQuery));
 				}
 			}

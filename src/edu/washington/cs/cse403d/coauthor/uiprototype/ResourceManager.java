@@ -7,9 +7,9 @@ import javax.swing.ImageIcon;
 
 public class ResourceManager {
 	private Map<String, Object> resources = new HashMap<String, Object>();
-	private String baseDir;
+	private String pathPrefix;
 	private URL getResourceURL(String name) {
-		return getClass().getResource(baseDir + name);
+		return getClass().getResource(pathPrefix + name);
 	}
 	public ImageIcon loadImageIcon(String name) {
 		return loadImageIcon(name, name);
@@ -24,7 +24,7 @@ public class ResourceManager {
 			return new ImageIcon(imageURL, description);
 		}
 	}
-	public ResourceManager(String baseDir) {
-		this.baseDir = baseDir;
+	public ResourceManager(String pathPrefix) {
+		this.pathPrefix = pathPrefix;
 	}
 }

@@ -17,7 +17,7 @@ import javax.swing.JPanel;
  * an instance of this class will provide an instance of a Browser to the
  * BrowserService, so that subsequent calls to BrowserService.getBrowser() will
  * return the most recently instantiated BrowserFrame.
- * @see BrowserService
+ * @see Services
  * @author William Cauchois
  */
 public class BrowserFrame extends JFrame implements Browser {
@@ -62,7 +62,7 @@ public class BrowserFrame extends JFrame implements Browser {
 		getContentPane().add(navPane, BorderLayout.NORTH);
 		getContentPane().add(pagePane, BorderLayout.CENTER);
 		update();
-		BrowserService.provideBrowser(this);
+		Services.provideBrowser(this);
 	}
 	private void update() {
 		pagePane.removeAll();
