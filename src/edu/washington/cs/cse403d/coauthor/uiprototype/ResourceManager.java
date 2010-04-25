@@ -1,55 +1,30 @@
 package edu.washington.cs.cse403d.coauthor.uiprototype;
 import java.net.URL;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.ImageIcon;
 
-
-/* TODO
- * -set up an iterator that contains the filenames in given directory
- * -load ImageIcons using those image names
- * 
- * Need To Know
- * -how to refer to the root directory of the repo
- * -how to obtain names of files within given directory
- */
-
-public class ResourceManager extends Hashtable {
-	private Hashtable<String, ImageIcon> manager;
-	private List<String> fileNameList;
-	private Iterator<String> fileNameIterator = fileNameList.iterator();
-	private String path;     // root/assets  (how to refer to the root of repo?)
-	private int count;
-	
-	public ResourceManager() {
-		manager = new Hashtable<String, ImageIcon>();
-		count = 0;
+public class ResourceManager {
+	private Map<String, Object> resources = new HashMap<String, Object>();
+	private String baseDir;
+	private URL getResourceURL(String name) {
+		return getClass().getResource(baseDir + name);
 	}
-	
-	private void add(String key, ImageIcon icon) {
-		manager.put(key, icon);
+	public ImageIcon loadImageIcon(String name) {
+		return loadImageIcon(name, name);
 	}
-	
-	//build the list of string, which contains filenames
-	private void buildList() {
-		
-	}
-	
-	//using the list of string, fill the hashtable
-	private void load() {
-		ImageIcon icon = loadImageIcon("images/questionmark.gif", "Question Mark");
-	}
-	
-	private ImageIcon loadImageIcon(String path, String description) {
-		URL url = getClass().getResource(path);
-		if (url != null) {
-			return new ImageIcon(url, description);
-		} else {
-			System.err.println("No such file exists: " + path);
-			return null;
+	public ImageIcon loadImageIcon(String name, String description) {
+		if(resources.containsKey(name))
+			return (ImageIcon)resources.get(name);
+		else {
+			URL imageURL = getResourceURL(name);
+			if(imageURL == null)
+				throw new RuntimeException("Could not locate resource: " + name);
+			return new ImageIcon(imageURL, description);
 		}
 	}
-	
+	public ResourceManager(String baseDir) {
+		this.baseDir = baseDir;
+	}
 }
