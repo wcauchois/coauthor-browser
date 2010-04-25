@@ -23,52 +23,26 @@ import javax.swing.JTextPane;
 
 
 public class StartPage extends BrowserPage {
- 	private JButton authorS;
-	private JButton articleS;
-	private JButton graphV;
-	private JButton llsr; //load last search result
-	private JLabel questionMark1;
-	private JLabel questionMark2;
-	private JLabel questionMark3;
-	private JLabel questionMark4;
+ 	private JButton authorSearchButton;
+	private JButton articleSearchButton;
+	private JButton graphSearchButton;
 	
-	//Test variable for displaying caption!
-	private String caption = "This is the help text displayed";
+	private static String authorSearchHelp = "Author search help";
+	private static String articleSearchHelp = "Article search help";
+	private static String graphSearchHelp = "Graph search help";
 	
-	// returns ImageIcon object
-	private ImageIcon createImageIcon(String path, String description) {
-		URL imgURL = getClass().getResource(path);
-		if (imgURL != null) {
-			return new ImageIcon(imgURL, description);
-		} else {
-			System.err.println("No such file exists: " + path);
-			return null;
-		}
-	}	
-	
-	//just initializes variables and such
 	private void initialize() {
 		this.setLayout(new GridBagLayout());
 		this.setName("Main");
 		
-		authorS = new JButton();
-		authorS.setText("Search By Author");
+		authorSearchButton = new JButton();
+		authorSearchButton.setText("Search By Author");
 		
-		articleS = new JButton();
-		articleS.setText("Search By Article");
+		articleSearchButton = new JButton();
+		articleSearchButton.setText("Search By Article");
 		
-		graphV = new JButton();
-		graphV.setText("Search By Graph");
-		
-		llsr = new JButton();
-		llsr.setText("Load Last Search Result");
-		
-		// will have to change these to buttons
-		ImageIcon icon = createImageIcon("images/questionmark.gif", "Question Mark");
-		questionMark1 = new JLabel(icon);
-		questionMark2 = new JLabel(icon);
-		questionMark3 = new JLabel(icon);
-		questionMark4 = new JLabel(icon);		
+		graphSearchButton = new JButton();
+		graphSearchButton.setText("Search By Graph");
 	}
 	
 	private void position() {
@@ -82,15 +56,6 @@ public class StartPage extends BrowserPage {
 		c.insets = new Insets(0, 0, 100, 0);
 		add(new JLabel("Placeholder for Logo"), c);
 		
-		/* This is the last question mark button
-		 * capAction takes the image to display, and the caption to display
-		 * You can find caption at the variable declarations at the top
-		 */
-		Icon icon = createImageIcon("images/questionmark.gif", "Question Mark");
-		captionAction capAction = new captionAction(icon, caption);
-		JButton button = new JButton(capAction);
-		HelpButton hb = new HelpButton(caption);
-		
 		//Insert question marks
 		c = new GridBagConstraints();
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -101,20 +66,16 @@ public class StartPage extends BrowserPage {
 		//this is where the JButton created with capAction is inserted.
 		//Enable add(questionMark1, c) to display JLabel instead, if you want to.
 		//add(button, c);
-		add(new HelpButton("Hello world"), c);
+		add(new HelpMarker(authorSearchHelp), c);
 		
 	    c.gridx = 1;
 	    c.gridy = 3;
-	    add(questionMark2, c);
+	    add(new HelpMarker(articleSearchHelp), c);
 	    
 	    c.gridx = 1;
 	    c.gridy = 2;
-	    add(questionMark3, c);
+	    add(new HelpMarker(graphSearchHelp), c);
 	    
-	    c.gridx = 1;
-	    c.gridy = 1;
-	    add(questionMark4, c);
-		
 	    //Button 1
 		GridBagConstraints c0 = new GridBagConstraints();
 		c0.fill = GridBagConstraints.HORIZONTAL;
@@ -122,7 +83,7 @@ public class StartPage extends BrowserPage {
 		c0.gridx = 0;
 		c0.gridy = 1;
 		c0.insets = new Insets(10, 0, 10, 0);
-		add(authorS, c0);
+		add(authorSearchButton, c0);
 		
 		//Button 2
 		GridBagConstraints c1 = new GridBagConstraints();
@@ -130,7 +91,7 @@ public class StartPage extends BrowserPage {
 		c1.gridx = 0;
 		c1.gridy = 2;
 		c1.insets = new Insets(10, 0, 10, 0);  //top, left, bottom, right
-		add(articleS, c1);
+		add(articleSearchButton, c1);
 		
 		//Button 3
 		GridBagConstraints c2 = new GridBagConstraints();
@@ -138,16 +99,8 @@ public class StartPage extends BrowserPage {
 		c2.gridx = 0;
 		c2.gridy = 3;
 		c2.insets = new Insets(10, 0, 10, 0);
-		add(graphV, c2);
-		
-		//Button 4
-		GridBagConstraints c3 = new GridBagConstraints();
-		c3.fill = GridBagConstraints.HORIZONTAL;
-		c3.weightx = 0.5;
-		c3.gridx = 0;
-		c3.gridy = 4;
-		c3.insets = new Insets(10, 0, 10, 0);
-		add(llsr, c3);		
+		add(graphSearchButton, c2);
+	
 		
 		
 		

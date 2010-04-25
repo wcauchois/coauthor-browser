@@ -4,60 +4,45 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
 
-
-/* Latest Changes
-	-Created global variable mainframe
-	-Search-Author Search button action implemented
-*/
 public class MainFrame extends BrowserFrame {
-	private static MainFrame mainframe;
 	
 	public JMenuBar createMenuBar() {
 		JMenuBar menuBar;
 		JMenu menu;
 		JMenuItem menuItem;
+		final MainFrame mainFrame = this;
 		
-		//create the menu bar
 		menuBar = new JMenuBar();
-		
-		//Build the first menu, File
+
+		/************** File **************/
 		menu = new JMenu("File");
 		menu.setMnemonic(KeyEvent.VK_F);
 		menuBar.add(menu);
 		
 		menuItem = new JMenuItem("Start A New Search");
 		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
-		//need to add actionListener
 		menu.add(menuItem);
 		
 		menu.addSeparator();
 		
 		menuItem = new JMenuItem("Save Current Search");
 		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
-		//need to add actionListner
 		menu.add(menuItem);
 		
 		menu.addSeparator();
 		
 		menuItem = new JMenuItem("Load Saved Search");
 		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ActionEvent.CTRL_MASK));
-		//need to add actionListner
 		menu.add(menuItem);
 		menuItem = new JMenuItem("Load Last Search");
 		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, ActionEvent.CTRL_MASK));
-		//need to add actionListner
 		menu.add(menuItem);
 		
 		menu.addSeparator();
@@ -70,8 +55,8 @@ public class MainFrame extends BrowserFrame {
 		});
 		menu.add(menuItem);
 		
-		
-		//Build the second menu, Search
+
+		/************** Search **************/
 		menu = new JMenu("Search");
 		menu.setMnemonic(KeyEvent.VK_S);
 		menuBar.add(menu);
@@ -80,71 +65,37 @@ public class MainFrame extends BrowserFrame {
 		//need to add actionListner
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				BrowserService.getBrowser().go(new SearchPage());				
+				Services.getBrowser().go(new SearchPage());				
 			}
 		});
 		
 		menu.add(menuItem);
 		
 		menuItem = new JMenuItem("Article Search");
-		//need to add actionListner
 		menu.add(menuItem);
 		
 		menuItem = new JMenuItem("Graph Search");
-		//need to add actionListner
 		menu.add(menuItem);
 		
-		menu = new JMenu("Go");
-		menu.setMnemonic(KeyEvent.VK_G);
-		menuBar.add(menu);
-		
-		menuItem = new JMenuItem("Back");
-		menuItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				if(canGoBack())
-					goBack();
-				else
-					JOptionPane.showMessageDialog(mainframe, "You can't go back");
-			}
-		});
-		menu.add(menuItem);
-		
-		menuItem = new JMenuItem("Forward");
-		menuItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				if(canGoForward())
-					goForward();
-				else
-					JOptionPane.showMessageDialog(mainframe, "You can't go forward");
-			}
-		});
-		menu.add(menuItem);
-		
-		//Build the third menu, Tools
+		/************** Tools **************/
 		menu = new JMenu("Tools");
 		menu.setMnemonic(KeyEvent.VK_T);
 		menuBar.add(menu);
 		
 		menuItem = new JMenuItem("Preferences");
-		//need to add actionListner
 		menu.add(menuItem);
 		
-		
-		
-		//Build the fourth menu, Help
 		menu = new JMenu("Help");
 		menu.setMnemonic(KeyEvent.VK_H);
 		menuBar.add(menu);
 		
 		menuItem = new JMenuItem("User Manual");
-		//need to add actionListner
 		menu.add(menuItem);
 		
 		menuItem = new JMenuItem("About");
-		//need to add actionListner
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				JOptionPane.showMessageDialog(mainframe, 
+				JOptionPane.showMessageDialog(mainFrame, 
 						"Co-Author Browser v.0.9\n"
 						+ "by CTA Inc.",
 						"About",
@@ -152,7 +103,6 @@ public class MainFrame extends BrowserFrame {
 			}
 		});
 		menu.add(menuItem);
-		
 		
 		return menuBar;
 	}
@@ -165,8 +115,9 @@ public class MainFrame extends BrowserFrame {
 	}
 	
 	public static void main(String[] args) {
-		mainframe = new MainFrame();
-		mainframe.setSize(480, 500);
-		mainframe.setVisible(true);
+		Services.provideResourceManager(new ResourceManager("/"));
+		MainFrame mainFrame = new MainFrame();
+		mainFrame.setSize(480, 500);
+		mainFrame.setVisible(true);
 	}
 }
