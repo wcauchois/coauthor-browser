@@ -23,7 +23,8 @@ public class StartPage extends BrowserPage {
 		add(tabbedPane, BorderLayout.CENTER);
 		tabbedPane.setPreferredSize(new Dimension(400, 200));
 		
-		JLabel logo = new JLabel("Constant Time Industries Logo");
+		//JLabel logo = new JLabel("Constant Time Industries Logo");
+		JLabel logo = new JLabel(Services.getResourceManager().loadImageIcon("logo.png"));
 		logo.setHorizontalAlignment(SwingConstants.CENTER);
 		logo.setFont(logo.getFont().deriveFont(Font.BOLD, 22));
 		add(logo, BorderLayout.NORTH);
