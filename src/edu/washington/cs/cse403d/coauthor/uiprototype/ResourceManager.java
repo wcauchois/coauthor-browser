@@ -26,5 +26,5 @@ public class ResourceManager {
 	}
 	public ResourceManager(String pathPrefix) {
 		this.pathPrefix = pathPrefix;
-	}
+	}	
 }
