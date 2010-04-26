@@ -117,7 +117,7 @@ public class MainFrame extends BrowserFrame {
 	public static void main(String[] args) {
 		Services.provideResourceManager(new ResourceManager("/"));
 		MainFrame mainFrame = new MainFrame();
-		mainFrame.setSize(480, 500);
+		mainFrame.setSize(480, 600);
 		mainFrame.setVisible(true);
 	}
 }
