@@ -20,10 +20,9 @@ public class StartPage extends BrowserPage {
 		add(tabbedPane, BorderLayout.CENTER);
 		tabbedPane.setPreferredSize(new Dimension(400, 200));
 		
-		JLabel logo = new JLabel(Services.getResourceManager().loadImageIcon("logo.png"));
+		JLabel logo = new JLabel(Services.getResourceManager().loadImageIcon("logo2.png"));
 		logo.setHorizontalAlignment(SwingConstants.CENTER);
-		logo.setFont(logo.getFont().deriveFont(Font.BOLD, 22));
-		//XXX add(logo, BorderLayout.NORTH);
+		add(logo, BorderLayout.NORTH);
 		
 		tabbedPane.addTab("Author Search", new AuthorSearchPane());
 		tabbedPane.addTab("Article Search", new ArticleSearchPane());
