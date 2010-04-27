@@ -3,6 +3,7 @@ package edu.washington.cs.cse403d.coauthor.uiprototype;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.rmi.*;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -10,6 +11,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
+
+import edu.washington.cs.cse403d.coauthor.dataservice.CoauthorDataServiceInterface;
 
 public class MainFrame extends BrowserFrame {
 	
@@ -106,7 +109,8 @@ public class MainFrame extends BrowserFrame {
 		
 		return menuBar;
 	}
-		
+	
+	private static final String HOSTNAME = "attu2.cs.washington.edu";
 	public MainFrame() {
 		super(new StartPage());
 		setTitle("Co-author Browser");
@@ -115,6 +119,15 @@ public class MainFrame extends BrowserFrame {
 	}
 	
 	public static void main(String[] args) {
+		try {
+			Services.provideCoauthorDataServiceInterface(
+				(CoauthorDataServiceInterface)Naming.lookup(
+				"rmi://" + HOSTNAME + "/" + CoauthorDataServiceInterface.SERVICE_NAME));
+		} catch(Exception e) {
+			JOptionPane.showMessageDialog(null,
+				"Couldn't connect to data service (" + e.getMessage() + ")");
+			System.exit(1);
+		}
 		Services.provideResourceManager(new ResourceManager("/"));
 		MainFrame mainFrame = new MainFrame();
 		mainFrame.setSize(480, 600);
