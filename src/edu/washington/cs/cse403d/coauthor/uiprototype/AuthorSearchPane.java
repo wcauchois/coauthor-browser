@@ -58,7 +58,7 @@ public class AuthorSearchPane extends JPanel {
 							suggestionsList.getSelectedIndex() + 1);
 					} else if(evt.getKeyCode() == KeyEvent.VK_UP) {
 						suggestionsList.setSelectedIndex(
-								suggestionsList.getSelectedIndex() + 1);
+								suggestionsList.getSelectedIndex() - 1);
 					} else if(evt.getKeyCode() == KeyEvent.VK_ENTER) {
 						if(suggestionsPopup != null && !suggestionsList.isSelectionEmpty()) {
 							setText((String)suggestionsList.getSelectedValue());
