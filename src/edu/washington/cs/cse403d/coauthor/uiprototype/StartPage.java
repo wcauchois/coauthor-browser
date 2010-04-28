@@ -34,7 +34,7 @@ public class StartPage extends BrowserPage {
 		public SearchPane() {
 			JPanel topPart = new JPanel();
 			topPart.add(new JLabel("Please enter your search terms below"));
-			topPart.add(new HelpMarker("This would be some explanation"));
+			topPart.add(new HelpMarker("Click here for more information."));
 			
 			JPanel bottomPart = new JPanel();
 			query.setPreferredSize(new Dimension(100, query.getPreferredSize().height));
