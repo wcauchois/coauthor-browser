@@ -1,34 +1,27 @@
 package edu.washington.cs.cse403d.coauthor.uiprototype;
 
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Point;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.*;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.Popup;
-import javax.swing.PopupFactory;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
+import java.rmi.RemoteException;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import edu.washington.cs.cse403d.coauthor.dataservice.CoauthorDataServiceInterface;
 
+/*
+ * TODO: make it so suggestions are hidden when you change focus
+ * TODO: fix the tab order so only fields can be focused
+ * TODO: put AuthorsPane into a JScrollPane for when it gets big
+ * TODO: fix the layout on the search button
+ * TODO: make & use icons for plus and minus buttons
+ * TODO: javadoc!!!!
+ */
 public class AuthorSearchPane extends JPanel {
 	private class AuthorField extends JTextField {
 		public AuthorField() {
@@ -87,6 +80,7 @@ public class AuthorSearchPane extends JPanel {
 			}
 		}
 		public void hideSuggestions() {
+			suggestionsList.setSelectedIndex(0);
 			if(suggestionsPopup != null) {
 				suggestionsPopup.hide();
 				suggestionsPopup = null;
@@ -144,29 +138,99 @@ public class AuthorSearchPane extends JPanel {
 		}
 	}
 	private JButton submit = new JButton("Search");
-	private List<AuthorField> authors = new LinkedList<AuthorField>();
+	private List<AuthorField> authorFields = new LinkedList<AuthorField>();
 	private Executor executor;
 	private PopupFactory popupFactory;
-	private JPanel authorsPane;
-	private void addAuthor() {
-		AuthorField field = new AuthorField();
-		boolean isFirst = authors.size() == 0;
-		authors.add(field);
-		
-		JPanel row = new JPanel();
-		JLabel label = new JLabel(isFirst ? "Author: " : "Co-author: ");
-		label.setPreferredSize(new Dimension(75, label.getPreferredSize().height));
-		row.add(label);
-		row.add(field);
-		if(!isFirst) {
-			JButton removeButton = new JButton("-");
-			row.add(removeButton);
+	private class AuthorsPane extends JPanel {
+		private GroupLayout layout;
+		private GroupLayout.SequentialGroup hGroup, vGroup;
+		private GroupLayout.ParallelGroup[] columns = new GroupLayout.ParallelGroup[N_COLUMNS];
+		private List<JComponent[]> rows = new LinkedList<JComponent[]>();
+		private static final int N_COLUMNS = 4;
+		private AuthorsPane thePane;
+		public AuthorsPane() {
+			thePane = this;
+			setLayout(layout = new GroupLayout(this));
+			layout.setAutoCreateGaps(true);
+			layout.setAutoCreateContainerGaps(true);
+
+			hGroup = layout.createSequentialGroup();
+			for(int i = 0; i < N_COLUMNS; i++) {
+				columns[i] = layout.createParallelGroup();
+				hGroup.addGroup(columns[i]);
+			}
+			layout.setHorizontalGroup(hGroup);
+			
+			vGroup = layout.createSequentialGroup();
+			layout.setVerticalGroup(vGroup);
+			
+			addFirstRow();
 		}
-		authorsPane.add(row);
+		private void addFirstRow() {
+			AuthorField field = new AuthorField();
+			authorFields.add(field);
+			JButton minusButton = new MinusButton();
+			minusButton.setEnabled(false);
+			addRow(new JLabel("Author:"), field, minusButton, new PlusButton());
+		}
+		private void refresh() {
+			getParent().validate();
+			repaint();
+		}
+		private class MinusButton extends JButton implements ActionListener {
+			private JComponent[] otherCells;
+			public MinusButton(JComponent... otherCells) {
+				super("-");
+				this.otherCells = otherCells.clone();
+				addActionListener(this);
+				setMinimumSize(new Dimension(20, 20));
+			}
+			public void actionPerformed(ActionEvent evt) {
+				for(JComponent cell : otherCells) {
+					if(cell instanceof AuthorField)
+						authorFields.remove(cell);
+					thePane.remove(cell);
+				}
+				thePane.remove(this);
+				refresh();
+			}
+		}
+		private class PlusButton extends JButton implements ActionListener {
+			public PlusButton() {
+				super("+");
+				addActionListener(this);
+			}
+			public void actionPerformed(ActionEvent evt) {
+				AuthorField field = new AuthorField();
+				JLabel label = new JLabel("Co-author:");
+				JButton plusButton = new PlusButton();
+				JButton minusButton = new MinusButton(field, label, plusButton);
+				authorFields.add(field);
+				addRow(label, field, minusButton, plusButton);
+				refresh();
+			}
+		}
+		private void addRow(JComponent... cells) {
+			GroupLayout.ParallelGroup row = layout.createParallelGroup(
+					GroupLayout.Alignment.BASELINE);
+			int i = 0;
+			for(JComponent cell : cells) {
+				columns[i].addComponent(cell);
+				row.addComponent(cell);
+				i++;
+			}
+			vGroup.addGroup(row);
+			rows.add(cells.clone());
+		}
 	}
+	private AuthorsPane authorsPane = new AuthorsPane();
+	private ImageIcon plusIcon, minusIcon;
 	public AuthorSearchPane() {
 		executor = Executors.newSingleThreadExecutor();
 		popupFactory = PopupFactory.getSharedInstance();
+		ResourceManager resourceManager = Services.getResourceManager();
+		plusIcon = resourceManager.loadImageIcon("plus.png");
+		minusIcon = resourceManager.loadImageIcon("minus.png");
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		
 		JPanel headerPane = new JPanel();
@@ -174,12 +238,18 @@ public class AuthorSearchPane extends JPanel {
 		headerPane.add(new HelpMarker("This would be some explanation"));
 		add(headerPane);
 		
-		authorsPane = new JPanel();
-		// XXX: need better layout
-		authorsPane.setLayout(new BoxLayout(authorsPane, BoxLayout.Y_AXIS));
-		addAuthor();
-		addAuthor();
-		addAuthor();
 		add(authorsPane);
+		add(submit);
+		submit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				System.out.println(getAuthors());
+			}
+		});
+	}
+	public List<String> getAuthors() {
+		List<String> authors = new ArrayList<String>();
+		for(JTextField field : authorFields)
+			authors.add(field.getText());
+		return authors;
 	}
 }
