@@ -235,7 +235,7 @@ public class AuthorSearchPane extends JPanel {
 		
 		JPanel headerPane = new JPanel();
 		headerPane.add(new JLabel("Please enter your search terms below"));
-		headerPane.add(new HelpMarker("This would be some explanation"));
+		headerPane.add(new HelpMarker("Click here for more information."));
 		add(headerPane);
 		
 		add(authorsPane);
