@@ -26,8 +26,9 @@ public class HelpMarker extends JLabel {
 	private Popup popup = null;
 	private ToolTip toolTip;
 	private static final String[] CSS_RULES = new String[] {
-		"body { background-color: #eeeeff }",
-		"body { font-family: Dialog; font-size: 12 }"
+		"body { background-color: #eeeeff; width: 250px }",
+		"body { font-family: Dialog; font-size: 12 }",
+		"ul { margin-left: 15px }"
 	};
 	private class ToolTip extends JPanel {
 		public ToolTip(String htmlContent) {
@@ -49,12 +50,12 @@ public class HelpMarker extends JLabel {
 			setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		}
 	}
-	public HelpMarker(String htmlContent) {
+	public HelpMarker(String tooltip) {
 		popupFactory = PopupFactory.getSharedInstance();
 		ResourceManager resourceManager = Services.getResourceManager();
 		icon = resourceManager.loadImageIcon("questionmark.gif");
 		hoverIcon = resourceManager.loadImageIcon("questionmark_hover.gif");
-		toolTip = new ToolTip(htmlContent);
+		toolTip = new ToolTip(tooltip);
 		
 		setIcon(icon);
 		addMouseListener(new MouseAdapter() {
