@@ -108,7 +108,7 @@ public class MainFrame extends BrowserFrame {
 	private static final String HOSTNAME = "attu2.cs.washington.edu";
 	public MainFrame() {
 		super(new StartPage());
-		setTitle("Co-author Browser");
+		setTitle("Author Network");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setJMenuBar(createMenuBar());
 	}
