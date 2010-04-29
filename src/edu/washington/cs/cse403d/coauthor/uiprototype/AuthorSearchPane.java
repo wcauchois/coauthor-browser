@@ -234,8 +234,10 @@ public class AuthorSearchPane extends JPanel {
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		
 		JPanel headerPane = new JPanel();
-		headerPane.add(new JLabel("Please enter your search terms below"));
-		headerPane.add(new HelpMarker("Click here for more information."));
+		headerPane.add(new JLabel("Please enter your search terms below."));
+		headerPane.add(new HelpMarker(
+				Services.getResourceManager().
+				loadStrings("strings.xml").get("AuthorSearchPane.help")));
 		add(headerPane);
 		
 		add(authorsPane);
