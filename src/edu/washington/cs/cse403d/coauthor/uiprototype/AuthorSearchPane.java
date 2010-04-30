@@ -273,7 +273,7 @@ public class AuthorSearchPane extends JPanel {
 		add(submit);
 		submit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				System.out.println(getAuthors());
+				Services.getBrowser().go(new SearchResultsPage(getAuthors()));
 			}
 		});
 	}
