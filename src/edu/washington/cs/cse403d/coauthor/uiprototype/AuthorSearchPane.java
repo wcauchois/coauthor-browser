@@ -24,44 +24,37 @@ import edu.washington.cs.cse403d.coauthor.dataservice.CoauthorDataServiceInterfa
  */
 public class AuthorSearchPane extends JPanel {
 	private class AuthorField extends JTextField {
+		private class TextChangedListener implements DocumentListener {
+			public void changedUpdate(DocumentEvent evt) { textValueChanged(); }
+			public void insertUpdate(DocumentEvent evt) { textValueChanged(); }
+			public void removeUpdate(DocumentEvent evt) { textValueChanged(); }
+		}
+		private class KeyboardShortcuts extends KeyAdapter {
+			@Override
+			public void keyPressed(KeyEvent evt) {
+				boolean scrollDown = evt.getKeyCode() == KeyEvent.VK_DOWN;
+				boolean scrollUp = evt.getKeyCode() == KeyEvent.VK_UP;
+				if(scrollUp || scrollDown) {
+					int newIndex = suggestionsList.getSelectedIndex() + (scrollDown ? 1 : -1);
+					suggestionsList.setSelectedIndex(newIndex);
+					suggestionsList.ensureIndexIsVisible(newIndex);
+				} else if(evt.getKeyCode() == KeyEvent.VK_ENTER) {
+					if(suggestionsPopup != null && !suggestionsList.isSelectionEmpty()) {
+						setText((String)suggestionsList.getSelectedValue());
+						hideSuggestions();
+					}
+				} else if(evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+					hideSuggestions();
+				}
+			}
+		}
 		public AuthorField() {
-			getDocument().addDocumentListener(new DocumentListener() {
-				@Override
-				public void changedUpdate(DocumentEvent evt) {
-					textValueChanged();
-				}
-				@Override
-				public void insertUpdate(DocumentEvent evt) {
-					textValueChanged();
-				}
-				@Override
-				public void removeUpdate(DocumentEvent evt) {
-					textValueChanged();
-				}
-			});
+			getDocument().addDocumentListener(new TextChangedListener());
 			suggestionsPane = new JScrollPane(suggestionsList,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 			suggestionsPane.setPreferredSize(new Dimension(200, 80));
-			addKeyListener(new KeyAdapter() {
-				@Override
-				public void keyPressed(KeyEvent evt) {
-					if(evt.getKeyCode() == KeyEvent.VK_DOWN) {
-						suggestionsList.setSelectedIndex(
-							suggestionsList.getSelectedIndex() + 1);
-					} else if(evt.getKeyCode() == KeyEvent.VK_UP) {
-						suggestionsList.setSelectedIndex(
-								suggestionsList.getSelectedIndex() - 1);
-					} else if(evt.getKeyCode() == KeyEvent.VK_ENTER) {
-						if(suggestionsPopup != null && !suggestionsList.isSelectionEmpty()) {
-							setText((String)suggestionsList.getSelectedValue());
-							hideSuggestions();
-						}
-					} else if(evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
-						hideSuggestions();
-					}
-				}
-			});
+			addKeyListener(new KeyboardShortcuts());
 			setPreferredSize(new Dimension(150, 24));
 			setFont(getFont().deriveFont(Font.BOLD, 14));
 		}
