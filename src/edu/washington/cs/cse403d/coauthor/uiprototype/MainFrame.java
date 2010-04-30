@@ -12,6 +12,7 @@ import edu.washington.cs.cse403d.coauthor.dataservice.CoauthorDataServiceInterfa
 public class MainFrame extends BrowserFrame {
 	
 	public JMenuBar createMenuBar() {
+		// TODO(wcauchois): the menu bar is vastly out of sync with the features we've been implementing.
 		JMenuBar menuBar;
 		JMenu menu;
 		JMenuItem menuItem;
@@ -61,11 +62,6 @@ public class MainFrame extends BrowserFrame {
 		
 		menuItem = new JMenuItem("Author Search");
 		//need to add actionListner
-		menuItem.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				Services.getBrowser().go(new SearchPage());				
-			}
-		});
 		
 		menu.add(menuItem);
 		

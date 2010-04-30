@@ -2,8 +2,6 @@ package edu.washington.cs.cse403d.coauthor.uiprototype;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Font;
-
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
