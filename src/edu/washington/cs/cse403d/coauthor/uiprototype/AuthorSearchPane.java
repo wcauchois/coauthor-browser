@@ -15,8 +15,6 @@ import javax.swing.event.DocumentListener;
 import edu.washington.cs.cse403d.coauthor.dataservice.CoauthorDataServiceInterface;
 
 /*
- * TODO: make it so suggestions are hidden when you change focus
- * TODO: fix the tab order so only fields can be focused
  * TODO: put AuthorsPane into a JScrollPane for when it gets big
  * TODO: fix the layout on the search button
  * TODO: make & use icons for plus and minus buttons
@@ -57,6 +55,11 @@ public class AuthorSearchPane extends JPanel {
 			addKeyListener(new KeyboardShortcuts());
 			setPreferredSize(new Dimension(150, 24));
 			setFont(getFont().deriveFont(Font.BOLD, 14));
+			addFocusListener(new FocusAdapter() {
+				public void focusLost(FocusEvent evt) {
+					hideSuggestions();
+				}
+			});
 		}
 		private JScrollPane suggestionsPane;
 		private JList suggestionsList = new JList();
@@ -135,6 +138,37 @@ public class AuthorSearchPane extends JPanel {
 	private Executor executor;
 	private PopupFactory popupFactory;
 	private class AuthorsPane extends JPanel {
+		private class FocusPolicy extends FocusTraversalPolicy {
+			private Component getComponentPlusN(Component comp, int n) {
+				int i = authorFields.indexOf(comp);
+				if(i < 0) return authorFields.get(0);
+				else {
+					i = (i + n) % authorFields.size();
+					if(i < 0) i += authorFields.size();
+					return authorFields.get(i);
+				}
+			}
+			@Override
+			public Component getComponentAfter(Container cycleRoot, Component comp) {
+				return getComponentPlusN(comp, 1);
+			}
+			@Override
+			public Component getComponentBefore(Container cycleRoot, Component comp) {
+				return getComponentPlusN(comp, -1);
+			}
+			@Override
+			public Component getDefaultComponent(Container cycleRoot) {
+				return authorFields.get(0);
+			}
+			@Override
+			public Component getFirstComponent(Container cycleRoot) {
+				return authorFields.get(0);
+			}
+			@Override
+			public Component getLastComponent(Container arg0) {
+				return authorFields.get(authorFields.size() - 1);
+			}
+		}
 		private GroupLayout layout;
 		private GroupLayout.SequentialGroup hGroup, vGroup;
 		private GroupLayout.ParallelGroup[] columns = new GroupLayout.ParallelGroup[N_COLUMNS];
@@ -144,6 +178,8 @@ public class AuthorSearchPane extends JPanel {
 		public AuthorsPane() {
 			thePane = this;
 			setLayout(layout = new GroupLayout(this));
+			setFocusTraversalPolicy(new FocusPolicy());
+			setFocusCycleRoot(true);
 			layout.setAutoCreateGaps(true);
 			layout.setAutoCreateContainerGaps(true);
 
