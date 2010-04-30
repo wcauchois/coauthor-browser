@@ -21,6 +21,6 @@ public class SearchResultsPage extends BrowserPage {
 	}
 	@SuppressWarnings("unchecked")
 	public Class[] getCrumbs() {
-		return new Class[] { SearchPage.class, StartPage.class };
+		return new Class[] { StartPage.class };
 	}
 }

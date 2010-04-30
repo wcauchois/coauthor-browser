@@ -59,6 +59,7 @@ public class ResourceManager {
 				strings.put(currentString, currentText);
 		}
 	}
+	@SuppressWarnings("unchecked")
 	public Map<String, String> loadStrings(String name) {
 		if(resources.containsKey(name))
 			return (Map<String, String>)resources.get(name);
