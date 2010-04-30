@@ -15,8 +15,6 @@ import javax.swing.event.DocumentListener;
 import edu.washington.cs.cse403d.coauthor.dataservice.CoauthorDataServiceInterface;
 
 /*
- * TODO: make it so suggestions are hidden when you change focus
- * TODO: fix the tab order so only fields can be focused
  * TODO: put AuthorsPane into a JScrollPane for when it gets big
  * TODO: fix the layout on the search button
  * TODO: make & use icons for plus and minus buttons
@@ -24,46 +22,44 @@ import edu.washington.cs.cse403d.coauthor.dataservice.CoauthorDataServiceInterfa
  */
 public class AuthorSearchPane extends JPanel {
 	private class AuthorField extends JTextField {
+		private class TextChangedListener implements DocumentListener {
+			public void changedUpdate(DocumentEvent evt) { textValueChanged(); }
+			public void insertUpdate(DocumentEvent evt) { textValueChanged(); }
+			public void removeUpdate(DocumentEvent evt) { textValueChanged(); }
+		}
+		private class KeyboardShortcuts extends KeyAdapter {
+			@Override
+			public void keyPressed(KeyEvent evt) {
+				boolean scrollDown = evt.getKeyCode() == KeyEvent.VK_DOWN;
+				boolean scrollUp = evt.getKeyCode() == KeyEvent.VK_UP;
+				if(scrollUp || scrollDown) {
+					int newIndex = suggestionsList.getSelectedIndex() + (scrollDown ? 1 : -1);
+					suggestionsList.setSelectedIndex(newIndex);
+					suggestionsList.ensureIndexIsVisible(newIndex);
+				} else if(evt.getKeyCode() == KeyEvent.VK_ENTER) {
+					if(suggestionsPopup != null && !suggestionsList.isSelectionEmpty()) {
+						setText((String)suggestionsList.getSelectedValue());
+						hideSuggestions();
+					}
+				} else if(evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+					hideSuggestions();
+				}
+			}
+		}
 		public AuthorField() {
-			getDocument().addDocumentListener(new DocumentListener() {
-				@Override
-				public void changedUpdate(DocumentEvent evt) {
-					textValueChanged();
-				}
-				@Override
-				public void insertUpdate(DocumentEvent evt) {
-					textValueChanged();
-				}
-				@Override
-				public void removeUpdate(DocumentEvent evt) {
-					textValueChanged();
-				}
-			});
+			getDocument().addDocumentListener(new TextChangedListener());
 			suggestionsPane = new JScrollPane(suggestionsList,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 			suggestionsPane.setPreferredSize(new Dimension(200, 80));
-			addKeyListener(new KeyAdapter() {
-				@Override
-				public void keyPressed(KeyEvent evt) {
-					if(evt.getKeyCode() == KeyEvent.VK_DOWN) {
-						suggestionsList.setSelectedIndex(
-							suggestionsList.getSelectedIndex() + 1);
-					} else if(evt.getKeyCode() == KeyEvent.VK_UP) {
-						suggestionsList.setSelectedIndex(
-								suggestionsList.getSelectedIndex() - 1);
-					} else if(evt.getKeyCode() == KeyEvent.VK_ENTER) {
-						if(suggestionsPopup != null && !suggestionsList.isSelectionEmpty()) {
-							setText((String)suggestionsList.getSelectedValue());
-							hideSuggestions();
-						}
-					} else if(evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
-						hideSuggestions();
-					}
-				}
-			});
+			addKeyListener(new KeyboardShortcuts());
 			setPreferredSize(new Dimension(150, 24));
 			setFont(getFont().deriveFont(Font.BOLD, 14));
+			addFocusListener(new FocusAdapter() {
+				public void focusLost(FocusEvent evt) {
+					hideSuggestions();
+				}
+			});
 		}
 		private JScrollPane suggestionsPane;
 		private JList suggestionsList = new JList();
@@ -142,6 +138,37 @@ public class AuthorSearchPane extends JPanel {
 	private Executor executor;
 	private PopupFactory popupFactory;
 	private class AuthorsPane extends JPanel {
+		private class FocusPolicy extends FocusTraversalPolicy {
+			private Component getComponentPlusN(Component comp, int n) {
+				int i = authorFields.indexOf(comp);
+				if(i < 0) return authorFields.get(0);
+				else {
+					i = (i + n) % authorFields.size();
+					if(i < 0) i += authorFields.size();
+					return authorFields.get(i);
+				}
+			}
+			@Override
+			public Component getComponentAfter(Container cycleRoot, Component comp) {
+				return getComponentPlusN(comp, 1);
+			}
+			@Override
+			public Component getComponentBefore(Container cycleRoot, Component comp) {
+				return getComponentPlusN(comp, -1);
+			}
+			@Override
+			public Component getDefaultComponent(Container cycleRoot) {
+				return authorFields.get(0);
+			}
+			@Override
+			public Component getFirstComponent(Container cycleRoot) {
+				return authorFields.get(0);
+			}
+			@Override
+			public Component getLastComponent(Container arg0) {
+				return authorFields.get(authorFields.size() - 1);
+			}
+		}
 		private GroupLayout layout;
 		private GroupLayout.SequentialGroup hGroup, vGroup;
 		private GroupLayout.ParallelGroup[] columns = new GroupLayout.ParallelGroup[N_COLUMNS];
@@ -151,6 +178,8 @@ public class AuthorSearchPane extends JPanel {
 		public AuthorsPane() {
 			thePane = this;
 			setLayout(layout = new GroupLayout(this));
+			setFocusTraversalPolicy(new FocusPolicy());
+			setFocusCycleRoot(true);
 			layout.setAutoCreateGaps(true);
 			layout.setAutoCreateContainerGaps(true);
 
