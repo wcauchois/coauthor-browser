@@ -1,5 +1,6 @@
 package edu.washington.cs.cse403d.coauthor.dataservice;
 
+import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -34,7 +35,7 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 	private static final long serialVersionUID = -5396719662952291707L;
 	private static final int SEARCH_DEPTH = 20;
 
-	private final PrintStream logStream;
+	private PrintStream logStream;
 	private final Connection sqlConnection;
 	private final EmbeddedGraphDatabase graphDb;
 
@@ -48,7 +49,13 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 		super();
 		this.sqlConnection = sqlConnection;
 		this.graphDb = graphDb;
-		logStream = System.out;
+		try {
+			logStream = new PrintStream("dataProvider.log");
+		} catch (FileNotFoundException e) {
+			System.err.println("could not create log!");
+			e.printStackTrace();
+			logStream = System.out;
+		}
 
 		prepareStatements();
 	}
