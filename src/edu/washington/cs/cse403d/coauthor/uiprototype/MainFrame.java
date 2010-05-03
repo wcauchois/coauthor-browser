@@ -3,11 +3,16 @@ package edu.washington.cs.cse403d.coauthor.uiprototype;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.rmi.*;
+import java.rmi.Naming;
 
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 
-import edu.washington.cs.cse403d.coauthor.dataservice.CoauthorDataServiceInterface;
+import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 
 public class MainFrame extends BrowserFrame {
 	

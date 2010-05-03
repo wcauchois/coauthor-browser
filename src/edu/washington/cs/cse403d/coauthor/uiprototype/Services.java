@@ -1,6 +1,6 @@
 package edu.washington.cs.cse403d.coauthor.uiprototype;
 
-import edu.washington.cs.cse403d.coauthor.dataservice.CoauthorDataServiceInterface;
+import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 
 // Used to keep track of a global instance of Browser.
 public class Services {

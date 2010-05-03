@@ -1,4 +1,4 @@
-package edu.washington.cs.cse403d.coauthor.dataservice.graphdb;
+package edu.washington.cs.cse403d.coauthor.uiprototype.graphvis;
 import java.awt.*;
 import java.util.ArrayList;
 import javax.swing.JFrame;
