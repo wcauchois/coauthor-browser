@@ -46,6 +46,7 @@ import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
  * TODO: javadoc!!!!
  */
 public class AuthorSearchPane extends JPanel {
+	private static final int MIN_QUERY_SIZE = 5;
 	private class AuthorField extends JTextField {
 		private class TextChangedListener implements DocumentListener {
 			public void changedUpdate(DocumentEvent evt) { textValueChanged(); }
@@ -125,7 +126,9 @@ public class AuthorSearchPane extends JPanel {
 		}
 		private void updateSuggestions(String queryPart, String filterPart) {
 			final String filter = filterPart;
-			if(!queryPart.isEmpty() && !queryPart.equals(query)) {
+			if(!queryPart.isEmpty()
+					&& !queryPart.equals(query)
+					&& queryPart.length() >= MIN_QUERY_SIZE) {
 				query = queryPart;
 				final CoauthorDataServiceInterface c = Services.getCoauthorDataServiceInterface();
 				executor.execute(new Runnable() {
