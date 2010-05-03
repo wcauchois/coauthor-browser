@@ -63,6 +63,7 @@ public class BrowserFrame extends JFrame implements Browser {
 		getContentPane().add(pagePane, BorderLayout.CENTER);
 		update();
 		Services.provideBrowser(this);
+		initialPage.onEnter(null);
 	}
 	private void update() {
 		pagePane.removeAll();
@@ -74,7 +75,8 @@ public class BrowserFrame extends JFrame implements Browser {
 		pagePane.repaint();
 	}
 	public void go(BrowserPage page) {
-		history.push(page);
+		history.getCurrent().onExit(page);
+		page.onEnter(history.push(page));
 		update();
 	}
 	public boolean canGoForward() {
@@ -84,11 +86,15 @@ public class BrowserFrame extends JFrame implements Browser {
 		return history.hasPrevious();
 	}
 	public void goForward() {
-		history.forward();
+		BrowserPage old = history.getCurrent();
+		old.onExit(history.forward());
+		history.getCurrent().onEnter(old);
 		update();
 	}
-	public void goBack() { 
-		history.back();
+	public void goBack() {
+		BrowserPage old = history.getCurrent();
+		old.onExit(history.back());
+		history.getCurrent().onEnter(old);
 		update();
 	}
 }

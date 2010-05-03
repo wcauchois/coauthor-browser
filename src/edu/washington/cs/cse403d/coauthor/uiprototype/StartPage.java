@@ -22,7 +22,7 @@ public class StartPage extends BrowserPage {
 		logo.setHorizontalAlignment(SwingConstants.CENTER);
 		add(logo, BorderLayout.NORTH);
 		
-		tabbedPane.addTab("Author Search", new AuthorSearchPane());
+		tabbedPane.addTab("Author Search", new AuthorSearchPane(this));
 		tabbedPane.addTab("Article Search", new ArticleSearchPane());
 	}
 	// XXX: move AuthorSearchPane out too!!

@@ -108,9 +108,10 @@ public class BrowserHistory {
 	 * more recent than the current page will be forgotten.
 	 * 
 	 * <b>Postcondition</b>: hasPrevious() is true.
-	 * @return the passed-in page
+	 * @return the old current page
 	 */
 	public BrowserPage push(BrowserPage page) {
+		BrowserPage old = getCurrent();
 		if(page != getCurrent()) {
 			while(cursor < -1) {
 				pages.pop();
@@ -118,7 +119,7 @@ public class BrowserHistory {
 			}
 			pages.add(page);
 		}
-		return page;
+		return old;
 	}
 	/**
 	 * Returns whether there is a previous page in the history. If true, then

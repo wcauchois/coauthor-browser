@@ -1,5 +1,8 @@
 package edu.washington.cs.cse403d.coauthor.uiprototype;
 
+import java.util.List;
+import java.util.ArrayList;
+
 import javax.swing.JPanel;
 
 /**
@@ -37,5 +40,24 @@ public abstract class BrowserPage extends JPanel {
 	@SuppressWarnings("unchecked")
 	public Class[] getCrumbs() {
 		return null;
+	}
+	
+	public interface NavListener {
+		void onEnter(BrowserPage previous);
+		void onExit(BrowserPage next);
+	}
+	private List<NavListener> listeners = new ArrayList<NavListener>();
+	public void addNavListener(NavListener l) {
+		listeners.add(l);
+	}
+	
+	protected void onEnter(BrowserPage previous) {
+		for(NavListener l : listeners)
+			l.onEnter(previous);
+	}
+	
+	protected void onExit(BrowserPage next) {
+		for(NavListener l : listeners)
+			l.onExit(next);
 	}
 }
