@@ -1,18 +1,43 @@
 package edu.washington.cs.cse403d.coauthor.uiprototype;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FocusTraversalPolicy;
+import java.awt.Font;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import javax.swing.*;
-import java.rmi.RemoteException;
+import javax.swing.BoxLayout;
+import javax.swing.GroupLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.Popup;
+import javax.swing.PopupFactory;
+import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import edu.washington.cs.cse403d.coauthor.dataservice.CoauthorDataServiceInterface;
+import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 
 /*
  * TODO: put AuthorsPane into a JScrollPane for when it gets big
@@ -104,7 +129,7 @@ public class AuthorSearchPane extends JPanel {
 				executor.execute(new Runnable() {
 					public void run() {
 						try {
-							queryResults = c.getAuthors("+" + query);
+							queryResults = c.getAuthors(query);
 						} catch(RemoteException e) {
 							System.err.println("Couldn't get suggestions for author");
 							return;
