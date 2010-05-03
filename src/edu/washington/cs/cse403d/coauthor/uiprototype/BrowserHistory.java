@@ -13,7 +13,7 @@ import java.util.List;
  * @author William Cauchois
  */
 public class BrowserHistory {
-	public static final int MAX = 5;
+	public static final int MAX = 30;
 	/**
 	 * A circular array of a fixed capacity where the indices wrap around.
 	 */
