@@ -87,6 +87,7 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 				return rs.getLong(1);
 			}
 		} catch (SQLException e) {
+			e.printStackTrace(logStream);
 			throw new IllegalStateException("SQL Error: " + e.getLocalizedMessage() + " SQLSTATE: " + e.getSQLState());
 		}
 	}
@@ -103,6 +104,7 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 				return rs.getString(1);
 			}
 		} catch (SQLException e) {
+			e.printStackTrace(logStream);
 			throw new IllegalStateException("SQL Error: " + e.getLocalizedMessage() + " SQLSTATE: " + e.getSQLState());
 		}
 	}
@@ -162,6 +164,7 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 				result.add(queryResults.getString(1));
 			}
 		} catch (SQLException e) {
+			e.printStackTrace(logStream);
 			throw new IllegalStateException("Error querying data service: " + e.getMessage());
 		}
 
@@ -186,6 +189,7 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 				result.add(queryResults.getString(1));
 			}
 		} catch (SQLException e) {
+			e.printStackTrace(logStream);
 			throw new IllegalStateException("Error querying data service: " + e.getMessage());
 		}
 
@@ -218,6 +222,8 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 
 			processPath(results, result, populatePublications);
 
+		} catch (Exception e) {
+			e.printStackTrace(logStream);
 		} finally {
 			tx.finish();
 		}
@@ -251,6 +257,8 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 				processPath(onePath, thisPath, populatePublications);
 				result.add(thisPath);
 			}
+		} catch (Exception e) {
+			e.printStackTrace(logStream);
 		} finally {
 			tx.finish();
 		}
@@ -307,7 +315,8 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 				result.add(createPublicationFromCurrentResult(results));
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			e.printStackTrace(logStream);
+			throw new IllegalStateException("SQL Error: " + e.getLocalizedMessage() + " SQLSTATE: " + e.getSQLState());
 		}
 
 		return result;
@@ -341,7 +350,8 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 				result.add(createPublicationFromCurrentResult(results));
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			e.printStackTrace(logStream);
+			throw new IllegalStateException("SQL Error: " + e.getLocalizedMessage() + " SQLSTATE: " + e.getSQLState());
 		}
 
 		return result;
