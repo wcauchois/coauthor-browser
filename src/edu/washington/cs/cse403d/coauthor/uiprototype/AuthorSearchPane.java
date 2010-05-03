@@ -18,7 +18,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.swing.BoxLayout;
@@ -92,7 +92,9 @@ public class AuthorSearchPane extends JPanel {
 		private String query = "";
 		private List<String> queryResults = new ArrayList<String>();
 		public void showSuggestions() {
-			if(suggestionsPopup == null) {
+			if(suggestionsPopup == null
+					&& suggestionsList.getModel().getSize() > 0
+					&& isDisplayable()) {
 				Point location = getLocationOnScreen();
 				int offsetY = getSize().height;
 				suggestionsPopup = popupFactory.getPopup(
@@ -160,7 +162,7 @@ public class AuthorSearchPane extends JPanel {
 	}
 	private JButton submit = new JButton("Search");
 	private List<AuthorField> authorFields = new LinkedList<AuthorField>();
-	private Executor executor;
+	private ExecutorService executor;
 	private PopupFactory popupFactory;
 	private class AuthorsPane extends JPanel {
 		private class FocusPolicy extends FocusTraversalPolicy {
@@ -279,8 +281,11 @@ public class AuthorSearchPane extends JPanel {
 	}
 	private AuthorsPane authorsPane = new AuthorsPane();
 	private ImageIcon plusIcon, minusIcon;
-	public AuthorSearchPane() {
-		executor = Executors.newSingleThreadExecutor();
+	private static ExecutorService createExecutor() {
+		return Executors.newSingleThreadExecutor();
+	}
+	public AuthorSearchPane(BrowserPage parent) {
+		executor = createExecutor();
 		popupFactory = PopupFactory.getSharedInstance();
 		ResourceManager resourceManager = Services.getResourceManager();
 		plusIcon = resourceManager.loadImageIcon("plus.png");
@@ -299,6 +304,19 @@ public class AuthorSearchPane extends JPanel {
 		submit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				Services.getBrowser().go(new AuthorSearchResults(getAuthors()));
+			}
+		});
+		
+		parent.addNavListener(new BrowserPage.NavListener() {
+			public void onEnter(BrowserPage previous) {
+				if(executor == null)
+					executor = createExecutor();
+			}
+			public void onExit(BrowserPage next) {
+				for(AuthorField f : authorFields)
+					f.hideSuggestions();
+				executor.shutdownNow();
+				executor = null;
 			}
 		});
 	}
