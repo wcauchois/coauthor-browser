@@ -3,6 +3,7 @@ package edu.washington.cs.cse403d.coauthor.uiprototype;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
@@ -52,16 +53,24 @@ public abstract class SuggestionsField extends JTextField {
 	}
 	
 	public void hideSuggestions() {
-		suggestionsList.setSelectedIndex(0);
 		if(suggestionsPopup != null) {
 			suggestionsPopup.hide();
 			suggestionsPopup = null;
 		}
 	}
 
+	private static final int DEFAULT_POPUP_HEIGHT = 80;
 	public void updateSuggestions() {
 		List<String> suggestions = getSuggestions(getText());
 		suggestionsList.setListData(suggestions.toArray());
+		Rectangle bounds = suggestionsList.getCellBounds(0, suggestions.size() - 1);
+		int preferredHeight = Math.min(DEFAULT_POPUP_HEIGHT,
+				(bounds != null) ? (bounds.height + 4) : Integer.MAX_VALUE);
+		System.out.println(preferredHeight);
+		suggestionsPane.setPreferredSize(new Dimension(
+				suggestionsPane.getPreferredSize().width,
+				preferredHeight));
+		hideSuggestions();
 		showSuggestions();
 	}
 	
@@ -73,6 +82,7 @@ public abstract class SuggestionsField extends JTextField {
 			if(scrollUp || scrollDown) {
 				// Scroll up or down using the arrow keys
 				int newIndex = suggestionsList.getSelectedIndex() + (scrollDown ? 1 : -1);
+				if(newIndex < 0) newIndex = 0;
 				suggestionsList.setSelectedIndex(newIndex);
 				suggestionsList.ensureIndexIsVisible(newIndex);
 			} else if(evt.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -111,6 +121,6 @@ public abstract class SuggestionsField extends JTextField {
 		
 		setFont(getFont().deriveFont(Font.BOLD, 14));
 		setPreferredSize(new Dimension(150, 24));
-		suggestionsPane.setPreferredSize(new Dimension(200, 80));
+		suggestionsPane.setPreferredSize(new Dimension(226, DEFAULT_POPUP_HEIGHT));
 	}
 }
