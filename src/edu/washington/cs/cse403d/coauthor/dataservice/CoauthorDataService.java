@@ -39,7 +39,10 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 	private final Connection sqlConnection;
 	private final EmbeddedGraphDatabase graphDb;
 
+	private PreparedStatement ps_queryAuthorFulltextSuggestions;
+	private PreparedStatement ps_queryPublicationsFulltextSuggestions;
 	private PreparedStatement ps_queryAuthorsFulltext;
+	private PreparedStatement ps_queryPublicationsFulltext;
 	private PreparedStatement ps_getAuthor;
 	private PreparedStatement ps_getAuthorName;
 	private PreparedStatement ps_getCoauthors;
@@ -63,6 +66,12 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 	private void prepareStatements() throws SQLException {
 		ps_queryAuthorsFulltext = sqlConnection
 				.prepareStatement("SELECT [name] FROM [Authors] WHERE CONTAINS(name, ?) ORDER BY [name] ASC");
+		ps_queryPublicationsFulltext = sqlConnection
+				.prepareStatement("SELECT [title] FROM [Publications] WHERE CONTAINS(title, ?) ORDER BY [title] ASC");
+		ps_queryAuthorFulltextSuggestions = sqlConnection
+				.prepareStatement("SELECT TOP 50 [name] FROM [Authors] WHERE CONTAINS(name, ?) ORDER BY [name] ASC");
+		ps_queryPublicationsFulltextSuggestions = sqlConnection
+				.prepareStatement("SELECT TOP 50 [title] FROM [Publications] WHERE CONTAINS(title, ?) ORDER BY [title] ASC");
 		ps_getAuthor = sqlConnection.prepareStatement("SELECT [id] FROM [Authors] WHERE [name] = ?");
 		ps_getAuthorName = sqlConnection.prepareStatement("SELECT [name] FROM [Authors] WHERE [id] = ?");
 		ps_getCoauthors = sqlConnection.prepareStatement("(SELECT a.name "
@@ -138,11 +147,20 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 
 	@Override
 	public List<String> getAuthors(String searchQuery) throws RemoteException {
+		return getAuthorsHelper(searchQuery, ps_queryAuthorsFulltext);
+	}
+
+	@Override
+	public List<String> getAuthorSuggestions(String searchQuery) throws RemoteException {
+		return getAuthorsHelper(searchQuery, ps_queryAuthorFulltextSuggestions);
+	}
+
+	private List<String> getAuthorsHelper(String searchQuery, PreparedStatement preparedQuery) {
 		if (searchQuery == null || searchQuery.isEmpty()) {
 			throw new IllegalArgumentException("Must provide a non-empty searchQuery");
 		}
 
-		logStream.println("searchQuery(" + searchQuery + ")");
+		logStream.println("getAuthors(" + searchQuery + ")");
 
 		List<String> result = new ArrayList<String>();
 
@@ -157,8 +175,8 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 		}
 
 		try {
-			ps_queryAuthorsFulltext.setString(1, containsParam.toString());
-			ResultSet queryResults = ps_queryAuthorsFulltext.executeQuery();
+			preparedQuery.setString(1, containsParam.toString());
+			ResultSet queryResults = preparedQuery.executeQuery();
 
 			while (queryResults.next()) {
 				result.add(queryResults.getString(1));
@@ -356,4 +374,48 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 
 		return result;
 	}
+
+	private List<String> getPublicationTitlesHelper(String searchQuery, PreparedStatement preparedQuery) {
+		if (searchQuery == null || searchQuery.length() < 4) {
+			throw new IllegalArgumentException("The search query must be non-empty and atleast 4 characters");
+		}
+
+		logStream.println("getPublicationTitles(" + searchQuery + ")");
+
+		List<String> result = new ArrayList<String>();
+
+		StringBuilder containsParam = new StringBuilder();
+		String[] queryParts = searchQuery.split("[\\s]");
+
+		for (int i = 0; i < queryParts.length; ++i) {
+			if (i != 0) {
+				containsParam.append(" AND ");
+			}
+			containsParam.append('"' + queryParts[i] + " *\"");
+		}
+
+		try {
+			preparedQuery.setString(1, containsParam.toString());
+			ResultSet queryResults = preparedQuery.executeQuery();
+
+			while (queryResults.next()) {
+				result.add(queryResults.getString(1));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace(logStream);
+			throw new IllegalStateException("Error querying data service: " + e.getMessage());
+		}
+		return result;
+	}
+
+	@Override
+	public List<String> getPublicationTitles(String searchQuery) throws RemoteException {
+		return getPublicationTitlesHelper(searchQuery, ps_queryPublicationsFulltext);
+	}
+
+	@Override
+	public List<String> getPublicationTitleSuggestions(String searchQuery) throws RemoteException {
+		return getPublicationTitlesHelper(searchQuery, ps_queryPublicationsFulltextSuggestions);
+	}
+
 }

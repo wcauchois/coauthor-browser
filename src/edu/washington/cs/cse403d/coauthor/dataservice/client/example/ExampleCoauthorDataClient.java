@@ -16,7 +16,9 @@ import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
  * @author Jeff Prouty
  */
 public class ExampleCoauthorDataClient {
-	 public static final String HOSTNAME = "attu2.cs.washington.edu";
+	public static final String HOSTNAME = "localhost";
+
+	// public static final String HOSTNAME = "attu2.cs.washington.edu";
 
 	public static void main(String[] args) {
 		// TODO(prouty): Adding security manager and reflection on the received
@@ -35,6 +37,8 @@ public class ExampleCoauthorDataClient {
 
 		long start = System.currentTimeMillis();
 		try {
+			System.out.println(c.getPublicationTitles("Wireless Networks"));
+			System.out.println((System.currentTimeMillis() - start));
 			System.out.println(c.getAuthors("Thomas E. Anderson"));
 			System.out.println((System.currentTimeMillis() - start));
 			System.out.println(c.getCoauthors("Thomas E. Anderson"));
