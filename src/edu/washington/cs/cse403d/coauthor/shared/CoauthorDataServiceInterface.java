@@ -23,10 +23,24 @@ public interface CoauthorDataServiceInterface extends Remote {
 	 * ALL terms (prefix atleast) are returned.
 	 * 
 	 * @param searchQuery
+	 * @param limit
+	 *            Number of suggestions to limit to.
 	 * @return
 	 * @throws RemoteException
 	 */
 	public List<String> getAuthors(String searchQuery) throws RemoteException;
+	
+	/**
+	 * Get a list of authors that match a fulltext search. Limits the search to only 50 to give low latency results.
+	 * 
+	 * The given query is split on whitespace and then only authors that match
+	 * ALL terms (prefix atleast) are returned.
+	 * 
+	 * @param searchQuery
+	 * @return
+	 * @throws RemoteException
+	 */
+	public List<String> getAuthorSuggestions(String searchQuery) throws RemoteException;
 
 	/**
 	 * Given a valid author, get a list of coauthors with a coauthor distance of
@@ -87,4 +101,26 @@ public interface CoauthorDataServiceInterface extends Remote {
 	 * @throws RemoteException
 	 */
 	public List<Publication> getPublicationsForAnyAuthor(String... author) throws RemoteException;
+
+	/**
+	 * Given a String of words, search for publications whose title contains all
+	 * of the given words (as prefixes). Very much like the getAuthors method.
+	 * 
+	 * @param searchQuery
+	 * @return
+	 * @throws RemoteException
+	 */
+	public List<String> getPublicationTitles(String searchQuery) throws RemoteException;
+	
+	/**
+	 * Given a String of words, search for publications whose title contains all
+	 * of the given words (as prefixes). Very much like the getAuthors method. Limits the search to only 50 to give low latency results.
+	 * 
+	 * @param searchQuery
+	 * @param limit
+	 *            Number of suggestions to limit to.
+	 * @return
+	 * @throws RemoteException
+	 */
+	public List<String> getPublicationTitleSuggestions(String searchQuery) throws RemoteException;
 }
