@@ -23,6 +23,8 @@ import javax.swing.event.DocumentListener;
  * suggestions to the user in a box below the text field.
  */
 public abstract class SuggestionsField extends JTextField {
+	private static final int DEFAULT_POPUP_HEIGHT = 80;
+	
 	// The list of suggestions is put inside a scrolling pane
 	private JScrollPane suggestionsPane;
 	// A widget to display the list of suggestions (which is stored inside
@@ -59,14 +61,12 @@ public abstract class SuggestionsField extends JTextField {
 		}
 	}
 
-	private static final int DEFAULT_POPUP_HEIGHT = 80;
 	public void updateSuggestions() {
 		List<String> suggestions = getSuggestions(getText());
 		suggestionsList.setListData(suggestions.toArray());
 		Rectangle bounds = suggestionsList.getCellBounds(0, suggestions.size() - 1);
 		int preferredHeight = Math.min(DEFAULT_POPUP_HEIGHT,
 				(bounds != null) ? (bounds.height + 4) : Integer.MAX_VALUE);
-		System.out.println(preferredHeight);
 		suggestionsPane.setPreferredSize(new Dimension(
 				suggestionsPane.getPreferredSize().width,
 				preferredHeight));
