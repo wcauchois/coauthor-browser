@@ -1,6 +1,8 @@
 package edu.washington.cs.cse403d.coauthor.uiprototype;
 
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -26,13 +28,29 @@ public class AuthorSearchResults extends BrowserPage {
 	
 	public AuthorSearchResults(List<String> queries) {
 		this.queries = queries;
-		//System.out.println("Moved to search pane");
+		initialize();
+				
+	}
+	
+	private void initialize() {
 		this.setVisible(true);
+		setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 0;
+		
 		if(queries.size() == 1) {
-			add(new SingleAuthorSearchResult(queries.get(0)));
-			add(new SingleAuthorSearchArticleResult(queries.get(0)));
+			add(new SingleAuthorSearchResult(queries.get(0)), c);
 		} else
-			add(new SingleAuthorSearchResult(queries.get(0)));
+			add(new SingleAuthorSearchResult(queries.get(0)), c);
+		
+		c.gridx = 0;
+		c.gridy = 1;
+		if(queries.size() == 1) {
+			add(new SingleAuthorSearchArticleResult(queries.get(0)), c);
+		} else
+			add(new SingleAuthorSearchArticleResult(queries.get(0)), c);
 	}
 	
 	public String getTitle() {
