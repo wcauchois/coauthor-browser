@@ -14,7 +14,7 @@ import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
  * @version 2
  */
 public interface CoauthorDataServiceInterface extends Remote {
-	public String SERVICE_NAME = "CoauthorDataServiceV2";
+	public String SERVICE_NAME = "CoauthorDataServiceV3";
 
 	/**
 	 * Get a list of authors that match a fulltext search.
@@ -29,9 +29,10 @@ public interface CoauthorDataServiceInterface extends Remote {
 	 * @throws RemoteException
 	 */
 	public List<String> getAuthors(String searchQuery) throws RemoteException;
-	
+
 	/**
-	 * Get a list of authors that match a fulltext search. Limits the search to only 50 to give low latency results.
+	 * Get a list of authors that match a fulltext search. Limits the search to
+	 * only 50 to give low latency results.
 	 * 
 	 * The given query is split on whitespace and then only authors that match
 	 * ALL terms (prefix atleast) are returned.
@@ -103,6 +104,24 @@ public interface CoauthorDataServiceInterface extends Remote {
 	public List<Publication> getPublicationsForAnyAuthor(String... author) throws RemoteException;
 
 	/**
+	 * Given a title, return the publication that matches the title exactly.
+	 * 
+	 * @param publicationTitle
+	 * @return
+	 * @throws RemoteException
+	 */
+	public Publication getPublication(String publicationTitle) throws RemoteException;
+
+	/**
+	 * Given a title query, return all publications that partially match title.
+	 * 
+	 * @param searchQuery
+	 * @return
+	 * @throws RemoteException
+	 */
+	public List<Publication> getPublications(String searchQuery) throws RemoteException;
+
+	/**
 	 * Given a String of words, search for publications whose title contains all
 	 * of the given words (as prefixes). Very much like the getAuthors method.
 	 * 
@@ -111,10 +130,11 @@ public interface CoauthorDataServiceInterface extends Remote {
 	 * @throws RemoteException
 	 */
 	public List<String> getPublicationTitles(String searchQuery) throws RemoteException;
-	
+
 	/**
 	 * Given a String of words, search for publications whose title contains all
-	 * of the given words (as prefixes). Very much like the getAuthors method. Limits the search to only 50 to give low latency results.
+	 * of the given words (as prefixes). Very much like the getAuthors method.
+	 * Limits the search to only 50 to give low latency results.
 	 * 
 	 * @param searchQuery
 	 * @param limit

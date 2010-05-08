@@ -34,7 +34,7 @@ public class CreateGraphFromSql {
 
 			sqlServerDataSource.setUser("cse403d");
 			sqlServerDataSource.setPassword("DI9u4ICOQPjaumFB");
-			sqlServerDataSource.setDatabaseName("403d");
+			sqlServerDataSource.setDatabaseName("403dTest");
 			sqlServerDataSource.setServerName("iprojsrv.cs.washington.edu");
 
 			BatchInserter batchInserter = new BatchInserterImpl("graphDB");

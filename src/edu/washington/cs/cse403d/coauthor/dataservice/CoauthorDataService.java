@@ -40,12 +40,15 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 	private final EmbeddedGraphDatabase graphDb;
 
 	private PreparedStatement ps_queryAuthorFulltextSuggestions;
-	private PreparedStatement ps_queryPublicationsFulltextSuggestions;
 	private PreparedStatement ps_queryAuthorsFulltext;
-	private PreparedStatement ps_queryPublicationsFulltext;
 	private PreparedStatement ps_getAuthor;
 	private PreparedStatement ps_getAuthorName;
 	private PreparedStatement ps_getCoauthors;
+
+	private PreparedStatement ps_queryPublicationsFulltext;
+	private PreparedStatement ps_queryPublicationsFulltextSuggestions;
+	private PreparedStatement ps_getPublication;
+	private PreparedStatement ps_getPublications;
 
 	public CoauthorDataService(Connection sqlConnection, EmbeddedGraphDatabase graphDb) throws RemoteException,
 			SQLException {
@@ -69,15 +72,18 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 		ps_queryPublicationsFulltext = sqlConnection
 				.prepareStatement("SELECT [title] FROM [Publications] WHERE CONTAINS(title, ?) ORDER BY [title] ASC");
 		ps_queryAuthorFulltextSuggestions = sqlConnection
-				.prepareStatement("SELECT TOP 50 [name] FROM [Authors] WHERE CONTAINS(name, ?) ORDER BY [name] ASC");
+				.prepareStatement("SELECT TOP 50 [name] FROM [Authors] WHERE CONTAINS(name, ?)");
 		ps_queryPublicationsFulltextSuggestions = sqlConnection
-				.prepareStatement("SELECT TOP 50 [title] FROM [Publications] WHERE CONTAINS(title, ?) ORDER BY [title] ASC");
+				.prepareStatement("SELECT TOP 50 [title] FROM [Publications] WHERE CONTAINS(title, ?)");
 		ps_getAuthor = sqlConnection.prepareStatement("SELECT [id] FROM [Authors] WHERE [name] = ?");
 		ps_getAuthorName = sqlConnection.prepareStatement("SELECT [name] FROM [Authors] WHERE [id] = ?");
 		ps_getCoauthors = sqlConnection.prepareStatement("(SELECT a.name "
 				+ "FROM [Authors] as a, [CoauthorRelations] as c " + "WHERE c.aid1 = ? AND c.aid2 = a.id) " + "UNION "
 				+ "(SELECT a.name " + "FROM [Authors] as a, [CoauthorRelations] as c "
 				+ "WHERE c.aid2 = ? AND c.aid1 = a.id)");
+
+		ps_getPublication = sqlConnection.prepareStatement("SELECT * FROM [Publications] WHERE title = ?");
+		ps_getPublications = sqlConnection.prepareStatement("SELECT * FROM [Publications] WHERE CONTAINS(title, ?)");
 	}
 
 	private long getAuthorId(String authorName) {
@@ -152,7 +158,9 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 
 	@Override
 	public List<String> getAuthorSuggestions(String searchQuery) throws RemoteException {
-		return getAuthorsHelper(searchQuery, ps_queryAuthorFulltextSuggestions);
+		List<String> results = getAuthorsHelper(searchQuery, ps_queryAuthorFulltextSuggestions);
+		Collections.sort(results);
+		return results;
 	}
 
 	private List<String> getAuthorsHelper(String searchQuery, PreparedStatement preparedQuery) {
@@ -415,7 +423,64 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 
 	@Override
 	public List<String> getPublicationTitleSuggestions(String searchQuery) throws RemoteException {
-		return getPublicationTitlesHelper(searchQuery, ps_queryPublicationsFulltextSuggestions);
+		List<String> results = getPublicationTitlesHelper(searchQuery, ps_queryPublicationsFulltextSuggestions);
+		Collections.sort(results);
+		return results;
 	}
 
+	@Override
+	public Publication getPublication(String publicationTitle) throws RemoteException {
+		if (publicationTitle == null || publicationTitle.isEmpty()) {
+			throw new IllegalArgumentException("The publicationTitle must be non-empty");
+		}
+
+		logStream.println("getPublication(" + publicationTitle + ")");
+
+		try {
+			ps_getPublication.setString(1, publicationTitle);
+			ResultSet queryResults = ps_getPublication.executeQuery();
+
+			while (queryResults.next()) {
+				return createPublicationFromCurrentResult(queryResults);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace(logStream);
+			throw new IllegalStateException("Error querying data service: " + e.getMessage());
+		}
+		throw new IllegalArgumentException("No publication exists in the database with title: " + publicationTitle);
+	}
+
+	@Override
+	public List<Publication> getPublications(String searchQuery) throws RemoteException {
+		if (searchQuery == null || searchQuery.length() < 4) {
+			throw new IllegalArgumentException("The search query must be non-empty and atleast 4 characters");
+		}
+
+		logStream.println("getPublications(" + searchQuery + ")");
+
+		List<Publication> result = new ArrayList<Publication>();
+
+		StringBuilder containsParam = new StringBuilder();
+		String[] queryParts = searchQuery.split("[\\s]");
+
+		for (int i = 0; i < queryParts.length; ++i) {
+			if (i != 0) {
+				containsParam.append(" AND ");
+			}
+			containsParam.append('"' + queryParts[i] + "\"");
+		}
+
+		try {
+			ps_getPublications.setString(1, containsParam.toString());
+			ResultSet queryResults = ps_getPublications.executeQuery();
+
+			while (queryResults.next()) {
+				result.add(createPublicationFromCurrentResult(queryResults));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace(logStream);
+			throw new IllegalStateException("Error querying data service: " + e.getMessage());
+		}
+		return result;
+	}
 }
