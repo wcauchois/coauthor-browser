@@ -28,6 +28,8 @@ import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
 
 	/*
 	 * Creates list of articles the author has worked on (as THE author)
+	 * 
+	 * TODO: work on the formatting of the filter panel instance(not aligned properly)
 	 */
 class SingleAuthorSearchArticleResult extends JPanel 
 											implements ListSelectionListener {
@@ -52,7 +54,7 @@ class SingleAuthorSearchArticleResult extends JPanel
 	private void initialize() {
 		setVisible(true);
 		
-		JLabel title = new JLabel("List of Publications");
+		JLabel title = new JLabel("Publications");
 		add(title, BorderLayout.PAGE_START);
 		
 		listModel = new DefaultListModel();
@@ -65,7 +67,8 @@ class SingleAuthorSearchArticleResult extends JPanel
 					"Error!",JOptionPane.ERROR_MESSAGE);
 		}
 		buildPubList();
-		createFilterPanel();
+		add(new FilterPanel("Pub", listModel, CDSI, pubList, theAuthor), BorderLayout.PAGE_END);
+		//createFilterPanel();
 	}
 	
 	private void buildPubList() {
@@ -86,38 +89,14 @@ class SingleAuthorSearchArticleResult extends JPanel
 			}
 	}
 	
-	
-	/*return a new listModel with filtered results
-	 * 
-	 */
-	private DefaultListModel getFilteredResult(String query) {
-		DefaultListModel filteredModel = new DefaultListModel();
-		CharSequence newQuery = (CharSequence) query.toLowerCase();
-		/*
-		 * sequence to get the filtered results.
-		 */
-		int i = 0;
-		int j = 0;
-		while (i < publications.size()){
-			String compare = publications.get(i).getTitle().toLowerCase();
-			if (compare.contains(newQuery)) {
-				filteredModel.add(j, publications.get(i).getTitle());
-				j++;
-			}
-			i++;
-		}
-		return filteredModel;
-		
-	}
-	
-	
 	public void valueChanged(ListSelectionEvent arg0) {
 		// TODO Auto-generated method stub
 		
-	}
-	
-	
-	private void createFilterPanel() {
+	}	
+}
+
+/*
+ 	private void createFilterPanel() {
 		filterPanel = new JPanel();
 		filterButton = new JButton("Filter");
 		filterButton.addActionListener(new ActionListener() { 
@@ -148,4 +127,23 @@ class SingleAuthorSearchArticleResult extends JPanel
 		
 		add(filterPanel, BorderLayout.PAGE_END);
 	}
-}
+	
+	
+	private DefaultListModel getFilteredResult(String query) {
+		DefaultListModel filteredModel = new DefaultListModel();
+		CharSequence newQuery = (CharSequence) query.toLowerCase();
+	
+		int i = 0;
+		int j = 0;
+		while (i < publications.size()){
+			String compare = publications.get(i).getTitle().toLowerCase();
+			if (compare.contains(newQuery)) {
+				filteredModel.add(j, publications.get(i).getTitle());
+				j++;
+			}
+			i++;
+		}
+		return filteredModel;
+		
+	}
+*/

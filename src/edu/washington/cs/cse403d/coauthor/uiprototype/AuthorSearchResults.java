@@ -43,7 +43,7 @@ public class AuthorSearchResults extends BrowserPage {
 		if(queries.size() == 1) {
 			add(new SingleAuthorSearchResult(queries.get(0)), c);
 		} else
-			add(new SingleAuthorSearchResult(queries.get(0)), c);
+			add(new SingleAuthorSearchResult(queries), c);
 		
 		c.gridx = 0;
 		c.gridy = 1;
