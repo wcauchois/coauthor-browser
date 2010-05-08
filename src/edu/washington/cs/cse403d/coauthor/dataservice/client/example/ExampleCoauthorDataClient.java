@@ -35,7 +35,10 @@ public class ExampleCoauthorDataClient {
 
 		long start = System.currentTimeMillis();
 		try {
-			System.out.println(c.getPublicationTitles("Wireless Networks"));
+			System.out.println(c.getPublication("Zone-based virtual backbone formation in wireless ad hoc networks"));
+			System.out.println((System.currentTimeMillis() - start));
+			System.out.println(printPubList(c
+					.getPublications("Zone-based virtual backbone formation wireless ad hoc networks")));
 			System.out.println((System.currentTimeMillis() - start));
 			System.out.println(c.getAuthors("Thomas E. Anderson"));
 			System.out.println((System.currentTimeMillis() - start));
@@ -49,14 +52,14 @@ public class ExampleCoauthorDataClient {
 			System.out.println(printPubList(c.getPublicationsForAnyAuthor("Brian N. Bershad", "Edward D. Lazowska",
 					"Henry M. Levy", "Thomas E. Anderson")));
 			System.out.println((System.currentTimeMillis() - start));
-			System.out.println(c.getOneShortestPathBetweenAuthors("Brian N. Bershad", "David D. Clark", false));
+			System.out.println(c.getPublicationTitleSuggestions("Wireless Networks"));
 			System.out.println((System.currentTimeMillis() - start));
-			System.out.println(c.getAllShortestPathsBetweenAuthors("Brian N. Bershad", "David D. Clark", false));
-			System.out.println((System.currentTimeMillis() - start));
-			System.out.println(c.getOneShortestPathBetweenAuthors("Brian N. Bershad", "David D. Clark", true));
-			System.out.println((System.currentTimeMillis() - start));
-			System.out.println(c.getAllShortestPathsBetweenAuthors("Brian N. Bershad", "David D. Clark", true));
-			System.out.println((System.currentTimeMillis() - start));
+			// System.out.println(c.getOneShortestPathBetweenAuthors("Brian N. Bershad",
+			// "David D. Clark", false));
+			// System.out.println((System.currentTimeMillis() - start));
+			// System.out.println(c.getOneShortestPathBetweenAuthors("Brian N. Bershad",
+			// "David D. Clark", true));
+			// System.out.println((System.currentTimeMillis() - start));
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
