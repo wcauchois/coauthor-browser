@@ -169,7 +169,7 @@ public class AuthorSearchPane extends JPanel {
 		add(submit);
 		submit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				Services.getBrowser().go(new AuthorSearchResults(getAuthors()));
+				Services.getBrowser().go(new AuthorSearchResultsMain(getAuthors()));
 			}
 		});
 		
