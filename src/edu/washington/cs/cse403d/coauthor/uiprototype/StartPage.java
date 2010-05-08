@@ -2,6 +2,9 @@ package edu.washington.cs.cse403d.coauthor.uiprototype;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -38,13 +41,20 @@ public class StartPage extends BrowserPage {
 			query.setPreferredSize(new Dimension(100, query.getPreferredSize().height));
 			bottomPart.add(query);
 			bottomPart.add(submit);
+			submit.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
+					Services.getBrowser().go(new ArticleSearchResults(query.getText()));
+				}
+			});
 			
 			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 			add(topPart);
 			add(bottomPart);
 		}
 	}
+	
 	private class ArticleSearchPane extends SearchPane {
+		
 	}
 	public String getTitle() {
 		return "Start";

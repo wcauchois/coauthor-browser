@@ -29,6 +29,8 @@ import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
 
 	/*
 	 * Creates list of articles the author has worked on (as THE author)
+	 * 
+	 * TODO: make the article panel work for the multi-author case
 	 */
 class FilterPanel extends JPanel implements ListSelectionListener {
 	private CoauthorDataServiceInterface CDSI;
@@ -135,7 +137,8 @@ class FilterPanel extends JPanel implements ListSelectionListener {
 			}
 		});
 		
-		filterQuery = new JTextField(10);		
+		filterQuery = new JTextField();
+		//filterQuery.setPreferredSize(new Dimension(200, filterQuery.getPreferredSize().height));
 		filterPanel.setLayout(new BoxLayout(filterPanel, BoxLayout.LINE_AXIS));
 		
 		filterPanel.add(filterQuery);
