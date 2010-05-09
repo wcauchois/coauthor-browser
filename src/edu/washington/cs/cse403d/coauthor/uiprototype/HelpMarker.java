@@ -50,6 +50,11 @@ public class HelpMarker extends JLabel {
 			setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		}
 	}
+	/**
+	 * Initializes the help marker with some text to be displayed when the user
+	 * hovers over the question mark.
+	 * @param tooltip the tooltip, with optional HTML formatting.
+	 */
 	public HelpMarker(String tooltip) {
 		popupFactory = PopupFactory.getSharedInstance();
 		ResourceManager resourceManager = Services.getResourceManager();

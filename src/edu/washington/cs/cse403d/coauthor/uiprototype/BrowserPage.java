@@ -47,15 +47,35 @@ public abstract class BrowserPage extends JPanel {
 		void onExit(BrowserPage next);
 	}
 	private List<NavListener> listeners = new ArrayList<NavListener>();
+	/**
+	 * @see #onEnter(BrowserPage)
+	 * @see #onExit(BrowserPage)
+	 * @see NavListener
+	 */
 	public void addNavListener(NavListener l) {
 		listeners.add(l);
 	}
 	
+	/**
+	 * Invoked when the user navigates to this page. May be called
+	 * multiple times during the lifetime of a single BrowserPage
+	 * (as the user goes back and forward in history).
+	 * @see #addNavListener(NavListener)
+	 * @param previous the page the user just navigated away from
+	 */
 	protected void onEnter(BrowserPage previous) {
 		for(NavListener l : listeners)
 			l.onEnter(previous);
 	}
 	
+	/**
+	 * Invoked when the user navigates to another page, so that this
+	 * page is no longer active. May be called multiple times during
+	 * the lifetime of a single BrowserPage (as the user goes back
+	 * and forward in history).
+	 * @see #addNavListener(NavListener)
+	 * @param next
+	 */
 	protected void onExit(BrowserPage next) {
 		for(NavListener l : listeners)
 			l.onExit(next);

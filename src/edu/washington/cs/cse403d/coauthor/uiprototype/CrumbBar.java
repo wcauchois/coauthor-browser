@@ -12,7 +12,7 @@ import javax.swing.JPanel;
 /**
  * A widget that presents a series of buttons to the user representing pages
  * that are previous in the history AND upwards in the hierarchy. The hierarchy
- * is implied by the current BrowserPage's getCrumbs() method.
+ * is specified by the getCrumbs() on the current BrowserPage.
  * @see BrowserPage#getCrumbs()
  * @author William Cauchois
  */

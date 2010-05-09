@@ -13,12 +13,29 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
+/**
+ * Manages resources like images and strings. Clients may request resources from
+ * this class using a resource name, which is just the path to the resource relative
+ * to the base directory of the ResourceManager. If the resource has already been
+ * loaded, it will not be loaded again -- instead, a reference to the already loaded
+ * resource will be returned.
+ * @author William Cauchois
+ *
+ */
 public class ResourceManager {
 	private Map<String, Object> resources = new HashMap<String, Object>();
-	private String pathPrefix;
+	private String baseDir;
 	private URL getResourceURL(String name) {
-		return getClass().getResource(pathPrefix + name);
+		return getClass().getResource(baseDir + name);
 	}
+	public String getBaseDir() {
+		return baseDir;
+	}
+	/**
+	 * Loads an image file (like a .png or .gif) as an ImageIcon.
+	 * @param name path to the image file (relative to the base dir).
+	 * @return
+	 */
 	public ImageIcon loadImageIcon(String name) {
 		if(resources.containsKey(name))
 			return (ImageIcon)resources.get(name);
@@ -59,6 +76,11 @@ public class ResourceManager {
 				strings.put(currentString, currentText);
 		}
 	}
+	/**
+	 * Loads a set of named strings from an xml file.
+	 * @param name path to the xml file (relative to the base dir).
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public Map<String, String> loadStrings(String name) {
 		if(resources.containsKey(name))
@@ -78,7 +100,11 @@ public class ResourceManager {
 			return strings;
 		}
 	}
-	public ResourceManager(String pathPrefix) {
-		this.pathPrefix = pathPrefix;
+	/**
+	 * Initialize the resource manager with a base directory. 
+	 * @param baseDir a path; resources will be loaded from this directory.
+	 */
+	public ResourceManager(String baseDir) {
+		this.baseDir = baseDir;
 	}	
 }

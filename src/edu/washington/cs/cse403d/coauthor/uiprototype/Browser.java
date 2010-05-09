@@ -1,5 +1,11 @@
 package edu.washington.cs.cse403d.coauthor.uiprototype;
 
+/**
+ * Interface for a web browser, including methods to "go" back
+ * and forward in history, or to an arbitrary BrowserPage.
+ * @see BrowserPage
+ * @author William Cauchois
+ */
 public interface Browser {
 	/**
 	 * Go to the specified page and make it the one presented to the user. To
