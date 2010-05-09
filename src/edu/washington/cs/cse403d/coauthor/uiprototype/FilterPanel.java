@@ -137,7 +137,7 @@ class FilterPanel extends JPanel implements ListSelectionListener {
 			}
 		});
 		
-		filterQuery = new JTextField();
+		filterQuery = new JTextField(10);
 		//filterQuery.setPreferredSize(new Dimension(200, filterQuery.getPreferredSize().height));
 		filterPanel.setLayout(new BoxLayout(filterPanel, BoxLayout.LINE_AXIS));
 		
