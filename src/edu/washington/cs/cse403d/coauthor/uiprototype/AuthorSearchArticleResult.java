@@ -2,6 +2,7 @@ package edu.washington.cs.cse403d.coauthor.uiprototype;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
@@ -57,6 +58,7 @@ class AuthorSearchArticleResult extends JPanel
 	 */
 	public AuthorSearchArticleResult(List<String> authors) {
 		setLayout(new BorderLayout());
+		theAuthor = authors.get(0);
 		authorList = authors;
 		multiEntryInitialize();	
 	}
@@ -64,7 +66,12 @@ class AuthorSearchArticleResult extends JPanel
 	private void singleEntryInitialize() {
 		setVisible(true);
 		
+		
 		JLabel title = new JLabel("Publications");
+		Font f = title.getFont();
+		Float s = title.getFont().getSize2D();
+		s += 8.0f;
+		title.setFont(f.deriveFont(s));
 		add(title, BorderLayout.PAGE_START);
 		
 		listModel = new DefaultListModel();
@@ -79,13 +86,16 @@ class AuthorSearchArticleResult extends JPanel
 		}
 		buildPubList();
 		add(new FilterPanel("Pub", listModel, CDSI, pubList, theAuthor), BorderLayout.PAGE_END);
-		//createFilterPanel();
 	}
 	
 	private void multiEntryInitialize() {
 		setVisible(true);
 		
 		JLabel title = new JLabel("Collaborations");
+		Font f = title.getFont();
+		Float s = title.getFont().getSize2D();
+		s += 8.0f;
+		title.setFont(f.deriveFont(s));
 		add(title, BorderLayout.PAGE_START);
 		
 		listModel = new DefaultListModel();
@@ -104,9 +114,12 @@ class AuthorSearchArticleResult extends JPanel
 					"Um, this isn't really supposed to happen",
 					"Error!",JOptionPane.ERROR_MESSAGE);
 		}
-		buildPubList();
-		add(new FilterPanel("Pub", listModel, CDSI, pubList, theAuthor), BorderLayout.PAGE_END);
-
+		if (publications.isEmpty()) {
+			add(new JLabel("There is no collaboration among these individuals"), BorderLayout.PAGE_END);
+		} else {
+			buildPubList();
+			add(new FilterPanel("Pub", listModel, CDSI, pubList, theAuthor), BorderLayout.PAGE_END);
+		}		
 	}
 	
 	
