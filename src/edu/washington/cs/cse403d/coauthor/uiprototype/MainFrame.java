@@ -14,6 +14,14 @@ import javax.swing.KeyStroke;
 
 import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 
+/**
+ * The entry point for the application -- main() initializes and shows an instance
+ * of this class. MainFrame encapsulates things like initializing the base services,
+ * and creating a menu.
+ * @see Services
+ * @author William Cauchois
+ *
+ */
 public class MainFrame extends BrowserFrame {
 	
 	public JMenuBar createMenuBar() {

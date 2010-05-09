@@ -21,6 +21,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+/**
+ * This panel permits the user to enter one or more author names, as for
+ * a search on those authors.
+ * @see StartPage
+ * @author William Cauchois
+ *
+ */
 public class AuthorSearchPane extends JPanel {
 	private class AuthorField extends QuerySuggestionsField {
 		@Override

@@ -20,7 +20,11 @@ import javax.swing.event.DocumentListener;
 
 /**
  * Implements a Swing text field that may display a list of auto-complete
- * suggestions to the user in a box below the text field.
+ * suggestions to the user in a box below the text field. When the user clicks
+ * on a suggestion or selects one using the keyboard, the text of the suggestion
+ * replaces the text of the field.
+ * 
+ * Derived classes should override the getSuggestions() method.
  */
 public abstract class SuggestionsField extends JTextField {
 	private static final int DEFAULT_POPUP_HEIGHT = 80;
@@ -42,10 +46,21 @@ public abstract class SuggestionsField extends JTextField {
 	 */
 	protected abstract List<String> getSuggestions(String text);
 	
+	private boolean shouldShowSuggestions() {
+		if(!isDisplayable()) return false;
+		if(suggestionsList.getModel().getSize() == 0)
+			return false;
+		if(suggestionsList.getModel().getSize() == 1) {
+			// Don't show suggestions if the text of the field equals the single
+			// suggestion (the user has probably already selected the suggestion).
+			if(getText().equalsIgnoreCase(
+					(String)suggestionsList.getModel().getElementAt(0)))
+				return false;
+		}
+		return true;
+	}
 	public void showSuggestions() {
-		if(suggestionsPopup == null
-				&& suggestionsList.getModel().getSize() > 0
-				&& isDisplayable()) {
+		if(shouldShowSuggestions() && suggestionsPopup == null) {
 			Point location = getLocationOnScreen();
 			int offsetY = getSize().height;
 			suggestionsPopup = popupFactory.getPopup(

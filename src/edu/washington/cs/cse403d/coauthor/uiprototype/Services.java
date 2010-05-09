@@ -2,7 +2,17 @@ package edu.washington.cs.cse403d.coauthor.uiprototype;
 
 import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 
-// Used to keep track of a global instance of Browser.
+/**
+ * Has several static methods that can be used to get shared instances of globally
+ * available objects, including the current Browser instance, ResourceManager, and
+ * CoauthorDataServiceInterface. These services are initialized by calling the
+ * provide*() methods when the application is started.
+ * @see Browser
+ * @see ResourceManager
+ * @see CoauthorDataServiceInterface
+ * @author William Cauchois
+ *
+ */
 public class Services {
 	private static Browser theBrowser;
 	private static ResourceManager theResourceManager;

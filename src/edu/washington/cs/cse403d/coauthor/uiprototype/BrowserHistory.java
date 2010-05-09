@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Encapsulates the "history" of a browser type system -- that is, which pages
+ * Encapsulates the "history" of a browser system -- that is, which pages
  * were viewed before the current one (and if we have already gone backwards in
  * history, which pages were after the current one).
  * @see BrowserPage 

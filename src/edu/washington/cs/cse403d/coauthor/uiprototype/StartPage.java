@@ -13,7 +13,11 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-
+/**
+ * This is the first page the user sees when he opens the coauthor application.
+ * Right now, it displays the logo along with tabs for article and author search. 
+ * @author William Cauchois
+ */
 public class StartPage extends BrowserPage {
 	public StartPage() {
 		JTabbedPane tabbedPane = new JTabbedPane();
