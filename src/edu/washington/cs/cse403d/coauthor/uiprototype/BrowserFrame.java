@@ -2,7 +2,10 @@ package edu.washington.cs.cse403d.coauthor.uiprototype;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -25,37 +28,47 @@ public class BrowserFrame extends JFrame implements Browser {
 	private JPanel pagePane = new JPanel();
 	private JPanel navPane = new JPanel();
 	private CrumbBar crumbBar = new CrumbBar();
-	private class BackAction extends AbstractAction {
-		public BackAction() {
-			putValue(NAME, "Back");
-			putValue("enabled", false);
+	private abstract class NavButton extends JButton implements ActionListener {
+		public NavButton(String iconImage) {
+			setIcon(Services.getResourceManager().loadImageIcon(iconImage));
+			setPreferredSize(new Dimension(30, 30));
+			addActionListener(this);
 		}
-		@Override public void actionPerformed(ActionEvent evt) {
+	}
+	private class BackButton extends NavButton {
+		public BackButton() {
+			super("HistoryBack.png");
+			setEnabled(false);
+		}
+		@Override
+		public void actionPerformed(ActionEvent evt) {
 			goBack();
 		}
 		public void update() {
-			putValue("enabled", canGoBack());
+			setEnabled(canGoBack());
 		}
 	}
-	private class ForwardAction extends AbstractAction {
-		public ForwardAction() {
-			putValue(NAME, "Forward");
-			putValue("enabled", false);
+	private class ForwardButton extends NavButton {
+		public ForwardButton() {
+			super("HistoryForward.png");
+			setEnabled(false);
 		}
-		@Override public void actionPerformed(ActionEvent evt) {
+		@Override
+		public void actionPerformed(ActionEvent evt) {
 			goForward();
 		}
 		public void update() {
-			putValue("enabled", canGoForward());
+			setEnabled(canGoForward());
 		}
 	}
-	private ForwardAction forwardAction = new ForwardAction();
-	private BackAction backAction = new BackAction(); // backdoor action hehe
+	private ForwardButton forwardButton = new ForwardButton();
+	private BackButton backButton = new BackButton();
 	public BrowserFrame(BrowserPage initialPage) {
 		history = new BrowserHistory(initialPage);
-		navPane.add(new JButton(backAction));
-		navPane.add(new JButton(forwardAction));
-		navPane.add(new JLabel("Crumbs: "));
+		navPane.setLayout(new FlowLayout(FlowLayout.LEFT));
+		navPane.add(backButton);
+		navPane.add(forwardButton);
+		navPane.add(new JPanel()); // This is just a spacer
 		navPane.add(crumbBar);
 		navPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		getContentPane().setLayout(new BorderLayout());
@@ -69,8 +82,8 @@ public class BrowserFrame extends JFrame implements Browser {
 		pagePane.removeAll();
 		pagePane.add(history.getCurrent());
 		crumbBar.update(history);
-		backAction.update();
-		forwardAction.update();
+		backButton.update();
+		forwardButton.update();
 		validate();
 		pagePane.repaint();
 	}
