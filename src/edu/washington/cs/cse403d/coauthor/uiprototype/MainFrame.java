@@ -1,5 +1,6 @@
 package edu.washington.cs.cse403d.coauthor.uiprototype;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -134,7 +135,9 @@ public class MainFrame extends BrowserFrame {
 		}
 		Services.provideResourceManager(new ResourceManager("/"));
 		MainFrame mainFrame = new MainFrame();
-		mainFrame.setSize(480, 600);
+		
+		//restrict resizing
+		mainFrame.setMinimumSize(new Dimension(480, 600));
 		mainFrame.setVisible(true);
 	}
 }
