@@ -8,6 +8,8 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 
 import javax.swing.JList;
@@ -30,13 +32,13 @@ public abstract class SuggestionsField extends JTextField {
 	private static final int DEFAULT_POPUP_HEIGHT = 80;
 	
 	// The list of suggestions is put inside a scrolling pane
-	private JScrollPane suggestionsPane;
+	private JScrollPane listPane;
 	// A widget to display the list of suggestions (which is stored inside
 	// the model for this JList).
-	private JList suggestionsList = new JList();
+	private JList list = new JList();
 	// The popup used to display the suggestionsList below the actual text
 	// field -- if null, the suggestions are currently hidden
-	private Popup suggestionsPopup = null;
+	private Popup popup = null;
 	private PopupFactory popupFactory;
 	
 	/**
@@ -48,43 +50,50 @@ public abstract class SuggestionsField extends JTextField {
 	
 	private boolean shouldShowSuggestions() {
 		if(!isDisplayable()) return false;
-		if(suggestionsList.getModel().getSize() == 0)
+		if(list.getModel().getSize() == 0)
 			return false;
-		if(suggestionsList.getModel().getSize() == 1) {
+		if(list.getModel().getSize() == 1) {
 			// Don't show suggestions if the text of the field equals the single
 			// suggestion (the user has probably already selected the suggestion).
 			if(getText().equalsIgnoreCase(
-					(String)suggestionsList.getModel().getElementAt(0)))
+					(String)list.getModel().getElementAt(0)))
 				return false;
 		}
 		return true;
 	}
 	public void showSuggestions() {
-		if(shouldShowSuggestions() && suggestionsPopup == null) {
+		if(shouldShowSuggestions() && popup == null) {
+			assert list.getModel().getSize() > 0;
+
+			// Resize the suggestions pane to better fit its content (that is, if it
+			// has only a few items we make it smaller).
+			Rectangle bounds = list.getCellBounds(
+					0, list.getModel().getSize() - 1);
+			int preferredHeight = Math.min(DEFAULT_POPUP_HEIGHT,
+					(bounds != null) ? (bounds.height + 4) : Integer.MAX_VALUE);
+			listPane.setPreferredSize(new Dimension(
+					listPane.getPreferredSize().width,
+					preferredHeight));
+			
 			Point location = getLocationOnScreen();
 			int offsetY = getSize().height;
-			suggestionsPopup = popupFactory.getPopup(
-					this, suggestionsPane, location.x, location.y + offsetY);
-			suggestionsPopup.show();
+			popup = popupFactory.getPopup(
+					null, listPane, location.x, location.y + offsetY);
+			
+			popup.show();
 		}
 	}
 	
 	public void hideSuggestions() {
-		if(suggestionsPopup != null) {
-			suggestionsPopup.hide();
-			suggestionsPopup = null;
+		if(popup != null) {
+			popup.hide();
+			popup = null;
 		}
 	}
 
 	public void updateSuggestions() {
 		List<String> suggestions = getSuggestions(getText());
-		suggestionsList.setListData(suggestions.toArray());
-		Rectangle bounds = suggestionsList.getCellBounds(0, suggestions.size() - 1);
-		int preferredHeight = Math.min(DEFAULT_POPUP_HEIGHT,
-				(bounds != null) ? (bounds.height + 4) : Integer.MAX_VALUE);
-		suggestionsPane.setPreferredSize(new Dimension(
-				suggestionsPane.getPreferredSize().width,
-				preferredHeight));
+		list.setListData(suggestions.toArray());
 		hideSuggestions();
 		showSuggestions();
 	}
@@ -96,14 +105,14 @@ public abstract class SuggestionsField extends JTextField {
 			boolean scrollUp = evt.getKeyCode() == KeyEvent.VK_UP;
 			if(scrollUp || scrollDown) {
 				// Scroll up or down using the arrow keys
-				int newIndex = suggestionsList.getSelectedIndex() + (scrollDown ? 1 : -1);
+				int newIndex = list.getSelectedIndex() + (scrollDown ? 1 : -1);
 				if(newIndex < 0) newIndex = 0;
-				suggestionsList.setSelectedIndex(newIndex);
-				suggestionsList.ensureIndexIsVisible(newIndex);
+				list.setSelectedIndex(newIndex);
+				list.ensureIndexIsVisible(newIndex);
 			} else if(evt.getKeyCode() == KeyEvent.VK_ENTER) {
 				// Select a suggestion by pressing enter
-				if(suggestionsPopup != null && !suggestionsList.isSelectionEmpty()) {
-					setText((String)suggestionsList.getSelectedValue());
+				if(popup != null && !list.isSelectionEmpty()) {
+					setText((String)list.getSelectedValue());
 					hideSuggestions();
 				}
 			} else if(evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
@@ -130,12 +139,19 @@ public abstract class SuggestionsField extends JTextField {
 			}
 		});
 		
-		suggestionsPane = new JScrollPane(suggestionsList,
+		listPane = new JScrollPane(list,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		
+		list.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				int index = list.locationToIndex(e.getPoint());
+				setText((String)list.getModel().getElementAt(index));
+			}
+		});
+		
 		setFont(getFont().deriveFont(Font.BOLD, 14));
 		setPreferredSize(new Dimension(150, 24));
-		suggestionsPane.setPreferredSize(new Dimension(226, DEFAULT_POPUP_HEIGHT));
+		listPane.setPreferredSize(new Dimension(226, DEFAULT_POPUP_HEIGHT));
 	}
 }
