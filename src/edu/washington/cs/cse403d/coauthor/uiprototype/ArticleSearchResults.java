@@ -81,8 +81,12 @@ public class ArticleSearchResults extends BrowserPage {
 		articleInfo.setVisible(true);
 		articleInfo.setLayout(new BoxLayout(articleInfo, BoxLayout.Y_AXIS));
 		
-		//Source
-		JLabel sourceLabel = new JLabel("Source:");
+		//Source. Will not be displayed if !hasJournal();
+		JLabel sourceLabel;
+		if(publication.hasJournal())
+			sourceLabel = new JLabel("Source:");
+		else
+			sourceLabel = new JLabel("Year:");
 		Font f = sourceLabel.getFont();
 		float s = sourceLabel.getFont().getSize2D();
 		s += 4.0f;
@@ -90,9 +94,13 @@ public class ArticleSearchResults extends BrowserPage {
 		articleInfo.add(sourceLabel);
 		articleInfo.add(new JSeparator(SwingConstants.HORIZONTAL));
 		
-		String source = publication.getJournal() + ", " + publication.getYear() 
+		String source;
+		if(publication.hasJournal())
+			source = publication.getJournal() + ", " + publication.getYear() 
 						+ ", Vol. "	+ publication.getVolume() + ", Number " 
 						+ publication.getNumber() + ", page " + publication.getPages();
+		else
+			source = publication.getYear().toString();
 		JLabel articleSource = new JLabel(source);
 		articleInfo.add(articleSource);
 		articleInfo.add(Box.createVerticalStrut(10));
@@ -106,7 +114,11 @@ public class ArticleSearchResults extends BrowserPage {
 		articleInfo.add(ISBNLabel);
 		articleInfo.add(new JSeparator(SwingConstants.HORIZONTAL));
 		
-		JLabel ISBN = new JLabel(publication.getIsbn());
+		JLabel ISBN;
+		if(publication.hasIsbn()) 
+			ISBN = new JLabel(publication.getIsbn());
+		else
+			ISBN = new JLabel("This article does not have ISBN");
 		articleInfo.add(ISBN);
 		articleInfo.add(Box.createVerticalStrut(10));
 		
@@ -145,12 +157,12 @@ public class ArticleSearchResults extends BrowserPage {
 		//Add list of authors
 		int i = 0;
 		while (i < authors.size()) {
-			final JLabel author = new JLabel(authors.get(i));		
+			final AdvLabel author = new AdvLabel(authors.get(i));		
 			authorInfo.add(author);
 			author.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
 					List<String> list = new ArrayList<String>();
-					list.add(author.getText());
+					list.add(author.getOriginalText());
 					Services.getBrowser().go(new AuthorSearchResultsMain(list));
 				}
 			});

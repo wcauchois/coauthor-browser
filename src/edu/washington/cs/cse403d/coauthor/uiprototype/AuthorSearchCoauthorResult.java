@@ -164,12 +164,12 @@ class AuthorSearchCoauthorResult extends JPanel implements ListSelectionListener
 		
 		multiEntryTop.add(new JSeparator(SwingConstants.HORIZONTAL));
 		
-		final JLabel author = new JLabel(theAuthor);		
+		final AdvLabel author = new AdvLabel(theAuthor);		
 		multiEntryTop.add(author);
 		author.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent evt) {
 				List<String> list = new ArrayList<String>();
-				list.add(author.getText());
+				list.add(author.getOriginalText());
 				Services.getBrowser().go(new AuthorSearchResultsMain(list));
 			}
 		});
@@ -192,12 +192,12 @@ class AuthorSearchCoauthorResult extends JPanel implements ListSelectionListener
 		int i = 1;
 		//implement an actionListner in here
 		while (i < theAuthorList.size()) {
-			final JLabel coauthor = new JLabel(theAuthorList.get(i));
+			final AdvLabel coauthor = new AdvLabel(theAuthorList.get(i));
 			multiEntryTop.add(coauthor);
 			coauthor.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
 					List<String> list = new ArrayList<String>();
-					list.add(coauthor.getText());
+					list.add(coauthor.getOriginalText());
 					Services.getBrowser().go(new AuthorSearchResultsMain(list));
 				}
 			});
