@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -66,7 +67,9 @@ class AuthorSearchArticleResult extends JPanel
 	private void singleEntryInitialize() {
 		setVisible(true);
 		
-		
+		//TODO: create BoxLayout that contains Publication, 
+		//		help marker, and JSeperator.
+		//		Do this for every header
 		JLabel title = new JLabel("Publications");
 		Font f = title.getFont();
 		Float s = title.getFont().getSize2D();
@@ -141,61 +144,14 @@ class AuthorSearchArticleResult extends JPanel
 			}
 	}
 	
-	public void valueChanged(ListSelectionEvent arg0) {
-		// TODO Auto-generated method stub
+	public void valueChanged(ListSelectionEvent evt) {
+		if (!evt.getValueIsAdjusting()) {
+			String selection = (String) ((DefaultListModel) pubList.getModel())
+											.get(pubList.getSelectedIndex());
+			
+			//get the new browser
+			Services.getBrowser().go(new ArticleSearchResults(selection));
+		}
 		
 	}	
 }
-
-/*
- 	private void createFilterPanel() {
-		filterPanel = new JPanel();
-		filterButton = new JButton("Filter");
-		filterButton.addActionListener(new ActionListener() { 
-				public void actionPerformed(ActionEvent evt) {
-					String query = filterQuery.getText();
-					pubList.setModel(getFilteredResult(query));			
-				}
-		});
-		
-		returnButton = new JButton("Return");
-		returnButton.addActionListener(new ActionListener() { 
-			public void actionPerformed(ActionEvent evt) {
-				pubList.setModel(listModel);			
-			}
-		});
-		
-		filterQuery = new JTextField(10);		
-		filterPanel.setLayout(new BoxLayout(filterPanel, BoxLayout.LINE_AXIS));
-		
-		filterPanel.add(filterQuery);
-		filterPanel.add(Box.createHorizontalStrut(5));
-		filterPanel.add(filterButton);
-		filterPanel.add(Box.createHorizontalStrut(5));
-		filterPanel.add(new JSeparator(SwingConstants.VERTICAL));
-		filterPanel.add(Box.createHorizontalStrut(5));
-		filterPanel.add(returnButton);
-		filterPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
-		
-		add(filterPanel, BorderLayout.PAGE_END);
-	}
-	
-	
-	private DefaultListModel getFilteredResult(String query) {
-		DefaultListModel filteredModel = new DefaultListModel();
-		CharSequence newQuery = (CharSequence) query.toLowerCase();
-	
-		int i = 0;
-		int j = 0;
-		while (i < publications.size()){
-			String compare = publications.get(i).getTitle().toLowerCase();
-			if (compare.contains(newQuery)) {
-				filteredModel.add(j, publications.get(i).getTitle());
-				j++;
-			}
-			i++;
-		}
-		return filteredModel;
-		
-	}
-*/

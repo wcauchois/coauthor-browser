@@ -12,13 +12,17 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -26,34 +30,133 @@ import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
 
 
+/*
+ * 
+ */
 public class ArticleSearchResults extends BrowserPage {
-	private JLabel title;
 	private CoauthorDataServiceInterface CDSI =	Services.getCoauthorDataServiceInterface();
-	private List<Publication> publication;
+	private JLabel title;
+	private JPanel articleInfo;
+	private JPanel authorInfo;
+	private Publication publication;
+	private JPanel contentPane;
 	
 	public ArticleSearchResults(String query) {
-		title = new JLabel(query);
+		try {
+			publication = CDSI.getPublication(query);
+		} catch (RemoteException e) {
+			JOptionPane.showMessageDialog(this,
+					"Um, this isn't really supposed to happen",
+					"Error!",JOptionPane.ERROR_MESSAGE);
+		}
 		initialize();
 	}
 	
 	private void initialize() {
-		this.setVisible(true);
+		contentPane = new JPanel();
+		contentPane.setVisible(true);
+		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
 		
-		//publication = CDSI.getPublicationTitles(title.getText());
+		buildTitle();
+		buildAuthorInfo();
+		buildArticleInfo();
+		contentPane.add(title);
+		contentPane.add(Box.createVerticalStrut(10));
+		contentPane.add(authorInfo);
+		contentPane.add(articleInfo);
 		
-		setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-		c.fill = GridBagConstraints.HORIZONTAL;
-		
-		//Title Label Formatting
-		c.gridx = 0;
-		c.gridy = 0;		
+		add(contentPane);
+	}
+	
+	private void buildTitle() {
+		title = new JLabel(publication.getTitle());
 		Font f = title.getFont();
 		float s = title.getFont().getSize2D();
 		s += 8.0f;
 		title.setFont(f.deriveFont(s));
-		add(title, c);
-		
 	}
 	
+	private void buildArticleInfo() {
+		articleInfo = new JPanel();
+		articleInfo.setVisible(true);
+		articleInfo.setLayout(new BoxLayout(articleInfo, BoxLayout.Y_AXIS));
+		
+		//Source
+		JLabel sourceLabel = new JLabel("Source:");
+		Font f = sourceLabel.getFont();
+		float s = sourceLabel.getFont().getSize2D();
+		s += 4.0f;
+		sourceLabel.setFont(f.deriveFont(s));
+		articleInfo.add(sourceLabel);
+		articleInfo.add(new JSeparator(SwingConstants.HORIZONTAL));
+		
+		String source = publication.getJournal() + ", " + publication.getYear() 
+						+ ", Vol. "	+ publication.getVolume() + ", Number " 
+						+ publication.getNumber() + ", page " + publication.getPages();
+		JLabel articleSource = new JLabel(source);
+		articleInfo.add(articleSource);
+		articleInfo.add(Box.createVerticalStrut(10));
+		
+		//ISBN
+		JLabel ISBNLabel = new JLabel("ISBN:");
+		f = ISBNLabel.getFont();
+		s = ISBNLabel.getFont().getSize2D();
+		s += 4.0f;
+		ISBNLabel.setFont(f.deriveFont(s));
+		articleInfo.add(ISBNLabel);
+		articleInfo.add(new JSeparator(SwingConstants.HORIZONTAL));
+		
+		JLabel ISBN = new JLabel(publication.getIsbn());
+		articleInfo.add(ISBN);
+		articleInfo.add(Box.createVerticalStrut(10));
+		
+		//EE
+		JLabel EELabel = new JLabel("Electronic Edition:");
+		f = EELabel.getFont();
+		s = EELabel.getFont().getSize2D();
+		s += 4.0f;
+		EELabel.setFont(f.deriveFont(s));
+		articleInfo.add(EELabel);
+		articleInfo.add(new JSeparator(SwingConstants.HORIZONTAL));
+		
+		JLabel EE;
+		if(publication.getEe() == null)
+			EE = new JLabel("This article does not have an electronic edition");
+		else
+			EE = new JLabel(publication.getEe());
+		articleInfo.add(EE);
+	}
+	
+	private void buildAuthorInfo() {
+		authorInfo = new JPanel();
+		authorInfo.setVisible(true);
+		authorInfo.setLayout(new BoxLayout(authorInfo, BoxLayout.Y_AXIS));
+		
+		//List of authors for this article
+		List<String> authors = publication.getAuthors();
+		
+		JLabel authorLabel = new JLabel("Authors:");
+		Font f = authorLabel.getFont();
+		float s = authorLabel.getFont().getSize2D();
+		s += 4.0f;
+		authorLabel.setFont(f.deriveFont(s));
+		authorInfo.add(authorLabel);
+		authorInfo.add(new JSeparator(SwingConstants.HORIZONTAL));
+		//Add list of authors
+		int i = 0;
+		while (i < authors.size()) {
+			final JLabel author = new JLabel(authors.get(i));		
+			authorInfo.add(author);
+			author.addMouseListener(new MouseAdapter() {
+				public void mouseClicked(MouseEvent evt) {
+					List<String> list = new ArrayList<String>();
+					list.add(author.getText());
+					Services.getBrowser().go(new AuthorSearchResultsMain(list));
+				}
+			});
+			authorInfo.add(Box.createVerticalStrut(2));
+			i++;
+		}		
+		authorInfo.add(Box.createVerticalStrut(10));
+	}	
 }
