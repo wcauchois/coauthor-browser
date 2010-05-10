@@ -74,6 +74,10 @@ public class ExampleCoauthorDataClient {
 				sb.append(':');
 				sb.append(p.getYear());
 			}
+			if (p.hasAuthors()) {
+				sb.append("numAuthors:");
+				sb.append(p.getAuthors().size());
+			}
 			sb.append(", \t");
 		}
 		return sb.toString();
