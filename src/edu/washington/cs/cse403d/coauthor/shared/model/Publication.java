@@ -1,9 +1,13 @@
 package edu.washington.cs.cse403d.coauthor.shared.model;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
 
 public class Publication implements Serializable {
 	private static final long serialVersionUID = 5221468963013037621L;
+
+	private List<String> authors;
 
 	private String title;
 	private String pages;
@@ -32,9 +36,21 @@ public class Publication implements Serializable {
 		setPublisher(publisher);
 		setNumber(number);
 	}
-	
+
 	public String toString() {
 		return getTitle();
+	}
+
+	public boolean hasAuthors() {
+		return authors != null;
+	}
+
+	public List<String> getAuthors() {
+		return Collections.unmodifiableList(authors);
+	}
+
+	public void setAuthors(List<String> authors) {
+		this.authors = authors;
 	}
 
 	public String getTitle() {
