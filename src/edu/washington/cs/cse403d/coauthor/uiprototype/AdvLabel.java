@@ -35,6 +35,10 @@ public class AdvLabel extends JLabel {
 		});
 	}
 	
+	public AdvLabel(String text, boolean flag) {
+		super(text);
+	}
+	
 	public String getOriginalText() {
 		return text;
 	}

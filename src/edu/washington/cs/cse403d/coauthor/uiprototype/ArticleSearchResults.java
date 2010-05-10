@@ -4,6 +4,10 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.ClipboardOwner;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -131,12 +135,28 @@ public class ArticleSearchResults extends BrowserPage {
 		articleInfo.add(EELabel);
 		articleInfo.add(new JSeparator(SwingConstants.HORIZONTAL));
 		
-		JLabel EE;
+		final AdvLabel EE;
 		if(publication.getEe() == null)
-			EE = new JLabel("This article does not have an electronic edition");
-		else
-			EE = new JLabel(publication.getEe());
+			EE = new AdvLabel("This article does not have an electronic edition", false);
+		else {
+			EE = new AdvLabel(publication.getEe());
+			//Clipboard Access
+			EE.addMouseListener(new MouseAdapter() {
+				public void mouseClicked(MouseEvent evt) {
+					StringSelection data = new StringSelection(EE.getOriginalText());
+					Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+					clipboard.setContents(data, data);
+					showCopyNotice();
+				}
+			});
+		}
 		articleInfo.add(EE);
+	}
+	
+	private void showCopyNotice() {
+		JOptionPane.showMessageDialog(this,
+				"The URL has been copied to the clipboard.",
+				"Notice", JOptionPane.INFORMATION_MESSAGE);
 	}
 	
 	private void buildAuthorInfo() {
