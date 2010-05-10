@@ -47,8 +47,8 @@ class AuthorSearchCoauthorResult extends JPanel implements ListSelectionListener
 		Services.getCoauthorDataServiceInterface();
 	
 	private String theAuthor; //the query(author name)
-	//private List<String> theAuthorList;
-	private List<String> coauthors;
+	private List<String> theAuthorList;
+	//private List<String> coauthors;
 	private DefaultListModel listModel;
 	private JList coauthorList;
 	
@@ -68,8 +68,7 @@ class AuthorSearchCoauthorResult extends JPanel implements ListSelectionListener
 	public AuthorSearchCoauthorResult(List<String> authorList) {
 		setLayout(new BorderLayout());
 		this.theAuthor = authorList.get(0);
-	//	this.theAuthorList = authorList;
-		this.coauthors = authorList;
+		this.theAuthorList = authorList;
 		multiEntryInitialize();			
 	}
 	
@@ -82,9 +81,9 @@ class AuthorSearchCoauthorResult extends JPanel implements ListSelectionListener
 		float s = title.getFont().getSize2D();
 		s += 8.0f;
 		title.setFont(f.deriveFont(s));
+				
+		add(title, BorderLayout.PAGE_START);		
 		
-		
-		add(title, BorderLayout.PAGE_START);
 		//HelpMarker not appearing right now.
 		add(new HelpMarker(
 				Services.getResourceManager().
@@ -94,7 +93,7 @@ class AuthorSearchCoauthorResult extends JPanel implements ListSelectionListener
 		listModel = new DefaultListModel();
 		coauthorList = new JList(listModel);
 		try {
-			coauthors = CDSI.getCoauthors(theAuthor);
+			theAuthorList = CDSI.getCoauthors(theAuthor);
 		} catch (RemoteException e) {
 			JOptionPane.showMessageDialog(this,
 					"Um, this isn't really supposed to happen",
@@ -102,18 +101,15 @@ class AuthorSearchCoauthorResult extends JPanel implements ListSelectionListener
 		}			
 		buildCoauthorList();
 		add(new FilterPanel("Coauthor", listModel, CDSI, coauthorList, theAuthor), BorderLayout.PAGE_END);
-		//createFilterPanel();
 	}
 	
 	private void multiEntryInitialize() {
 		setVisible(true);			
 		multiEntryTopBuild();
 		add(multiEntryTop, BorderLayout.PAGE_START);
-		//listModel = new DefaultListModel();
-		//coauthorList = new JList(listModel);
-		//buildCoauthorList();
-		//add(new FilterPanel("Coauthor", listModel, CDSI, coauthorList, theAuthorList.get(0)), BorderLayout.PAGE_END);
-	
+		
+		//With this class, the formatting's not working correctly..
+		//add(new AuthorListDisplay(coauthors), BorderLayout.PAGE_START);
 	}	
 	
 	/*
@@ -136,8 +132,8 @@ class AuthorSearchCoauthorResult extends JPanel implements ListSelectionListener
 	 */
 	private void buildListHelper() {
 		int i = 0;			
-		while (i < coauthors.size()){
-			listModel.add(i, coauthors.get(i));
+		while (i < theAuthorList.size()){
+			listModel.add(i, theAuthorList.get(i));
 			i++;
 		}
 	}
@@ -147,19 +143,16 @@ class AuthorSearchCoauthorResult extends JPanel implements ListSelectionListener
 	 */
 	private void buildListHelper2() {
 		int i = 1;
-		while (i < coauthors.size()) {
-			listModel.add(i - 1, coauthors.get(i));
+		while (i < theAuthorList.size()) {
+			listModel.add(i - 1, theAuthorList.get(i));
 			i++;
 		}
 	}
 	
 	private void multiEntryTopBuild() {
 		multiEntryTop = new JPanel();
-		multiEntryTop.setLayout(new GridBagLayout());
+		multiEntryTop.setLayout(new BoxLayout(multiEntryTop, BoxLayout.Y_AXIS));
 		multiEntryTop.setVisible(true);
-		multiEntryTop.setPreferredSize(new Dimension(200, 100));
-		GridBagConstraints c = new GridBagConstraints();
-		//c.fill = GridBagConstraints.HORIZONTAL;
 		
 		//The Author Name.
 		JLabel title = new JLabel("Author");
@@ -167,20 +160,12 @@ class AuthorSearchCoauthorResult extends JPanel implements ListSelectionListener
 		float s = title.getFont().getSize2D();
 		s += 8.0f;
 		title.setFont(f.deriveFont(s));
-		c.gridwidth = 2;
-		c.gridx = 0;
-		c.gridy = 0;
-		multiEntryTop.add(title, c);
+		multiEntryTop.add(title);
 		
-		
-		//JLabel bullet = new JLabel("¡Ü");
+		multiEntryTop.add(new JSeparator(SwingConstants.HORIZONTAL));
 		
 		final JLabel author = new JLabel(theAuthor);		
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 0;
-		c.gridy = 1;
-		//multiEntryTop.add(bullet, c);
-		multiEntryTop.add(author, c);
+		multiEntryTop.add(author);
 		author.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent evt) {
 				List<String> list = new ArrayList<String>();
@@ -189,27 +174,26 @@ class AuthorSearchCoauthorResult extends JPanel implements ListSelectionListener
 			}
 		});
 		
+		multiEntryTop.add(Box.createVerticalStrut(10));
+		
 		JLabel coauthor = new JLabel("Coauthors");
 		f = coauthor.getFont();
 		s = coauthor.getFont().getSize2D();
 		s += 8.0f;
 		coauthor.setFont(f.deriveFont(s));
-		c.weighty = 0.1;
-		c.gridx = 0;
-		c.gridy = 2;
-		multiEntryTop.add(coauthor, c);		
-		
-		addCoauthors(2, c);
+		multiEntryTop.add(coauthor);
+		multiEntryTop.add(new JSeparator(SwingConstants.HORIZONTAL));
+				
+		addCoauthors();
+		multiEntryTop.add(Box.createVerticalStrut(10));
 	}
 	
-	private void addCoauthors(int gridy, GridBagConstraints c) {
+	private void addCoauthors() {
 		int i = 1;
-		gridy++;
 		//implement an actionListner in here
-		while (i < coauthors.size()) {
-			final JLabel coauthor = new JLabel(coauthors.get(i));
-			c.gridy = gridy;
-			multiEntryTop.add(coauthor, c);
+		while (i < theAuthorList.size()) {
+			final JLabel coauthor = new JLabel(theAuthorList.get(i));
+			multiEntryTop.add(coauthor);
 			coauthor.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
 					List<String> list = new ArrayList<String>();
@@ -217,7 +201,7 @@ class AuthorSearchCoauthorResult extends JPanel implements ListSelectionListener
 					Services.getBrowser().go(new AuthorSearchResultsMain(list));
 				}
 			});
-			gridy++;
+			multiEntryTop.add(Box.createVerticalStrut(2));
 			i++;
 		}
 	}
@@ -235,55 +219,3 @@ class AuthorSearchCoauthorResult extends JPanel implements ListSelectionListener
 		}		
 	}	
 }
-
-/*
-
-private DefaultListModel getFilteredResult(String query) {
-	DefaultListModel filteredModel = new DefaultListModel();
-	CharSequence newQuery = (CharSequence) query.toLowerCase();
-	
-	int i = 0;
-	int j = 0;
-	while (i < coauthors.size()){
-		String compare = coauthors.get(i).toLowerCase();
-		if (compare.contains(newQuery)) {
-			filteredModel.add(j, coauthors.get(i));
-			j++;
-		}
-		i++;
-	}
-	return filteredModel;
-}
-
-private void createFilterPanel() {
-	filterPanel = new JPanel();
-	filterButton = new JButton("Filter");
-	filterButton.addActionListener(new ActionListener() { 
-			public void actionPerformed(ActionEvent evt) {
-				String query = filterQuery.getText();
-				coauthorList.setModel(getFilteredResult(query));			
-			}
-	});
-	
-	returnButton = new JButton("Return");
-	returnButton.addActionListener(new ActionListener() { 
-		public void actionPerformed(ActionEvent evt) {
-			coauthorList.setModel(listModel);			
-		}
-	});
-	
-	filterQuery = new JTextField(10);		
-	filterPanel.setLayout(new BoxLayout(filterPanel, BoxLayout.LINE_AXIS));
-	
-	filterPanel.add(filterQuery);
-	filterPanel.add(Box.createHorizontalStrut(5));
-	filterPanel.add(filterButton);
-	filterPanel.add(Box.createHorizontalStrut(5));
-	filterPanel.add(new JSeparator(SwingConstants.VERTICAL));
-	filterPanel.add(Box.createHorizontalStrut(5));
-	filterPanel.add(returnButton);
-	filterPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
-	
-	add(filterPanel, BorderLayout.PAGE_END);
-}
-*/
