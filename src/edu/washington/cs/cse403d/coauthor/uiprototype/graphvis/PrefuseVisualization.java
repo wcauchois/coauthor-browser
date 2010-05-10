@@ -5,6 +5,7 @@ import javax.swing.JFrame;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.util.List;
+import java.util.Locale;
 
 
 import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
@@ -22,7 +23,9 @@ import prefuse.action.layout.graph.ForceDirectedLayout;
 import prefuse.activity.Activity;
 import prefuse.controls.DragControl;
 import prefuse.controls.PanControl;
+import prefuse.controls.WheelZoomControl;
 import prefuse.controls.ZoomControl;
+import prefuse.controls.ZoomToFitControl;
 import prefuse.data.Graph;
 import prefuse.data.Table;
 import prefuse.data.util.TableIterator;
@@ -171,7 +174,11 @@ public class PrefuseVisualization {
 	        d.addControlListener(new PanControl()); 
 	        // zoom with right-click drag
 	       d.addControlListener(new ZoomControl());
-	        
+	       // zoom with scroll wheel
+	       d.addControlListener(new WheelZoomControl());
+	       // right click to zoom to full frame view of graph
+	       d.addControlListener(new ZoomToFitControl());
+
 	        // -- 6. launch the visualization -------------------------------------
 	        
 	        // create a new window to hold the visualization
