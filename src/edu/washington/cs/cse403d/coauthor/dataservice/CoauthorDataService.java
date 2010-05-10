@@ -50,6 +50,8 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 	private PreparedStatement ps_getPublication;
 	private PreparedStatement ps_getPublications;
 
+	private PreparedStatement ps_getPublicationAuthors;
+
 	public CoauthorDataService(Connection sqlConnection, EmbeddedGraphDatabase graphDb) throws RemoteException,
 			SQLException {
 		super();
@@ -84,6 +86,29 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 
 		ps_getPublication = sqlConnection.prepareStatement("SELECT * FROM [Publications] WHERE title = ?");
 		ps_getPublications = sqlConnection.prepareStatement("SELECT * FROM [Publications] WHERE CONTAINS(title, ?)");
+
+		ps_getPublicationAuthors = sqlConnection
+				.prepareStatement("SELECT a.name FROM Authors AS a, PublicationAuthors AS pa WHERE pa.pid = ? AND pa.aid = a.id");
+	}
+
+	private List<String> getPublicationAuthors(long publicationId) {
+		logStream.println("getPublicationAuthors(" + publicationId + ")");
+
+		List<String> result = new ArrayList<String>();
+
+		try {
+			ps_getPublicationAuthors.setLong(1, publicationId);
+			ResultSet rs = ps_getPublicationAuthors.executeQuery();
+
+			while (rs.next()) {
+				result.add(rs.getString(1));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace(logStream);
+			throw new IllegalStateException("SQL Error: " + e.getLocalizedMessage() + " SQLSTATE: " + e.getSQLState());
+		}
+
+		return result;
 	}
 
 	private long getAuthorId(String authorName) {
@@ -124,10 +149,18 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 		}
 	}
 
-	private Publication createPublicationFromCurrentResult(ResultSet results) throws SQLException {
-		return new Publication(results.getString("title"), results.getString("pages"), results.getInt("year"), results
-				.getString("url"), results.getString("ee"), results.getInt("volume"), results.getString("journal"),
-				results.getString("isbn"), results.getString("publisher"), results.getInt("number"));
+	private Publication createPublicationFromCurrentResult(ResultSet results, boolean populateAuthors)
+			throws SQLException {
+		Publication result = new Publication(results.getString("title"), results.getString("pages"), results
+				.getInt("year"), results.getString("url"), results.getString("ee"), results.getInt("volume"), results
+				.getString("journal"), results.getString("isbn"), results.getString("publisher"), results
+				.getInt("number"));
+
+		if (populateAuthors) {
+			result.setAuthors(getPublicationAuthors(results.getLong("id")));
+		}
+
+		return result;
 	}
 
 	private void processPath(List<Node> nodeList, List<PathLink> resultPath, boolean populatePublications) {
@@ -338,7 +371,7 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 			ResultSet results = preparedStatement.executeQuery();
 
 			while (results.next()) {
-				result.add(createPublicationFromCurrentResult(results));
+				result.add(createPublicationFromCurrentResult(results, false));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace(logStream);
@@ -373,7 +406,7 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 			ResultSet results = sqlConnection.createStatement().executeQuery(query);
 
 			while (results.next()) {
-				result.add(createPublicationFromCurrentResult(results));
+				result.add(createPublicationFromCurrentResult(results, false));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace(logStream);
@@ -441,7 +474,7 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 			ResultSet queryResults = ps_getPublication.executeQuery();
 
 			while (queryResults.next()) {
-				return createPublicationFromCurrentResult(queryResults);
+				return createPublicationFromCurrentResult(queryResults, true);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace(logStream);
@@ -475,7 +508,7 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 			ResultSet queryResults = ps_getPublications.executeQuery();
 
 			while (queryResults.next()) {
-				result.add(createPublicationFromCurrentResult(queryResults));
+				result.add(createPublicationFromCurrentResult(queryResults, true));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace(logStream);
