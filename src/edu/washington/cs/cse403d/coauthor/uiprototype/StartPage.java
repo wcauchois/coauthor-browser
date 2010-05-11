@@ -2,6 +2,7 @@ package edu.washington.cs.cse403d.coauthor.uiprototype;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -21,6 +22,7 @@ import javax.swing.SwingConstants;
 public class StartPage extends BrowserPage {
 	public StartPage() {
 		JTabbedPane tabbedPane = new JTabbedPane();
+		tabbedPane.setFont(tabbedPane.getFont().deriveFont(Font.ITALIC, 14));
 		setLayout(new BorderLayout(10, 20));
 		add(tabbedPane, BorderLayout.CENTER);
 		tabbedPane.setPreferredSize(new Dimension(400, 250));
