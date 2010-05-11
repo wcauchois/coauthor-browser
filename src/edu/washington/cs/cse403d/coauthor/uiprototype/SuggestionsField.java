@@ -111,16 +111,26 @@ public abstract class SuggestionsField extends JTextField {
 				list.ensureIndexIsVisible(newIndex);
 			} else if(evt.getKeyCode() == KeyEvent.VK_ENTER) {
 				// Select a suggestion by pressing enter
-				if(popup != null && !list.isSelectionEmpty()) {
-					setText((String)list.getSelectedValue());
-					hideSuggestions();
-				}
+				if(popup != null) {
+					if(!list.isSelectionEmpty()) {
+						setText((String)list.getSelectedValue());
+						hideSuggestions();
+					}
+				} else
+					onSubmit();
 			} else if(evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
 				// Hide suggestions by pressing escape
 				hideSuggestions();
 			}
 		}
 	}
+	
+	/**
+	 * Called when the user presses enter (and the suggestions popup is not
+	 * visible). This could be used to, for example, submit a form when the
+	 * user hits enter.
+	 */
+	protected void onSubmit() { }
 	
 	public SuggestionsField() {
 		popupFactory = PopupFactory.getSharedInstance();
