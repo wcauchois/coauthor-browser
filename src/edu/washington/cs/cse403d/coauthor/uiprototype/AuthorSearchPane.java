@@ -1,11 +1,17 @@
 package edu.washington.cs.cse403d.coauthor.uiprototype;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.FocusTraversalPolicy;
+import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,6 +25,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 /**
@@ -28,8 +35,22 @@ import javax.swing.JTextField;
  * @author William Cauchois
  *
  */
-public class AuthorSearchPane extends JPanel {
-	private class AuthorField extends QuerySuggestionsField {
+public class AuthorSearchPane extends JPanel implements ActionListener {
+	private static class AuthorField extends QuerySuggestionsField {
+		public static final Color INVALID_COLOR = Color.RED;
+		private boolean markedInvalid = false;
+		public void markInvalid() {
+			markedInvalid = true;
+			setBackground(INVALID_COLOR);
+		}
+		public AuthorField() {
+			addFocusListener(new FocusAdapter() {
+				@Override public void focusGained(FocusEvent evt) {
+					if(markedInvalid)
+						setBackground(SystemColor.text);
+				}
+			});
+		}
 		@Override
 		protected List<String> issueQuery(String part) throws Exception {
 			return Services.getCoauthorDataServiceInterface().getAuthors(part);
@@ -163,22 +184,23 @@ public class AuthorSearchPane extends JPanel {
 		ResourceManager resourceManager = Services.getResourceManager();
 		plusIcon = resourceManager.loadImageIcon("plus.png");
 		minusIcon = resourceManager.loadImageIcon("minus.png");
-		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		setLayout(new BorderLayout());
 		
 		JPanel headerPane = new JPanel();
 		headerPane.add(new JLabel("Please enter your search terms below."));
 		headerPane.add(new HelpMarker(
 				Services.getResourceManager().
 				loadStrings("strings.xml").get("AuthorSearchPane.help")));
-		add(headerPane);
+		add(headerPane, BorderLayout.NORTH);
 		
-		add(authorsPane);
-		add(submit);
-		submit.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				Services.getBrowser().go(new AuthorSearchResultsMain(getAuthors()));
-			}
-		});
+		JScrollPane scrollAuthorsPane = new JScrollPane(authorsPane);
+		add(scrollAuthorsPane, BorderLayout.CENTER);
+		
+		JPanel submitPane = new JPanel();
+		submitPane.add(submit);
+		submitPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
+		add(submitPane, BorderLayout.SOUTH);
+		submit.addActionListener(this);
 		
 		parent.addNavListener(new BrowserPage.NavListener() {
 			public void onEnter(BrowserPage previous) {
@@ -193,10 +215,24 @@ public class AuthorSearchPane extends JPanel {
 			}
 		});
 	}
+	public void actionPerformed(ActionEvent evt) {
+		List<String> authors = getAuthors();
+		if(authors != null)
+			Services.getBrowser().go(new AuthorSearchResultsMain(getAuthors()));
+	}
 	public List<String> getAuthors() {
 		List<String> authors = new ArrayList<String>();
-		for(JTextField field : authorFields)
-			authors.add(field.getText());
-		return authors;
+		boolean haveInvalidFields = false;
+		for(AuthorField field : authorFields) {
+			if(field.getText().trim().length() == 0) {
+				field.markInvalid();
+				haveInvalidFields = true;
+			} else if(!haveInvalidFields)
+				authors.add(field.getText());
+		}
+		if(haveInvalidFields)
+			return null;
+		else
+			return authors;
 	}
 }
