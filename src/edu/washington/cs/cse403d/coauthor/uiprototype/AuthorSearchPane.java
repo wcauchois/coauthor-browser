@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -26,7 +25,6 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 
 /**
  * This panel permits the user to enter one or more author names, as for
@@ -46,8 +44,10 @@ public class AuthorSearchPane extends JPanel implements ActionListener {
 		public AuthorField() {
 			addFocusListener(new FocusAdapter() {
 				@Override public void focusGained(FocusEvent evt) {
-					if(markedInvalid)
+					if(markedInvalid) {
+						// Restore the default background color
 						setBackground(SystemColor.text);
+					}
 				}
 			});
 		}
@@ -94,11 +94,14 @@ public class AuthorSearchPane extends JPanel implements ActionListener {
 		private GroupLayout layout;
 		private GroupLayout.SequentialGroup hGroup, vGroup;
 		private GroupLayout.ParallelGroup[] columns = new GroupLayout.ParallelGroup[N_COLUMNS];
+		private ImageIcon plusIcon, minusIcon;
 		private List<JComponent[]> rows = new LinkedList<JComponent[]>();
 		private static final int N_COLUMNS = 4;
-		private AuthorsPane thePane;
 		public AuthorsPane() {
-			thePane = this;
+			ResourceManager resourceManager = Services.getResourceManager();
+			plusIcon = resourceManager.loadImageIcon("plus.png");
+			minusIcon = resourceManager.loadImageIcon("minus.png");
+			
 			setLayout(layout = new GroupLayout(this));
 			setFocusTraversalPolicy(new FocusPolicy());
 			setFocusCycleRoot(true);
@@ -123,32 +126,43 @@ public class AuthorSearchPane extends JPanel implements ActionListener {
 			JButton minusButton = new MinusButton();
 			minusButton.setEnabled(false);
 			addRow(new JLabel("Author:"), field, minusButton, new PlusButton());
+			validate();
 		}
 		private void refresh() {
 			getParent().validate();
 			repaint();
 		}
-		private class MinusButton extends JButton implements ActionListener {
+		// Encapsulates a tiny bit of behavior shared between PlusButton and MinusButton.
+		private class PlusMinusButton extends JButton {
+			private final Dimension size = new Dimension(27, 27);
+			public PlusMinusButton(ImageIcon theIcon) {
+				super(theIcon);
+				setBorderPainted(false);
+				setContentAreaFilled(false);
+				setMaximumSize(size);
+				setMinimumSize(size);
+			}
+		}
+		private class MinusButton extends PlusMinusButton implements ActionListener {
 			private JComponent[] otherCells;
 			public MinusButton(JComponent... otherCells) {
-				super("-");
+				super(minusIcon);
 				this.otherCells = otherCells.clone();
 				addActionListener(this);
-				setMinimumSize(new Dimension(20, 20));
 			}
 			public void actionPerformed(ActionEvent evt) {
 				for(JComponent cell : otherCells) {
 					if(cell instanceof AuthorField)
 						authorFields.remove(cell);
-					thePane.remove(cell);
+					AuthorsPane.this.remove(cell);
 				}
-				thePane.remove(this);
+				AuthorsPane.this.remove(this);
 				refresh();
 			}
 		}
-		private class PlusButton extends JButton implements ActionListener {
+		private class PlusButton extends PlusMinusButton implements ActionListener {
 			public PlusButton() {
-				super("+");
+				super(plusIcon);
 				addActionListener(this);
 			}
 			public void actionPerformed(ActionEvent evt) {
@@ -175,15 +189,11 @@ public class AuthorSearchPane extends JPanel implements ActionListener {
 		}
 	}
 	private AuthorsPane authorsPane = new AuthorsPane();
-	private ImageIcon plusIcon, minusIcon;
 	private static ExecutorService createExecutor() {
 		return Executors.newSingleThreadExecutor();
 	}
 	public AuthorSearchPane(BrowserPage parent) {
 		executor = createExecutor();
-		ResourceManager resourceManager = Services.getResourceManager();
-		plusIcon = resourceManager.loadImageIcon("plus.png");
-		minusIcon = resourceManager.loadImageIcon("minus.png");
 		setLayout(new BorderLayout());
 		
 		JPanel headerPane = new JPanel();
