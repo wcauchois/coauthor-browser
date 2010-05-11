@@ -33,13 +33,17 @@ import javax.swing.JScrollPane;
  * @author William Cauchois
  *
  */
-public class AuthorSearchPane extends JPanel implements ActionListener {
-	private static class AuthorField extends QuerySuggestionsField {
-		public static final Color INVALID_COLOR = Color.RED;
+public class AuthorSearchPane extends JPanel {
+	private class AuthorField extends QuerySuggestionsField {
+		private final Color invalidMarkColor = Color.RED;
 		private boolean markedInvalid = false;
 		public void markInvalid() {
 			markedInvalid = true;
-			setBackground(INVALID_COLOR);
+			setBackground(invalidMarkColor);
+		}
+		@Override
+		protected void onSubmit() {
+			AuthorSearchPane.this.onSubmit();
 		}
 		public AuthorField() {
 			addFocusListener(new FocusAdapter() {
@@ -210,7 +214,11 @@ public class AuthorSearchPane extends JPanel implements ActionListener {
 		submitPane.add(submit);
 		submitPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 		add(submitPane, BorderLayout.SOUTH);
-		submit.addActionListener(this);
+		submit.addActionListener(new ActionListener() {
+			@Override public void actionPerformed(ActionEvent evt) {
+				onSubmit();
+			}
+		});
 		
 		parent.addNavListener(new BrowserPage.NavListener() {
 			public void onEnter(BrowserPage previous) {
@@ -225,7 +233,7 @@ public class AuthorSearchPane extends JPanel implements ActionListener {
 			}
 		});
 	}
-	public void actionPerformed(ActionEvent evt) {
+	protected void onSubmit() {
 		List<String> authors = getAuthors();
 		if(authors != null)
 			Services.getBrowser().go(new AuthorSearchResultsMain(getAuthors()));
