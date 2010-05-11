@@ -20,7 +20,12 @@ import javax.swing.SwingConstants;
  * @author William Cauchois
  */
 public class StartPage extends BrowserPage {
+	public static final int AUTHOR_SEARCH = 0;
+	public static final int ARTICLE_SEARCH = 1;
 	public StartPage() {
+		this(AUTHOR_SEARCH);
+	}
+	public StartPage(int searchType) {
 		JTabbedPane tabbedPane = new JTabbedPane();
 		tabbedPane.setFont(tabbedPane.getFont().deriveFont(Font.ITALIC, 14));
 		setLayout(new BorderLayout(10, 20));
@@ -33,6 +38,11 @@ public class StartPage extends BrowserPage {
 		
 		tabbedPane.addTab("Author Search", new AuthorSearchPane(this));
 		tabbedPane.addTab("Article Search", new ArticleSearchPane());
+		
+		if(searchType == AUTHOR_SEARCH)
+			tabbedPane.setSelectedIndex(0);
+		else if(searchType == ARTICLE_SEARCH)
+			tabbedPane.setSelectedIndex(1);
 	}
 	// XXX: move AuthorSearchPane out too!!
 	private class SearchPane extends JPanel {
