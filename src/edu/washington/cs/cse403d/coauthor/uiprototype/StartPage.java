@@ -23,7 +23,7 @@ public class StartPage extends BrowserPage {
 		JTabbedPane tabbedPane = new JTabbedPane();
 		setLayout(new BorderLayout(10, 20));
 		add(tabbedPane, BorderLayout.CENTER);
-		tabbedPane.setPreferredSize(new Dimension(400, 200));
+		tabbedPane.setPreferredSize(new Dimension(400, 250));
 		
 		JLabel logo = new JLabel(Services.getResourceManager().loadImageIcon("logo2.png"));
 		logo.setHorizontalAlignment(SwingConstants.CENTER);
