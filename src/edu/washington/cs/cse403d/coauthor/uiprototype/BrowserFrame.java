@@ -68,7 +68,6 @@ public class BrowserFrame extends JFrame implements Browser {
 		navPane.setLayout(new FlowLayout(FlowLayout.LEFT));
 		navPane.add(backButton);
 		navPane.add(forwardButton);
-		navPane.add(new JPanel()); // This is just a spacer
 		navPane.add(crumbBar);
 		navPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		getContentPane().setLayout(new BorderLayout());
