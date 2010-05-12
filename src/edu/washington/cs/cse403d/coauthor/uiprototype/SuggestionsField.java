@@ -67,8 +67,13 @@ public abstract class SuggestionsField extends JTextField {
 
 			// Resize the suggestions pane to better fit its content (that is, if it
 			// has only a few items we make it smaller).
-			Rectangle bounds = list.getCellBounds(
-					0, list.getModel().getSize() - 1);
+			Rectangle bounds = null;
+			try {
+				bounds = list.getCellBounds(0, list.getModel().getSize() - 1);
+			} catch(ArrayIndexOutOfBoundsException e) {
+				// HACK(wcauchois): this was getting thrown randomly and I couldn't figure out why
+			}
+					
 			int preferredHeight = Math.min(DEFAULT_POPUP_HEIGHT,
 					(bounds != null) ? (bounds.height + 4) : Integer.MAX_VALUE);
 			listPane.setPreferredSize(new Dimension(
