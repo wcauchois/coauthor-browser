@@ -28,8 +28,7 @@ public class AuthorSearchResultsMain extends BrowserPage {
 	
 	public AuthorSearchResultsMain(List<String> queries) {
 		this.queries = queries;
-		initialize();
-				
+		initialize();				
 	}
 	
 	private void initialize() {
