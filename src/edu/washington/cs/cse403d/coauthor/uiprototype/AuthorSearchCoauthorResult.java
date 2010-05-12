@@ -120,7 +120,8 @@ class AuthorSearchCoauthorResult extends JPanel implements ListSelectionListener
 			buildListHelper();
 		else
 			buildListHelper2();
-		coauthorList.addListSelectionListener(this);
+		//coauthorList.addListSelectionListener(this);
+		coauthorList.addMouseListener(new DoubleClickListener(coauthorList, CDSI, "author"));
 		coauthorList.setLayoutOrientation(JList.VERTICAL);
 		coauthorList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);			
 		JScrollPane listScroller = new JScrollPane(coauthorList);
@@ -166,13 +167,13 @@ class AuthorSearchCoauthorResult extends JPanel implements ListSelectionListener
 		
 		final AdvLabel author = new AdvLabel(theAuthor);		
 		multiEntryTop.add(author);
-		author.addMouseListener(new MouseAdapter() {
+		/*author.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent evt) {
 				List<String> list = new ArrayList<String>();
 				list.add(author.getOriginalText());
 				Services.getBrowser().go(new AuthorSearchResultsMain(list));
 			}
-		});
+		});*/
 		
 		multiEntryTop.add(Box.createVerticalStrut(10));
 		

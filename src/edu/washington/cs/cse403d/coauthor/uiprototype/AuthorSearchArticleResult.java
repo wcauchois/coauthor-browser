@@ -33,8 +33,7 @@ import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
 	 * 
 	 * TODO: work on the formatting of the filter panel instance(not aligned properly)
 	 */
-class AuthorSearchArticleResult extends JPanel 
-											implements ListSelectionListener {
+class AuthorSearchArticleResult extends JPanel {
 	private edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface CDSI = 
 		Services.getCoauthorDataServiceInterface();
 	
@@ -128,7 +127,7 @@ class AuthorSearchArticleResult extends JPanel
 	
 	private void buildPubList() {
 		buildListHelper();
-		pubList.addListSelectionListener(this);
+		pubList.addMouseListener(new DoubleClickListener(pubList, CDSI, "article"));
 		pubList.setLayoutOrientation(JList.VERTICAL);
 		pubList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);			
 		JScrollPane listScroller = new JScrollPane(pubList);
@@ -143,7 +142,7 @@ class AuthorSearchArticleResult extends JPanel
 				i++;
 			}
 	}
-	
+	/*
 	public void valueChanged(ListSelectionEvent evt) {
 		if (!evt.getValueIsAdjusting()) {
 			String selection = (String) ((DefaultListModel) pubList.getModel())
@@ -151,7 +150,6 @@ class AuthorSearchArticleResult extends JPanel
 			
 			//get the new browser
 			Services.getBrowser().go(new ArticleSearchResults(selection));
-		}
-		
-	}	
+		}		
+	}	*/
 }
