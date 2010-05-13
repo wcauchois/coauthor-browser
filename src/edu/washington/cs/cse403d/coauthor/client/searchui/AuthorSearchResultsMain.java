@@ -1,4 +1,4 @@
-package edu.washington.cs.cse403d.coauthor.uiprototype;
+package edu.washington.cs.cse403d.coauthor.client.searchui;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -21,15 +21,15 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import edu.washington.cs.cse403d.coauthor.client.browser.BrowserPage;
 import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
 
-public class AuthorSearchResults extends BrowserPage {
+public class AuthorSearchResultsMain extends BrowserPage {
 	private List<String> queries;
 	
-	public AuthorSearchResults(List<String> queries) {
+	public AuthorSearchResultsMain(List<String> queries) {
 		this.queries = queries;
-		initialize();
-				
+		initialize();				
 	}
 	
 	private void initialize() {
@@ -41,16 +41,16 @@ public class AuthorSearchResults extends BrowserPage {
 		c.gridy = 0;
 		
 		if(queries.size() == 1) {
-			add(new SingleAuthorSearchResult(queries.get(0)), c);
+			add(new AuthorSearchCoauthorResult(queries.get(0)), c);
 		} else
-			add(new SingleAuthorSearchResult(queries), c);
+			add(new AuthorSearchCoauthorResult(queries), c);
 		
 		c.gridx = 0;
 		c.gridy = 1;
-		if(queries.size() == 1) {
-			add(new SingleAuthorSearchArticleResult(queries.get(0)), c);
-		} else
-			add(new SingleAuthorSearchArticleResult(queries.get(0)), c);
+		if(queries.size() == 1) 
+			add(new AuthorSearchArticleResult(queries.get(0)), c);
+		else
+			add(new AuthorSearchArticleResult(queries), c);
 	}
 	
 	public String getTitle() {
@@ -58,6 +58,6 @@ public class AuthorSearchResults extends BrowserPage {
 	}
 	@SuppressWarnings("unchecked")
 	public Class[] getCrumbs() {
-		return new Class[] { StartPage.class };
+		return new Class[] { SearchPage.class };
 	}	
 }

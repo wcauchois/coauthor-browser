@@ -1,9 +1,10 @@
-package edu.washington.cs.cse403d.coauthor.uiprototype;
+package edu.washington.cs.cse403d.coauthor.client.browser;
 
 import java.util.List;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
+
 
 /**
  * Base class for a "page" in a browser type system. Derived types should

@@ -1,4 +1,4 @@
-package edu.washington.cs.cse403d.coauthor.uiprototype;
+package edu.washington.cs.cse403d.coauthor.client.searchui;
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -30,6 +30,9 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import edu.washington.cs.cse403d.coauthor.client.Services;
+import edu.washington.cs.cse403d.coauthor.client.browser.BrowserPage;
+import edu.washington.cs.cse403d.coauthor.client.utils.ClickableJLabel;
 import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
 
@@ -200,6 +203,6 @@ public class ArticleSearchResults extends BrowserPage {
 	}
 	@SuppressWarnings("unchecked")
 	public Class[] getCrumbs() {
-		return new Class[] { StartPage.class };
+		return new Class[] { SearchPage.class };
 	}
 }
