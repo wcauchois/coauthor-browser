@@ -3,42 +3,28 @@ package edu.washington.cs.cse403d.coauthor.client.searchui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
+import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JPanel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.DefaultListModel;
-import javax.swing.JSeparator;
-import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import edu.washington.cs.cse403d.coauthor.client.Services;
 import edu.washington.cs.cse403d.coauthor.client.utils.FilterPanel;
 import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
 
-	/*
-	 * Creates list of articles the author has worked on (as THE author)
-	 * 
-	 * TODO: work on the formatting of the filter panel instance(not aligned properly)
-	 */
-class AuthorSearchArticleResult extends JPanel {
+/**
+ * Displays search result information about a single author. 
+ * @author Kevin Bang
+ */
+class SingleAuthorResult extends JPanel {
 	private edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface CDSI = 
 		Services.getCoauthorDataServiceInterface();
 	
@@ -47,13 +33,9 @@ class AuthorSearchArticleResult extends JPanel {
 	private JList pubList;
 	private List<Publication> publications;
 	private DefaultListModel listModel;
-	private JTextField filterQuery;
-	private JButton filterButton;
-	private JButton returnButton;
-	private JPanel filterPanel;
 	//private String[] 
 	
-	public AuthorSearchArticleResult(String author) {
+	public SingleAuthorResult(String author) {
 		setLayout(new BorderLayout());
 		theAuthor = author;
 		singleEntryInitialize();
@@ -62,7 +44,7 @@ class AuthorSearchArticleResult extends JPanel {
 	/*for multi-entry search 
 	 * 
 	 */
-	public AuthorSearchArticleResult(List<String> authors) {
+	public SingleAuthorResult(List<String> authors) {
 		setLayout(new BorderLayout());
 		theAuthor = authors.get(0);
 		authorList = authors;
@@ -141,7 +123,7 @@ class AuthorSearchArticleResult extends JPanel {
 			public void mouseClicked(MouseEvent evt) {
 				if(evt.getClickCount() == 2) {
 					String article = (String)pubList.getSelectedValue();
-					Services.getBrowser().go(new ArticleSearchResults(article));
+					Services.getBrowser().go(new ArticleResult(article));
 				}
 			}
 		});

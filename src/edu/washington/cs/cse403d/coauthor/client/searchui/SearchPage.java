@@ -63,7 +63,7 @@ public class SearchPage extends BrowserPage {
 			bottomPart.add(submit);
 			submit.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					Services.getBrowser().go(new ArticleSearchResults(query.getText()));
+					Services.getBrowser().go(new ArticleResult(query.getText()));
 				}
 			});
 			

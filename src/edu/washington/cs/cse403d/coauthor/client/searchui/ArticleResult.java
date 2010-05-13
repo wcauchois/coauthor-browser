@@ -1,34 +1,22 @@
 package edu.washington.cs.cse403d.coauthor.client.searchui;
 
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
-import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import edu.washington.cs.cse403d.coauthor.client.Services;
 import edu.washington.cs.cse403d.coauthor.client.browser.BrowserPage;
@@ -36,11 +24,12 @@ import edu.washington.cs.cse403d.coauthor.client.utils.HyperLinkButton;
 import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
 
-
-/*
- * 
+/**
+ * Displays search result information about a publication, including a list
+ * of co-authors.
+ * @author Kevin Bang
  */
-public class ArticleSearchResults extends BrowserPage {
+public class ArticleResult extends BrowserPage {
 	private CoauthorDataServiceInterface CDSI =	Services.getCoauthorDataServiceInterface();
 	private String articleTitle;
 	private JLabel title;
@@ -49,7 +38,7 @@ public class ArticleSearchResults extends BrowserPage {
 	private Publication publication;
 	private JPanel contentPane;
 	
-	public ArticleSearchResults(String query) {
+	public ArticleResult(String query) {
 		articleTitle = query;
 		try {
 			publication = CDSI.getPublication(query);
@@ -188,7 +177,7 @@ public class ArticleSearchResults extends BrowserPage {
 				public void actionPerformed(ActionEvent evt) {
 					List<String> list = new ArrayList<String>();
 					list.add(author.getText());
-					Services.getBrowser().go(new AuthorSearchResults(list));
+					Services.getBrowser().go(new AuthorResult(list));
 				}
 			});
 			authorInfo.add(Box.createVerticalStrut(3));

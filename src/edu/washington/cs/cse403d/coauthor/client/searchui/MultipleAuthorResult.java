@@ -28,17 +28,11 @@ import edu.washington.cs.cse403d.coauthor.client.utils.FilterPanel;
 import edu.washington.cs.cse403d.coauthor.client.utils.HelpMarker;
 
 
-/*
- * TODO: Make changes to the formatting. Helpmarker is not appearing correctly
- * 
- * 			Maybe gridbaglayout?
- * 
+/**
+ * Displays search result information about multiple authors.
+ * @author Kevin Bang
  */
-/*
-	 * This will produce the search result screen with single-entry
-	 * 	author search.
-	 */
-public class AuthorSearchCoauthorResult extends JPanel {
+public class MultipleAuthorResult extends JPanel {
 	private edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface CDSI = 
 		Services.getCoauthorDataServiceInterface();
 	
@@ -52,7 +46,7 @@ public class AuthorSearchCoauthorResult extends JPanel {
 	/*
 	 * Constructor
 	 */
-	public AuthorSearchCoauthorResult(String author) {
+	public MultipleAuthorResult(String author) {
 		setLayout(new BorderLayout());
 		this.theAuthor = author;
 		singleEntryInitialize();
@@ -61,7 +55,7 @@ public class AuthorSearchCoauthorResult extends JPanel {
 	/*
 	 * If given list of authors
 	 */
-	public AuthorSearchCoauthorResult(List<String> authorList) {
+	public MultipleAuthorResult(List<String> authorList) {
 		setLayout(new BorderLayout());
 		this.theAuthor = authorList.get(0);
 		this.theAuthorList = authorList;
@@ -126,7 +120,7 @@ public class AuthorSearchCoauthorResult extends JPanel {
 			public void mouseClicked(MouseEvent evt) {
 				if(evt.getClickCount() == 2) {
 					String coauthor = (String)coauthorList.getSelectedValue();
-					Services.getBrowser().go(new AuthorSearchResults(coauthor));
+					Services.getBrowser().go(new AuthorResult(coauthor));
 				}
 			}
 		});
@@ -207,7 +201,7 @@ public class AuthorSearchCoauthorResult extends JPanel {
 				public void actionPerformed(ActionEvent evt) {
 					List<String> list = new ArrayList<String>();
 					list.add(coauthor.getText());
-					Services.getBrowser().go(new AuthorSearchResults(list));
+					Services.getBrowser().go(new AuthorResult(list));
 				}
 			});
 			multiEntryTop.add(Box.createVerticalStrut(3));
