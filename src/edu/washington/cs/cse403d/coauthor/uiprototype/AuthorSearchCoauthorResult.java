@@ -3,33 +3,22 @@ package edu.washington.cs.cse403d.coauthor.uiprototype;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
-import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 
 /*
@@ -42,7 +31,7 @@ import javax.swing.event.ListSelectionListener;
 	 * This will produce the search result screen with single-entry
 	 * 	author search.
 	 */
-class AuthorSearchCoauthorResult extends JPanel implements ListSelectionListener{
+public class AuthorSearchCoauthorResult extends JPanel {
 	private edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface CDSI = 
 		Services.getCoauthorDataServiceInterface();
 	
@@ -92,6 +81,10 @@ class AuthorSearchCoauthorResult extends JPanel implements ListSelectionListener
 		//Set up the co-author list
 		listModel = new DefaultListModel();
 		coauthorList = new JList(listModel);
+		
+		
+		String[] authorArray = new String[1];
+		authorArray[0] = theAuthor; 
 		try {
 			theAuthorList = CDSI.getCoauthors(theAuthor);
 		} catch (RemoteException e) {
@@ -100,7 +93,7 @@ class AuthorSearchCoauthorResult extends JPanel implements ListSelectionListener
 					"Error!",JOptionPane.ERROR_MESSAGE);
 		}			
 		buildCoauthorList();
-		add(new FilterPanel("Coauthor", listModel, CDSI, coauthorList, theAuthor), BorderLayout.PAGE_END);
+		add(new FilterPanel("Coauthor", listModel, CDSI, coauthorList, authorArray), BorderLayout.PAGE_END);
 	}
 	
 	private void multiEntryInitialize() {
@@ -165,7 +158,7 @@ class AuthorSearchCoauthorResult extends JPanel implements ListSelectionListener
 		
 		multiEntryTop.add(new JSeparator(SwingConstants.HORIZONTAL));
 		
-		final AdvLabel author = new AdvLabel(theAuthor);		
+		final ClickableJLabel author = new ClickableJLabel(theAuthor);		
 		multiEntryTop.add(author);
 		/*author.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent evt) {
@@ -193,7 +186,7 @@ class AuthorSearchCoauthorResult extends JPanel implements ListSelectionListener
 		int i = 1;
 		//implement an actionListner in here
 		while (i < theAuthorList.size()) {
-			final AdvLabel coauthor = new AdvLabel(theAuthorList.get(i));
+			final ClickableJLabel coauthor = new ClickableJLabel(theAuthorList.get(i));
 			multiEntryTop.add(coauthor);
 			coauthor.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
@@ -202,11 +195,11 @@ class AuthorSearchCoauthorResult extends JPanel implements ListSelectionListener
 					Services.getBrowser().go(new AuthorSearchResultsMain(list));
 				}
 			});
-			multiEntryTop.add(Box.createVerticalStrut(2));
+			multiEntryTop.add(Box.createVerticalStrut(3));
 			i++;
 		}
 	}
-	
+	/*
 	public void valueChanged(ListSelectionEvent e) {
 		if (!e.getValueIsAdjusting()) {
 			String selection = (String) ((DefaultListModel) coauthorList.getModel())
@@ -218,5 +211,5 @@ class AuthorSearchCoauthorResult extends JPanel implements ListSelectionListener
 			//get the new browser
 			Services.getBrowser().go(new AuthorSearchResultsMain(author));
 		}		
-	}	
+	}*/
 }

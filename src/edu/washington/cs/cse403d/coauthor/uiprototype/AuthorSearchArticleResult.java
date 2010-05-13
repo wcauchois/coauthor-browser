@@ -46,6 +46,7 @@ class AuthorSearchArticleResult extends JPanel {
 	private JButton filterButton;
 	private JButton returnButton;
 	private JPanel filterPanel;
+	//private String[] 
 	
 	public AuthorSearchArticleResult(String author) {
 		setLayout(new BorderLayout());
@@ -79,6 +80,9 @@ class AuthorSearchArticleResult extends JPanel {
 		listModel = new DefaultListModel();
 		pubList = new JList(listModel);
 		
+		String[] authorArray = new String[1];
+		authorArray[0] = theAuthor;
+		
 		try {
 			publications = CDSI.getPublicationsForAnyAuthor(theAuthor);
 		} catch (RemoteException e) {
@@ -87,7 +91,7 @@ class AuthorSearchArticleResult extends JPanel {
 					"Error!",JOptionPane.ERROR_MESSAGE);
 		}
 		buildPubList();
-		add(new FilterPanel("Pub", listModel, CDSI, pubList, theAuthor), BorderLayout.PAGE_END);
+		add(new FilterPanel("Pub", listModel, CDSI, pubList, authorArray), BorderLayout.PAGE_END);
 	}
 	
 	private void multiEntryInitialize() {
@@ -120,7 +124,7 @@ class AuthorSearchArticleResult extends JPanel {
 			add(new JLabel("There is no collaboration among these individuals"), BorderLayout.PAGE_END);
 		} else {
 			buildPubList();
-			add(new FilterPanel("Pub", listModel, CDSI, pubList, theAuthor), BorderLayout.PAGE_END);
+			add(new FilterPanel("Pub", listModel, CDSI, pubList, authorArray), BorderLayout.PAGE_END);
 		}		
 	}
 	

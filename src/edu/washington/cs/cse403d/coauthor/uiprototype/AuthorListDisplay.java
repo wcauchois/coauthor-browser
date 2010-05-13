@@ -77,7 +77,7 @@ public class AuthorListDisplay extends JPanel{
 					Services.getBrowser().go(new AuthorSearchResultsMain(list));
 				}
 			});
-			authorListPanel.add(Box.createVerticalStrut(2));
+			authorListPanel.add(Box.createVerticalStrut(3));
 			i++;
 		}
 	}	
