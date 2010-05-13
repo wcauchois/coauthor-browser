@@ -1,32 +1,18 @@
 package edu.washington.cs.cse403d.coauthor.client.searchui;
 
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
 import edu.washington.cs.cse403d.coauthor.client.browser.BrowserPage;
-import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
 
 public class AuthorSearchResultsMain extends BrowserPage {
 	private List<String> queries;
 	
+	public AuthorSearchResultsMain(String singleAuthor) {
+		this(Arrays.asList(singleAuthor));
+	}
 	public AuthorSearchResultsMain(List<String> queries) {
 		this.queries = queries;
 		initialize();				

@@ -24,7 +24,6 @@ import javax.swing.SwingConstants;
 
 import edu.washington.cs.cse403d.coauthor.client.Services;
 import edu.washington.cs.cse403d.coauthor.client.utils.HyperLinkButton;
-import edu.washington.cs.cse403d.coauthor.client.utils.DoubleClickListener;
 import edu.washington.cs.cse403d.coauthor.client.utils.FilterPanel;
 import edu.washington.cs.cse403d.coauthor.client.utils.HelpMarker;
 
@@ -122,7 +121,15 @@ public class AuthorSearchCoauthorResult extends JPanel {
 		else
 			buildListHelper2();
 		//coauthorList.addListSelectionListener(this);
-		coauthorList.addMouseListener(new DoubleClickListener(coauthorList, CDSI, "author"));
+		coauthorList.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent evt) {
+				if(evt.getClickCount() == 2) {
+					String coauthor = (String)coauthorList.getSelectedValue();
+					Services.getBrowser().go(new AuthorSearchResultsMain(coauthor));
+				}
+			}
+		});
 		coauthorList.setLayoutOrientation(JList.VERTICAL);
 		coauthorList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);			
 		JScrollPane listScroller = new JScrollPane(coauthorList);

@@ -5,6 +5,9 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +30,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import edu.washington.cs.cse403d.coauthor.client.Services;
-import edu.washington.cs.cse403d.coauthor.client.utils.DoubleClickListener;
 import edu.washington.cs.cse403d.coauthor.client.utils.FilterPanel;
 import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
 
@@ -134,7 +136,15 @@ class AuthorSearchArticleResult extends JPanel {
 	
 	private void buildPubList() {
 		buildListHelper();
-		pubList.addMouseListener(new DoubleClickListener(pubList, CDSI, "article"));
+		pubList.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent evt) {
+				if(evt.getClickCount() == 2) {
+					String article = (String)pubList.getSelectedValue();
+					Services.getBrowser().go(new ArticleSearchResults(article));
+				}
+			}
+		});
 		pubList.setLayoutOrientation(JList.VERTICAL);
 		pubList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);			
 		JScrollPane listScroller = new JScrollPane(pubList);
