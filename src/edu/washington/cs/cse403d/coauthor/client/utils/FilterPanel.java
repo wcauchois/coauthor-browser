@@ -1,4 +1,4 @@
-package edu.washington.cs.cse403d.coauthor.uiprototype;	
+package edu.washington.cs.cse403d.coauthor.client.utils;	
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -36,7 +36,7 @@ import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
 	 * 
 	 * TODO: make the article panel work for the multi-author case
 	 */
-class FilterPanel extends JPanel implements ListSelectionListener {
+public class FilterPanel extends JPanel implements ListSelectionListener {
 	private CoauthorDataServiceInterface CDSI;
 	private List<Publication> publications;
 	private List<String> coauthors;

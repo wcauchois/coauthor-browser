@@ -1,4 +1,4 @@
-package edu.washington.cs.cse403d.coauthor.uiprototype;
+package edu.washington.cs.cse403d.coauthor.client.searchui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -26,10 +26,16 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import edu.washington.cs.cse403d.coauthor.client.ResourceManager;
+import edu.washington.cs.cse403d.coauthor.client.Services;
+import edu.washington.cs.cse403d.coauthor.client.browser.BrowserPage;
+import edu.washington.cs.cse403d.coauthor.client.utils.HelpMarker;
+import edu.washington.cs.cse403d.coauthor.client.utils.QuerySuggestionsField;
+
 /**
  * This panel permits the user to enter one or more author names, as for
  * a search on those authors.
- * @see StartPage
+ * @see SearchPage
  * @author William Cauchois
  *
  */

@@ -1,4 +1,4 @@
-package edu.washington.cs.cse403d.coauthor.uiprototype;
+package edu.washington.cs.cse403d.coauthor.client.searchui;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -21,6 +21,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import edu.washington.cs.cse403d.coauthor.client.browser.BrowserPage;
 import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
 
 public class AuthorSearchResultsMain extends BrowserPage {
@@ -57,6 +58,6 @@ public class AuthorSearchResultsMain extends BrowserPage {
 	}
 	@SuppressWarnings("unchecked")
 	public Class[] getCrumbs() {
-		return new Class[] { StartPage.class };
+		return new Class[] { SearchPage.class };
 	}	
 }

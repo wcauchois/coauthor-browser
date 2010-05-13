@@ -1,4 +1,4 @@
-package edu.washington.cs.cse403d.coauthor.uiprototype;	
+package edu.washington.cs.cse403d.coauthor.client.searchui;	
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -26,6 +26,9 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import edu.washington.cs.cse403d.coauthor.client.Services;
+import edu.washington.cs.cse403d.coauthor.client.utils.DoubleClickListener;
+import edu.washington.cs.cse403d.coauthor.client.utils.FilterPanel;
 import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
 
 	/*

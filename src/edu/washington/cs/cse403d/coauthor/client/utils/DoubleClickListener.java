@@ -1,10 +1,14 @@
-package edu.washington.cs.cse403d.coauthor.uiprototype;
+package edu.washington.cs.cse403d.coauthor.client.utils;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JList;
+
+import edu.washington.cs.cse403d.coauthor.client.Services;
+import edu.washington.cs.cse403d.coauthor.client.searchui.ArticleSearchResults;
+import edu.washington.cs.cse403d.coauthor.client.searchui.AuthorSearchResultsMain;
 import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 
 public class DoubleClickListener extends MouseAdapter {	

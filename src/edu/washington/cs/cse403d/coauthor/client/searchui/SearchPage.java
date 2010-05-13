@@ -1,4 +1,4 @@
-package edu.washington.cs.cse403d.coauthor.uiprototype;
+package edu.washington.cs.cse403d.coauthor.client.searchui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -14,18 +14,22 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import edu.washington.cs.cse403d.coauthor.client.Services;
+import edu.washington.cs.cse403d.coauthor.client.browser.BrowserPage;
+import edu.washington.cs.cse403d.coauthor.client.utils.HelpMarker;
+
 /**
  * This is the first page the user sees when he opens the coauthor application.
  * Right now, it displays the logo along with tabs for article and author search. 
  * @author William Cauchois
  */
-public class StartPage extends BrowserPage {
+public class SearchPage extends BrowserPage {
 	public static final int AUTHOR_SEARCH = 0;
 	public static final int ARTICLE_SEARCH = 1;
-	public StartPage() {
+	public SearchPage() {
 		this(AUTHOR_SEARCH);
 	}
-	public StartPage(int searchType) {
+	public SearchPage(int searchType) {
 		JTabbedPane tabbedPane = new JTabbedPane();
 		tabbedPane.setFont(tabbedPane.getFont().deriveFont(Font.ITALIC, 14));
 		setLayout(new BorderLayout(10, 20));

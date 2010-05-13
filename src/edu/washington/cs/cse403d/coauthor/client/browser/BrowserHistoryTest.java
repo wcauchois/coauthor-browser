@@ -1,10 +1,11 @@
-package edu.washington.cs.cse403d.coauthor.uiprototype;
+package edu.washington.cs.cse403d.coauthor.client.browser;
 
 import static org.junit.Assert.*;
 
 import java.util.Iterator;
 
 import org.junit.*;
+
 
 public class BrowserHistoryTest {
 	private static class TestPage extends BrowserPage {
