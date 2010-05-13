@@ -48,7 +48,7 @@ public class AuthorListDisplay extends JPanel{
 			public void mouseClicked(MouseEvent evt) {
 				List<String> list = new ArrayList<String>();
 				list.add(author.getText());
-				Services.getBrowser().go(new AuthorSearchResultsMain(list));
+				Services.getBrowser().go(new AuthorSearchResults(list));
 			}
 		});
 		
@@ -76,7 +76,7 @@ public class AuthorListDisplay extends JPanel{
 				public void mouseClicked(MouseEvent evt) {
 					List<String> list = new ArrayList<String>();
 					list.add(coauthor.getText());
-					Services.getBrowser().go(new AuthorSearchResultsMain(list));
+					Services.getBrowser().go(new AuthorSearchResults(list));
 				}
 			});
 			authorListPanel.add(Box.createVerticalStrut(3));

@@ -242,7 +242,7 @@ public class AuthorSearchPane extends JPanel {
 	protected void onSubmit() {
 		List<String> authors = getAuthors();
 		if(authors != null)
-			Services.getBrowser().go(new AuthorSearchResultsMain(getAuthors()));
+			Services.getBrowser().go(new AuthorSearchResults(getAuthors()));
 	}
 	public List<String> getAuthors() {
 		List<String> authors = new ArrayList<String>();

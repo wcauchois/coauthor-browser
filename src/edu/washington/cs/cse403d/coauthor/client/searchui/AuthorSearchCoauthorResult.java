@@ -126,7 +126,7 @@ public class AuthorSearchCoauthorResult extends JPanel {
 			public void mouseClicked(MouseEvent evt) {
 				if(evt.getClickCount() == 2) {
 					String coauthor = (String)coauthorList.getSelectedValue();
-					Services.getBrowser().go(new AuthorSearchResultsMain(coauthor));
+					Services.getBrowser().go(new AuthorSearchResults(coauthor));
 				}
 			}
 		});
@@ -207,7 +207,7 @@ public class AuthorSearchCoauthorResult extends JPanel {
 				public void actionPerformed(ActionEvent evt) {
 					List<String> list = new ArrayList<String>();
 					list.add(coauthor.getText());
-					Services.getBrowser().go(new AuthorSearchResultsMain(list));
+					Services.getBrowser().go(new AuthorSearchResults(list));
 				}
 			});
 			multiEntryTop.add(Box.createVerticalStrut(3));
