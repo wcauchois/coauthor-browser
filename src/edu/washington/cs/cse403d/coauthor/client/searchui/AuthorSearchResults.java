@@ -1,36 +1,22 @@
 package edu.washington.cs.cse403d.coauthor.client.searchui;
 
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
 import edu.washington.cs.cse403d.coauthor.client.browser.BrowserPage;
-import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
+import edu.washington.cs.cse403d.coauthor.client.utils.StringUtils;
 
 public class AuthorSearchResults extends BrowserPage {
 	private List<String> queries;
 	
+	public AuthorSearchResults(String singleAuthor) {
+		this(Arrays.asList(singleAuthor));
+	}
 	public AuthorSearchResults(List<String> queries) {
 		this.queries = queries;
-		initialize();
-				
+		initialize();				
 	}
 	
 	private void initialize() {
@@ -41,22 +27,26 @@ public class AuthorSearchResults extends BrowserPage {
 		c.gridx = 0;
 		c.gridy = 0;
 		
-		// XXX(wcauchois): kevin you need to fix this!
-//		if(queries.size() == 1) {
-//			add(new SingleAuthorSearchResult(queries.get(0)), c);
-//		} else
-//			add(new SingleAuthorSearchResult(queries), c);
-//		
-//		c.gridx = 0;
-//		c.gridy = 1;
-//		if(queries.size() == 1) {
-//			add(new SingleAuthorSearchArticleResult(queries.get(0)), c);
-//		} else
-//			add(new SingleAuthorSearchArticleResult(queries.get(0)), c);
+		if(queries.size() == 1) {
+			add(new AuthorSearchCoauthorResult(queries.get(0)), c);
+		} else
+			add(new AuthorSearchCoauthorResult(queries), c);
+		
+		c.gridx = 0;
+		c.gridy = 1;
+		if(queries.size() == 1) 
+			add(new AuthorSearchArticleResult(queries.get(0)), c);
+		else
+			add(new AuthorSearchArticleResult(queries), c);
 	}
 	
 	public String getTitle() {
-		return "Results for \"" + queries.get(0) + "\"";
+		if(queries.size() == 1) {
+			return queries.get(0);
+		} else {
+			return StringUtils.elide(
+					StringUtils.join(", ", queries), 20);
+		}
 	}
 	@SuppressWarnings("unchecked")
 	public Class[] getCrumbs() {

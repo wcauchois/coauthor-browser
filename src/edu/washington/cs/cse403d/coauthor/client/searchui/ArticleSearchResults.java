@@ -188,7 +188,7 @@ public class ArticleSearchResults extends BrowserPage {
 				public void actionPerformed(ActionEvent evt) {
 					List<String> list = new ArrayList<String>();
 					list.add(author.getText());
-					Services.getBrowser().go(new AuthorSearchResultsMain(list));
+					Services.getBrowser().go(new AuthorSearchResults(list));
 				}
 			});
 			authorInfo.add(Box.createVerticalStrut(3));
