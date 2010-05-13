@@ -8,13 +8,18 @@ import java.util.List;
 import edu.washington.cs.cse403d.coauthor.client.browser.BrowserPage;
 import edu.washington.cs.cse403d.coauthor.client.utils.StringUtils;
 
-public class AuthorSearchResults extends BrowserPage {
+/**
+ * This page displays search results information for single or multiple
+ * authors.
+ * @author Kevin Bang
+ */
+public class AuthorResult extends BrowserPage {
 	private List<String> queries;
 	
-	public AuthorSearchResults(String singleAuthor) {
+	public AuthorResult(String singleAuthor) {
 		this(Arrays.asList(singleAuthor));
 	}
-	public AuthorSearchResults(List<String> queries) {
+	public AuthorResult(List<String> queries) {
 		this.queries = queries;
 		initialize();				
 	}
@@ -28,16 +33,16 @@ public class AuthorSearchResults extends BrowserPage {
 		c.gridy = 0;
 		
 		if(queries.size() == 1) {
-			add(new AuthorSearchCoauthorResult(queries.get(0)), c);
+			add(new MultipleAuthorResult(queries.get(0)), c);
 		} else
-			add(new AuthorSearchCoauthorResult(queries), c);
+			add(new MultipleAuthorResult(queries), c);
 		
 		c.gridx = 0;
 		c.gridy = 1;
 		if(queries.size() == 1) 
-			add(new AuthorSearchArticleResult(queries.get(0)), c);
+			add(new SingleAuthorResult(queries.get(0)), c);
 		else
-			add(new AuthorSearchArticleResult(queries), c);
+			add(new SingleAuthorResult(queries), c);
 	}
 	
 	public String getTitle() {

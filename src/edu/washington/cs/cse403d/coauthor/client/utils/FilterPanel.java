@@ -36,6 +36,10 @@ import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
 	 * 
 	 * TODO: make the article panel work for the multi-author case
 	 */
+
+// XXX(wcauchois): this is a very leaky abstraction. the FilterPanel should
+//                 definitely not use the CDSI to populate its fields!
+
 public class FilterPanel extends JPanel implements ListSelectionListener {
 	private CoauthorDataServiceInterface CDSI;
 	private List<Publication> publications;

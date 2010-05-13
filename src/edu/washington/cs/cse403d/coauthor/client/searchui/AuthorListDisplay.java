@@ -17,6 +17,8 @@ import javax.swing.SwingConstants;
 import edu.washington.cs.cse403d.coauthor.client.Services;
 
 
+// XXX(wcauchois): this class doesn't seem to be referenced anywhere else --
+//                 what is it FOR?
 public class AuthorListDisplay extends JPanel{
 	private List<String> authorList;
 	private JPanel authorListPanel;
@@ -48,7 +50,7 @@ public class AuthorListDisplay extends JPanel{
 			public void mouseClicked(MouseEvent evt) {
 				List<String> list = new ArrayList<String>();
 				list.add(author.getText());
-				Services.getBrowser().go(new AuthorSearchResults(list));
+				Services.getBrowser().go(new AuthorResult(list));
 			}
 		});
 		
@@ -76,7 +78,7 @@ public class AuthorListDisplay extends JPanel{
 				public void mouseClicked(MouseEvent evt) {
 					List<String> list = new ArrayList<String>();
 					list.add(coauthor.getText());
-					Services.getBrowser().go(new AuthorSearchResults(list));
+					Services.getBrowser().go(new AuthorResult(list));
 				}
 			});
 			authorListPanel.add(Box.createVerticalStrut(3));
