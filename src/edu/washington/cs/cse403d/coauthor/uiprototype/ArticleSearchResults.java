@@ -39,6 +39,7 @@ import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
  */
 public class ArticleSearchResults extends BrowserPage {
 	private CoauthorDataServiceInterface CDSI =	Services.getCoauthorDataServiceInterface();
+	private String articleTitle;
 	private JLabel title;
 	private JPanel articleInfo;
 	private JPanel authorInfo;
@@ -46,6 +47,7 @@ public class ArticleSearchResults extends BrowserPage {
 	private JPanel contentPane;
 	
 	public ArticleSearchResults(String query) {
+		articleTitle = query;
 		try {
 			publication = CDSI.getPublication(query);
 		} catch (RemoteException e) {
@@ -135,11 +137,11 @@ public class ArticleSearchResults extends BrowserPage {
 		articleInfo.add(EELabel);
 		articleInfo.add(new JSeparator(SwingConstants.HORIZONTAL));
 		
-		final AdvLabel EE;
+		final ClickableJLabel EE;
 		if(publication.getEe() == null)
-			EE = new AdvLabel("This article does not have an electronic edition", false);
+			EE = new ClickableJLabel("This article does not have an electronic edition", false);
 		else {
-			EE = new AdvLabel(publication.getEe());
+			EE = new ClickableJLabel(publication.getEe());
 			//Clipboard Access
 			EE.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
@@ -177,7 +179,7 @@ public class ArticleSearchResults extends BrowserPage {
 		//Add list of authors
 		int i = 0;
 		while (i < authors.size()) {
-			final AdvLabel author = new AdvLabel(authors.get(i));		
+			final ClickableJLabel author = new ClickableJLabel(authors.get(i));		
 			authorInfo.add(author);
 			author.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
@@ -186,9 +188,18 @@ public class ArticleSearchResults extends BrowserPage {
 					Services.getBrowser().go(new AuthorSearchResultsMain(list));
 				}
 			});
-			authorInfo.add(Box.createVerticalStrut(2));
+			authorInfo.add(Box.createVerticalStrut(3));
 			i++;
 		}		
 		authorInfo.add(Box.createVerticalStrut(10));
-	}	
+	}
+	
+	//Potentially TOO long...
+	public String getTitle() {
+		return "Results for \"" + articleTitle + "\"";
+	}
+	@SuppressWarnings("unchecked")
+	public Class[] getCrumbs() {
+		return new Class[] { StartPage.class };
+	}
 }
