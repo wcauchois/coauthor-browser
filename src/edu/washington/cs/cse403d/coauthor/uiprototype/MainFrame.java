@@ -114,6 +114,7 @@ public class MainFrame extends BrowserFrame {
 		} catch(Exception e) {
 			JOptionPane.showMessageDialog(null,
 				"Couldn't connect to data service (" + e.getMessage() + ")");
+			e.printStackTrace(System.err);
 			System.exit(1);
 		}
 		Services.provideResourceManager(new ResourceManager("/"));
