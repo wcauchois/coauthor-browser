@@ -32,7 +32,7 @@ import javax.swing.event.ListSelectionListener;
 
 import edu.washington.cs.cse403d.coauthor.client.Services;
 import edu.washington.cs.cse403d.coauthor.client.browser.BrowserPage;
-import edu.washington.cs.cse403d.coauthor.client.utils.ClickableJLabel;
+import edu.washington.cs.cse403d.coauthor.client.utils.HyperLinkButton;
 import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
 
@@ -140,15 +140,15 @@ public class ArticleSearchResults extends BrowserPage {
 		articleInfo.add(EELabel);
 		articleInfo.add(new JSeparator(SwingConstants.HORIZONTAL));
 		
-		final ClickableJLabel EE;
+		final HyperLinkButton EE;
 		if(publication.getEe() == null)
-			EE = new ClickableJLabel("This article does not have an electronic edition", false);
+			EE = new HyperLinkButton("This article does not have an electronic edition");
 		else {
-			EE = new ClickableJLabel(publication.getEe());
+			EE = new HyperLinkButton(publication.getEe());
 			//Clipboard Access
-			EE.addMouseListener(new MouseAdapter() {
-				public void mouseClicked(MouseEvent evt) {
-					StringSelection data = new StringSelection(EE.getOriginalText());
+			EE.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
+					StringSelection data = new StringSelection(EE.getText());
 					Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 					clipboard.setContents(data, data);
 					showCopyNotice();
@@ -182,12 +182,12 @@ public class ArticleSearchResults extends BrowserPage {
 		//Add list of authors
 		int i = 0;
 		while (i < authors.size()) {
-			final ClickableJLabel author = new ClickableJLabel(authors.get(i));		
+			final HyperLinkButton author = new HyperLinkButton(authors.get(i));		
 			authorInfo.add(author);
-			author.addMouseListener(new MouseAdapter() {
-				public void mouseClicked(MouseEvent evt) {
+			author.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
 					List<String> list = new ArrayList<String>();
-					list.add(author.getOriginalText());
+					list.add(author.getText());
 					Services.getBrowser().go(new AuthorSearchResultsMain(list));
 				}
 			});
