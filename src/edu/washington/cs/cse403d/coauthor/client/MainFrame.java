@@ -1,4 +1,4 @@
-package edu.washington.cs.cse403d.coauthor.uiprototype;
+package edu.washington.cs.cse403d.coauthor.client;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -13,6 +13,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
+import edu.washington.cs.cse403d.coauthor.client.browser.BrowserFrame;
+import edu.washington.cs.cse403d.coauthor.client.searchui.SearchPage;
 import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 
 /**
@@ -43,7 +45,7 @@ public class MainFrame extends BrowserFrame {
 		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
 		menuItem.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent e) {
-				MainFrame.this.go(new StartPage(StartPage.AUTHOR_SEARCH));
+				MainFrame.this.go(new SearchPage(SearchPage.AUTHOR_SEARCH));
 			}
 		});
 		menu.add(menuItem);
@@ -52,7 +54,7 @@ public class MainFrame extends BrowserFrame {
 		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
 		menuItem.addActionListener(new ActionListener() {
 			@Override public void actionPerformed(ActionEvent e) {
-				MainFrame.this.go(new StartPage(StartPage.ARTICLE_SEARCH));
+				MainFrame.this.go(new SearchPage(SearchPage.ARTICLE_SEARCH));
 			}
 		});
 		menu.add(menuItem);
@@ -100,7 +102,7 @@ public class MainFrame extends BrowserFrame {
 	
 	private static final String HOSTNAME = "attu2.cs.washington.edu";
 	public MainFrame() {
-		super(new StartPage());
+		super(new SearchPage());
 		setTitle("Author Network");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setJMenuBar(createMenuBar());
