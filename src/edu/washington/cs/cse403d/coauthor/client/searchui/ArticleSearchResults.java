@@ -199,7 +199,7 @@ public class ArticleSearchResults extends BrowserPage {
 	
 	//Potentially TOO long...
 	public String getTitle() {
-		return "Results for \"" + articleTitle + "\"";
+		return articleTitle;
 	}
 	@SuppressWarnings("unchecked")
 	public Class[] getCrumbs() {

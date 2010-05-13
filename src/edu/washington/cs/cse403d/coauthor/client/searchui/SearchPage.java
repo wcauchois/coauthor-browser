@@ -77,6 +77,6 @@ public class SearchPage extends BrowserPage {
 		
 	}
 	public String getTitle() {
-		return "Start";
+		return "Search";
 	}
 }
