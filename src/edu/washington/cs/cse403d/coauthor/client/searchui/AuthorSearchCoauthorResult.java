@@ -3,6 +3,8 @@ package edu.washington.cs.cse403d.coauthor.client.searchui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.rmi.RemoteException;
@@ -21,7 +23,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 
 import edu.washington.cs.cse403d.coauthor.client.Services;
-import edu.washington.cs.cse403d.coauthor.client.utils.ClickableJLabel;
+import edu.washington.cs.cse403d.coauthor.client.utils.HyperLinkButton;
 import edu.washington.cs.cse403d.coauthor.client.utils.DoubleClickListener;
 import edu.washington.cs.cse403d.coauthor.client.utils.FilterPanel;
 import edu.washington.cs.cse403d.coauthor.client.utils.HelpMarker;
@@ -164,15 +166,15 @@ public class AuthorSearchCoauthorResult extends JPanel {
 		
 		multiEntryTop.add(new JSeparator(SwingConstants.HORIZONTAL));
 		
-		final ClickableJLabel author = new ClickableJLabel(theAuthor);		
+		final HyperLinkButton author = new HyperLinkButton(theAuthor);		
 		multiEntryTop.add(author);
-		/*author.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent evt) {
-				List<String> list = new ArrayList<String>();
-				list.add(author.getOriginalText());
-				Services.getBrowser().go(new AuthorSearchResultsMain(list));
-			}
-		});*/
+//		author.addActionListener(new ActionListener() {
+//				public void actionPerformed(ActionEvent evt) {
+//				List<String> list = new ArrayList<String>();
+//				list.add(author.getOriginalText());
+//				Services.getBrowser().go(new AuthorSearchResultsMain(list));
+//			}
+//		});
 		
 		multiEntryTop.add(Box.createVerticalStrut(10));
 		
@@ -192,12 +194,12 @@ public class AuthorSearchCoauthorResult extends JPanel {
 		int i = 1;
 		//implement an actionListner in here
 		while (i < theAuthorList.size()) {
-			final ClickableJLabel coauthor = new ClickableJLabel(theAuthorList.get(i));
+			final HyperLinkButton coauthor = new HyperLinkButton(theAuthorList.get(i));
 			multiEntryTop.add(coauthor);
-			coauthor.addMouseListener(new MouseAdapter() {
-				public void mouseClicked(MouseEvent evt) {
+			coauthor.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
 					List<String> list = new ArrayList<String>();
-					list.add(coauthor.getOriginalText());
+					list.add(coauthor.getText());
 					Services.getBrowser().go(new AuthorSearchResultsMain(list));
 				}
 			});
