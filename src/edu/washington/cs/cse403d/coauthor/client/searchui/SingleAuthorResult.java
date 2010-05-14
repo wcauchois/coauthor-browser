@@ -33,7 +33,6 @@ class SingleAuthorResult extends JPanel {
 	private JList pubList;
 	private List<Publication> publications;
 	private DefaultListModel listModel;
-	//private String[] 
 	
 	public SingleAuthorResult(String author) {
 		setLayout(new BorderLayout());
@@ -78,7 +77,8 @@ class SingleAuthorResult extends JPanel {
 					"Error!",JOptionPane.ERROR_MESSAGE);
 		}
 		buildPubList();
-		add(new FilterPanel("Pub", listModel, CDSI, pubList, authorArray), BorderLayout.PAGE_END);
+		add(new FilterPanel("Pub", listModel, publications
+				, pubList, authorArray), BorderLayout.PAGE_END);
 	}
 	
 	private void multiEntryInitialize() {
@@ -108,13 +108,14 @@ class SingleAuthorResult extends JPanel {
 					"Error!",JOptionPane.ERROR_MESSAGE);
 		}
 		if (publications.isEmpty()) {
-			add(new JLabel("There is no collaboration among these individuals"), BorderLayout.PAGE_END);
+			add(new JLabel("There is no collaboration among these individuals")
+			, BorderLayout.PAGE_END);
 		} else {
 			buildPubList();
-			add(new FilterPanel("Pub", listModel, CDSI, pubList, authorArray), BorderLayout.PAGE_END);
+			add(new FilterPanel("Pub", listModel, publications
+					, pubList, authorArray), BorderLayout.PAGE_END);
 		}		
-	}
-	
+	}	
 	
 	private void buildPubList() {
 		buildListHelper();
@@ -141,14 +142,4 @@ class SingleAuthorResult extends JPanel {
 				i++;
 			}
 	}
-	/*
-	public void valueChanged(ListSelectionEvent evt) {
-		if (!evt.getValueIsAdjusting()) {
-			String selection = (String) ((DefaultListModel) pubList.getModel())
-											.get(pubList.getSelectedIndex());
-			
-			//get the new browser
-			Services.getBrowser().go(new ArticleSearchResults(selection));
-		}		
-	}	*/
 }

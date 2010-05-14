@@ -20,6 +20,12 @@ import javax.swing.border.Border;
  * @author Kevin Bang
  */
 public class HyperLinkButton extends JLabel {
+	/**
+	 * Constructor.
+	 * Creates a new HyperLinkButton instance with given text.
+	 * 
+	 * @param text the text to be displayed
+	 */
 	public HyperLinkButton(String text) {
 		super(text);
 		final Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
@@ -49,6 +55,7 @@ public class HyperLinkButton extends JLabel {
 	}
 	
 	private List<ActionListener> listeners = new ArrayList<ActionListener>();
+	
 	/**
 	 * Add an ActionListener to be notified when the user clicks on this
 	 * HyperLinkButton.

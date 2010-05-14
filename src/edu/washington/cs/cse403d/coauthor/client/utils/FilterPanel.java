@@ -1,34 +1,24 @@
 package edu.washington.cs.cse403d.coauthor.client.utils;	
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.rmi.RemoteException;
 import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
 import javax.swing.DefaultListModel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-
-import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
 
 	/*
@@ -37,49 +27,30 @@ import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
 	 * TODO: make the article panel work for the multi-author case
 	 */
 
-// XXX(wcauchois): this is a very leaky abstraction. the FilterPanel should
-//                 definitely not use the CDSI to populate its fields!
-
 public class FilterPanel extends JPanel implements ListSelectionListener {
-	private CoauthorDataServiceInterface CDSI;
 	private List<Publication> publications;
 	private List<String> coauthors;
 	private DefaultListModel listModel;
+	
 	private JTextField filterQuery;
 	private JButton filterButton;
 	private JButton returnButton;
 	private JPanel filterPanel;
 	private String flag;
 	private JList list;
-	private String theAuthor;
-	private String[] authorArray;
 	
+	@SuppressWarnings("unchecked")
 	public FilterPanel(String flag, DefaultListModel defaultListModel,
-			CoauthorDataServiceInterface CDSI, JList list, String[] authorArray) {
+			List dataList, JList list, String[] authorArray) {
 		listModel = defaultListModel;
-		theAuthor = authorArray[0];
 		this.flag = flag;
-		this.CDSI = CDSI;
 		this.list = list;
 		
 		
-		if(flag == "Coauthor") {
-			try {
-				coauthors = CDSI.getCoauthors(theAuthor);
-			} catch (RemoteException e) {
-				JOptionPane.showMessageDialog(this,
-						"Um, this isn't really supposed to happen",
-						"Error!",JOptionPane.ERROR_MESSAGE);
-			}
-		} else {
-			try {
-				publications = CDSI.getPublicationsForAllAuthors(authorArray);
-			} catch (RemoteException e) {
-				JOptionPane.showMessageDialog(this,
-						"Um, this isn't really supposed to happen",
-						"Error!",JOptionPane.ERROR_MESSAGE);
-			}
-		}		
+		if(flag == "Coauthor")
+			coauthors = dataList;			
+		else
+			publications = dataList;		
 		createFilterPanel();
 		add(filterPanel);
 	}

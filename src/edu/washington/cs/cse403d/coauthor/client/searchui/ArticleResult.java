@@ -1,21 +1,29 @@
 package edu.washington.cs.cse403d.coauthor.client.searchui;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 
 import edu.washington.cs.cse403d.coauthor.client.Services;
@@ -37,6 +45,8 @@ public class ArticleResult extends BrowserPage {
 	private JPanel authorInfo;
 	private Publication publication;
 	private JPanel contentPane;
+	private JList authorList;
+	private DefaultListModel listModel;
 	
 	public ArticleResult(String query) {
 		articleTitle = query;
@@ -51,17 +61,34 @@ public class ArticleResult extends BrowserPage {
 	}
 	
 	private void initialize() {
+		//Wrapping around does not work
+		setLayout(new BorderLayout());
+		
+		
 		contentPane = new JPanel();
 		contentPane.setVisible(true);
-		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
+		contentPane.setLayout(new BorderLayout());
 		
 		buildTitle();
 		buildAuthorInfo();
 		buildArticleInfo();
-		contentPane.add(title);
-		contentPane.add(Box.createVerticalStrut(10));
-		contentPane.add(authorInfo);
-		contentPane.add(articleInfo);
+		
+		JLabel authorLabel = new JLabel("Authors:");
+		Font f = authorLabel.getFont();
+		float s = authorLabel.getFont().getSize2D();
+		s += 4.0f;
+		authorLabel.setFont(f.deriveFont(s));		
+		
+		JPanel topPart = new JPanel();
+		topPart.setLayout(new BoxLayout(topPart, BoxLayout.Y_AXIS));
+		topPart.add(title);
+		topPart.add(Box.createVerticalStrut(10));
+		topPart.add(authorLabel);
+		topPart.add(new JSeparator(SwingConstants.HORIZONTAL));
+		
+		contentPane.add(topPart, BorderLayout.PAGE_START);
+		contentPane.add(authorInfo, BorderLayout.CENTER);
+		contentPane.add(articleInfo, BorderLayout.PAGE_END);
 		
 		add(contentPane);
 	}
@@ -158,35 +185,43 @@ public class ArticleResult extends BrowserPage {
 		authorInfo.setVisible(true);
 		authorInfo.setLayout(new BoxLayout(authorInfo, BoxLayout.Y_AXIS));
 		
-		//List of authors for this article
-		List<String> authors = publication.getAuthors();
-		
 		JLabel authorLabel = new JLabel("Authors:");
 		Font f = authorLabel.getFont();
 		float s = authorLabel.getFont().getSize2D();
 		s += 4.0f;
-		authorLabel.setFont(f.deriveFont(s));
-		authorInfo.add(authorLabel);
-		authorInfo.add(new JSeparator(SwingConstants.HORIZONTAL));
+		authorLabel.setFont(f.deriveFont(s));		
+		
 		//Add list of authors
-		int i = 0;
-		while (i < authors.size()) {
-			final HyperLinkButton author = new HyperLinkButton(authors.get(i));		
-			authorInfo.add(author);
-			author.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent evt) {
-					List<String> list = new ArrayList<String>();
-					list.add(author.getText());
-					Services.getBrowser().go(new AuthorResult(list));
+		buildList();
+		authorList = new JList(listModel);
+		authorList.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent evt) {
+				if(evt.getClickCount() == 2) {
+					String article = (String)authorList.getSelectedValue();
+					Services.getBrowser().go(new ArticleResult(article));
 				}
-			});
-			authorInfo.add(Box.createVerticalStrut(3));
-			i++;
-		}		
+			}
+		});
+		authorList.setLayoutOrientation(JList.VERTICAL);
+		authorList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);			
+		JScrollPane listScroller = new JScrollPane(authorList);
+		listScroller.setPreferredSize(new Dimension(60, 120));
+		authorInfo.add(listScroller);
 		authorInfo.add(Box.createVerticalStrut(10));
+		
 	}
 	
-	//Potentially TOO long...
+	private void buildList() {
+		listModel = new DefaultListModel();
+		List<String> list = publication.getAuthors();
+		int i = 0;
+		while (i < list.size()) {
+			listModel.add(i, list.get(i));
+			i++;
+		}
+	}
+	
 	public String getTitle() {
 		return articleTitle;
 	}

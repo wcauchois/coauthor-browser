@@ -94,19 +94,17 @@ public class MultipleAuthorResult extends JPanel {
 					"Error!",JOptionPane.ERROR_MESSAGE);
 		}			
 		buildCoauthorList();
-		add(new FilterPanel("Coauthor", listModel, CDSI, coauthorList, authorArray), BorderLayout.PAGE_END);
+		add(new FilterPanel("Coauthor", listModel, theAuthorList
+				, coauthorList, authorArray), BorderLayout.PAGE_END);
 	}
 	
 	private void multiEntryInitialize() {
 		setVisible(true);			
 		multiEntryTopBuild();
 		add(multiEntryTop, BorderLayout.PAGE_START);
-		
-		//With this class, the formatting's not working correctly..
-		//add(new AuthorListDisplay(coauthors), BorderLayout.PAGE_START);
 	}	
 	
-	/*
+	/**
 	 * Builds the co-author list
 	 */
 	private void buildCoauthorList() {
@@ -168,15 +166,7 @@ public class MultipleAuthorResult extends JPanel {
 		multiEntryTop.add(new JSeparator(SwingConstants.HORIZONTAL));
 		
 		final HyperLinkButton author = new HyperLinkButton(theAuthor);		
-		multiEntryTop.add(author);
-//		author.addActionListener(new ActionListener() {
-//				public void actionPerformed(ActionEvent evt) {
-//				List<String> list = new ArrayList<String>();
-//				list.add(author.getOriginalText());
-//				Services.getBrowser().go(new AuthorSearchResultsMain(list));
-//			}
-//		});
-		
+		multiEntryTop.add(author);		
 		multiEntryTop.add(Box.createVerticalStrut(10));
 		
 		JLabel coauthor = new JLabel("Coauthors");
@@ -193,7 +183,7 @@ public class MultipleAuthorResult extends JPanel {
 	
 	private void addCoauthors() {
 		int i = 1;
-		//implement an actionListner in here
+	
 		while (i < theAuthorList.size()) {
 			final HyperLinkButton coauthor = new HyperLinkButton(theAuthorList.get(i));
 			multiEntryTop.add(coauthor);
@@ -208,17 +198,4 @@ public class MultipleAuthorResult extends JPanel {
 			i++;
 		}
 	}
-	/*
-	public void valueChanged(ListSelectionEvent e) {
-		if (!e.getValueIsAdjusting()) {
-			String selection = (String) ((DefaultListModel) coauthorList.getModel())
-											.get(coauthorList.getSelectedIndex());
-			//Make a List, since AuthorSearchResults only takes list
-			List<String> author = new ArrayList<String>();
-			author.add(selection);
-			
-			//get the new browser
-			Services.getBrowser().go(new AuthorSearchResultsMain(author));
-		}		
-	}*/
 }
