@@ -1,7 +1,8 @@
-package edu.washington.cs.cse403d.coauthor.uiprototype;
+package edu.washington.cs.cse403d.coauthor.client.searchui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -13,17 +14,27 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import edu.washington.cs.cse403d.coauthor.client.Services;
+import edu.washington.cs.cse403d.coauthor.client.browser.BrowserPage;
+import edu.washington.cs.cse403d.coauthor.client.utils.HelpMarker;
+
 /**
  * This is the first page the user sees when he opens the coauthor application.
  * Right now, it displays the logo along with tabs for article and author search. 
  * @author William Cauchois
  */
-public class StartPage extends BrowserPage {
-	public StartPage() {
+public class SearchPage extends BrowserPage {
+	public static final int AUTHOR_SEARCH = 0;
+	public static final int ARTICLE_SEARCH = 1;
+	public SearchPage() {
+		this(AUTHOR_SEARCH);
+	}
+	public SearchPage(int searchType) {
 		JTabbedPane tabbedPane = new JTabbedPane();
+		tabbedPane.setFont(tabbedPane.getFont().deriveFont(Font.ITALIC, 14));
 		setLayout(new BorderLayout(10, 20));
 		add(tabbedPane, BorderLayout.CENTER);
-		tabbedPane.setPreferredSize(new Dimension(400, 200));
+		tabbedPane.setPreferredSize(new Dimension(400, 250));
 		
 		JLabel logo = new JLabel(Services.getResourceManager().loadImageIcon("logo2.png"));
 		logo.setHorizontalAlignment(SwingConstants.CENTER);
@@ -31,6 +42,11 @@ public class StartPage extends BrowserPage {
 		
 		tabbedPane.addTab("Author Search", new AuthorSearchPane(this));
 		tabbedPane.addTab("Article Search", new ArticleSearchPane());
+		
+		if(searchType == AUTHOR_SEARCH)
+			tabbedPane.setSelectedIndex(0);
+		else if(searchType == ARTICLE_SEARCH)
+			tabbedPane.setSelectedIndex(1);
 	}
 	// XXX: move AuthorSearchPane out too!!
 	private class SearchPane extends JPanel {
@@ -47,7 +63,7 @@ public class StartPage extends BrowserPage {
 			bottomPart.add(submit);
 			submit.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					Services.getBrowser().go(new ArticleSearchResults(query.getText()));
+					Services.getBrowser().go(new ArticleResult(query.getText()));
 				}
 			});
 			
@@ -61,6 +77,6 @@ public class StartPage extends BrowserPage {
 		
 	}
 	public String getTitle() {
-		return "Start";
+		return "Search";
 	}
 }

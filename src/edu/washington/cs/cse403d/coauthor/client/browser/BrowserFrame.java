@@ -1,4 +1,4 @@
-package edu.washington.cs.cse403d.coauthor.uiprototype;
+package edu.washington.cs.cse403d.coauthor.client.browser;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -7,12 +7,12 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import edu.washington.cs.cse403d.coauthor.client.Services;
 
 /**
  * A frame that displays one BrowserPage at a time, and includes controls for
@@ -68,7 +68,6 @@ public class BrowserFrame extends JFrame implements Browser {
 		navPane.setLayout(new FlowLayout(FlowLayout.LEFT));
 		navPane.add(backButton);
 		navPane.add(forwardButton);
-		navPane.add(new JPanel()); // This is just a spacer
 		navPane.add(crumbBar);
 		navPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		getContentPane().setLayout(new BorderLayout());

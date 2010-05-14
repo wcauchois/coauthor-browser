@@ -1,9 +1,10 @@
-package edu.washington.cs.cse403d.coauthor.uiprototype;
+package edu.washington.cs.cse403d.coauthor.client.browser;
 
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+
 
 /**
  * Encapsulates the "history" of a browser system -- that is, which pages

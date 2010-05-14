@@ -1,5 +1,6 @@
-package edu.washington.cs.cse403d.coauthor.uiprototype;
+package edu.washington.cs.cse403d.coauthor.client;
 
+import edu.washington.cs.cse403d.coauthor.client.browser.Browser;
 import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 
 /**

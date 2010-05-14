@@ -1,4 +1,4 @@
-package edu.washington.cs.cse403d.coauthor.uiprototype;
+package edu.washington.cs.cse403d.coauthor.client;
 
 import java.io.FileReader;
 import java.net.URL;

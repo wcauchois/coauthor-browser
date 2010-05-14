@@ -1,4 +1,5 @@
-package edu.washington.cs.cse403d.coauthor.uiprototype;
+package edu.washington.cs.cse403d.coauthor.client.browser;
+
 
 /**
  * Interface for a web browser, including methods to "go" back

@@ -1,4 +1,4 @@
-package edu.washington.cs.cse403d.coauthor.uiprototype;
+package edu.washington.cs.cse403d.coauthor.client.browser;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
@@ -8,6 +8,8 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+
+import edu.washington.cs.cse403d.coauthor.client.Services;
 
 /**
  * A widget that presents a series of buttons to the user representing pages

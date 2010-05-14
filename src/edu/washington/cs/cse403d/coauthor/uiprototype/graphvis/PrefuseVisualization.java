@@ -4,8 +4,10 @@ import javax.swing.JFrame;
 
 import java.rmi.Naming;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Scanner;
 
 
 import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
@@ -27,11 +29,15 @@ import prefuse.controls.WheelZoomControl;
 import prefuse.controls.ZoomControl;
 import prefuse.controls.ZoomToFitControl;
 import prefuse.data.Graph;
+import prefuse.data.Node;
 import prefuse.data.Table;
 import prefuse.data.util.TableIterator;
 import prefuse.render.DefaultRendererFactory;
 import prefuse.render.LabelRenderer;
 import prefuse.util.ColorLib;
+import prefuse.util.PrefuseLib;
+import prefuse.visual.NodeItem;
+import prefuse.visual.VisualGraph;
 import prefuse.visual.VisualItem;
 
 public class PrefuseVisualization {
@@ -41,7 +47,7 @@ public class PrefuseVisualization {
 	public static void main(String[] args) {
 	
 		// setup of database connections
-		CoauthorDataServiceInterface c;
+	/*	CoauthorDataServiceInterface c;
 		try {
 			c = (CoauthorDataServiceInterface) Naming.lookup("rmi://" + HOSTNAME + "/"
 					+ CoauthorDataServiceInterface.SERVICE_NAME);
@@ -56,10 +62,16 @@ public class PrefuseVisualization {
 			coAu = c.getCoauthors(centerNode);
 		} catch (RemoteException e) {
 			e.printStackTrace();
-		}
+		}*/
 		
-//		System.out.println(coAu);
-		
+		String centerNode = "Jeff Prouty"; // CHANGE THIS VARIABLE TO CHANGE THE SEARCH/VISUALIZATION RESULTS
+		List<String> coAu = new ArrayList<String>();
+		//coAu.add(centerNode);
+		coAu.add("Sergey Alekhnovich");
+		coAu.add("Miles Sackler");
+		coAu.add("Bill Cauchois");
+		coAu.add("Kevin Bang");
+		coAu.add("unicorns");
 		Table nodes = new Table();
 		nodes.addColumn("name", String.class);
 
@@ -108,13 +120,14 @@ public class PrefuseVisualization {
 	*/	
 // -- 1. load the data ------------------------------------------------
 	       Graph coAuthors = new Graph(nodes,e,false); 
-	
+	       
+	   
 	        // -- 2. the visualization --------------------------------------------
 	        
 	        // add the graph to the visualization as the data group "graph"
 	        // nodes and edges are accessible as "graph.nodes" and "graph.edges"
 	        Visualization vis = new Visualization();
-	        vis.add("graph", coAuthors);
+	        VisualGraph vg  = (VisualGraph) vis.add("graph", coAuthors);
 	        vis.setInteractive("graph.edges", null, true);
 	        
 	        // -- 3. the renderers and renderer factory ---------------------------
@@ -167,7 +180,7 @@ public class PrefuseVisualization {
 	        // -- 5. the display and interactive controls -------------------------
 	        
 	        Display d = new Display(vis);
-	        d.setSize(720, 500); // set display size
+	        d.setSize(500, 500); // set display size
 	        // drag individual items around
 	        d.addControlListener(new DragControl());
 	        // pan with left-click drag on background
@@ -180,18 +193,40 @@ public class PrefuseVisualization {
 	       d.addControlListener(new ZoomToFitControl());
 
 	        // -- 6. launch the visualization -------------------------------------
-	        
+	        NodeItem focus = (NodeItem) vg.getNode(0);
+	        PrefuseLib.setX(focus, null, 1000);
+	        PrefuseLib.setY(focus, null, 1000);
 	        // create a new window to hold the visualization
-	        JFrame frame = new JFrame("prefuse example");
-	        // ensure application exits when window is closed
+	       JFrame frame = new JFrame("prefuse example");
+	       frame.setBounds(800, 100, 1, 1);
+	            // ensure application exits when window is closed
 	        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	        frame.add(d);
 	        frame.pack();           // layout components in window
 	        frame.setVisible(true); // show the window
-	        
 	        // assign the colors
 	        vis.run("color");
 	        // start up the animated layout
 	        vis.run("layout");
+	        
+	        // Demonstrates dynamically adding nodes to the graph
+	        // scanner for user input
+	        Scanner read = new Scanner(System.in);
+	        System.out.println("Would you like to visualize more nodes?");
+	        String ans = read.next();
+	        
+	        if(ans.equals("yes")){
+	        	// for loop for great justice
+				for(int i = 0; i <40 ; i++){
+					// code to add the actual nodes
+					int aN = coAuthors.addNodeRow();
+					Node b = coAuthors.getNode(aN);
+					b.set("name", "Mr. Notkin");
+					coAuthors.addEdge(i%5, aN);
+				}
+			}
+	        vis.run("color");
+	        vis.run("layout");
+		        
 	    }
 }

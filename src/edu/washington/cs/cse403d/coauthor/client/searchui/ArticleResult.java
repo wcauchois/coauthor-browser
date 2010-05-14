@@ -1,47 +1,45 @@
-package edu.washington.cs.cse403d.coauthor.uiprototype;
+package edu.washington.cs.cse403d.coauthor.client.searchui;
 
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
-import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
+import edu.washington.cs.cse403d.coauthor.client.Services;
+import edu.washington.cs.cse403d.coauthor.client.browser.BrowserPage;
+import edu.washington.cs.cse403d.coauthor.client.utils.HyperLinkButton;
 import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
 
-
-/*
- * 
+/**
+ * Displays search result information about a publication, including a list
+ * of co-authors.
+ * @author Kevin Bang
  */
-public class ArticleSearchResults extends BrowserPage {
+public class ArticleResult extends BrowserPage {
 	private CoauthorDataServiceInterface CDSI =	Services.getCoauthorDataServiceInterface();
+	private String articleTitle;
 	private JLabel title;
 	private JPanel articleInfo;
 	private JPanel authorInfo;
 	private Publication publication;
 	private JPanel contentPane;
 	
-	public ArticleSearchResults(String query) {
+	public ArticleResult(String query) {
+		articleTitle = query;
 		try {
 			publication = CDSI.getPublication(query);
 		} catch (RemoteException e) {
@@ -81,8 +79,12 @@ public class ArticleSearchResults extends BrowserPage {
 		articleInfo.setVisible(true);
 		articleInfo.setLayout(new BoxLayout(articleInfo, BoxLayout.Y_AXIS));
 		
-		//Source
-		JLabel sourceLabel = new JLabel("Source:");
+		//Source. Will not be displayed if !hasJournal();
+		JLabel sourceLabel;
+		if(publication.hasJournal())
+			sourceLabel = new JLabel("Source:");
+		else
+			sourceLabel = new JLabel("Year:");
 		Font f = sourceLabel.getFont();
 		float s = sourceLabel.getFont().getSize2D();
 		s += 4.0f;
@@ -90,9 +92,13 @@ public class ArticleSearchResults extends BrowserPage {
 		articleInfo.add(sourceLabel);
 		articleInfo.add(new JSeparator(SwingConstants.HORIZONTAL));
 		
-		String source = publication.getJournal() + ", " + publication.getYear() 
+		String source;
+		if(publication.hasJournal())
+			source = publication.getJournal() + ", " + publication.getYear() 
 						+ ", Vol. "	+ publication.getVolume() + ", Number " 
 						+ publication.getNumber() + ", page " + publication.getPages();
+		else
+			source = publication.getYear().toString();
 		JLabel articleSource = new JLabel(source);
 		articleInfo.add(articleSource);
 		articleInfo.add(Box.createVerticalStrut(10));
@@ -106,7 +112,11 @@ public class ArticleSearchResults extends BrowserPage {
 		articleInfo.add(ISBNLabel);
 		articleInfo.add(new JSeparator(SwingConstants.HORIZONTAL));
 		
-		JLabel ISBN = new JLabel(publication.getIsbn());
+		JLabel ISBN;
+		if(publication.hasIsbn()) 
+			ISBN = new JLabel(publication.getIsbn());
+		else
+			ISBN = new JLabel("This article does not have ISBN");
 		articleInfo.add(ISBN);
 		articleInfo.add(Box.createVerticalStrut(10));
 		
@@ -119,12 +129,28 @@ public class ArticleSearchResults extends BrowserPage {
 		articleInfo.add(EELabel);
 		articleInfo.add(new JSeparator(SwingConstants.HORIZONTAL));
 		
-		JLabel EE;
+		final HyperLinkButton EE;
 		if(publication.getEe() == null)
-			EE = new JLabel("This article does not have an electronic edition");
-		else
-			EE = new JLabel(publication.getEe());
+			EE = new HyperLinkButton("This article does not have an electronic edition");
+		else {
+			EE = new HyperLinkButton(publication.getEe());
+			//Clipboard Access
+			EE.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
+					StringSelection data = new StringSelection(EE.getText());
+					Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+					clipboard.setContents(data, data);
+					showCopyNotice();
+				}
+			});
+		}
 		articleInfo.add(EE);
+	}
+	
+	private void showCopyNotice() {
+		JOptionPane.showMessageDialog(this,
+				"The URL has been copied to the clipboard.",
+				"Notice", JOptionPane.INFORMATION_MESSAGE);
 	}
 	
 	private void buildAuthorInfo() {
@@ -145,18 +171,27 @@ public class ArticleSearchResults extends BrowserPage {
 		//Add list of authors
 		int i = 0;
 		while (i < authors.size()) {
-			final JLabel author = new JLabel(authors.get(i));		
+			final HyperLinkButton author = new HyperLinkButton(authors.get(i));		
 			authorInfo.add(author);
-			author.addMouseListener(new MouseAdapter() {
-				public void mouseClicked(MouseEvent evt) {
+			author.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
 					List<String> list = new ArrayList<String>();
 					list.add(author.getText());
-					Services.getBrowser().go(new AuthorSearchResultsMain(list));
+					Services.getBrowser().go(new AuthorResult(list));
 				}
 			});
-			authorInfo.add(Box.createVerticalStrut(2));
+			authorInfo.add(Box.createVerticalStrut(3));
 			i++;
 		}		
 		authorInfo.add(Box.createVerticalStrut(10));
-	}	
+	}
+	
+	//Potentially TOO long...
+	public String getTitle() {
+		return articleTitle;
+	}
+	@SuppressWarnings("unchecked")
+	public Class[] getCrumbs() {
+		return new Class[] { SearchPage.class };
+	}
 }
