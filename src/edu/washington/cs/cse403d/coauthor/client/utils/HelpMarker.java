@@ -1,4 +1,4 @@
-package edu.washington.cs.cse403d.coauthor.uiprototype;
+package edu.washington.cs.cse403d.coauthor.client.utils;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -14,6 +14,9 @@ import javax.swing.Popup;
 import javax.swing.PopupFactory;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
+
+import edu.washington.cs.cse403d.coauthor.client.ResourceManager;
+import edu.washington.cs.cse403d.coauthor.client.Services;
 
 /**
  * This component displays a question mark which, when the user hovers over it,

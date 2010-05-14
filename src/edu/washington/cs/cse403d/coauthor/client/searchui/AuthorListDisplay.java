@@ -1,4 +1,4 @@
-package edu.washington.cs.cse403d.coauthor.uiprototype;
+package edu.washington.cs.cse403d.coauthor.client.searchui;
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -14,7 +14,11 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 
+import edu.washington.cs.cse403d.coauthor.client.Services;
 
+
+// XXX(wcauchois): this class doesn't seem to be referenced anywhere else --
+//                 what is it FOR?
 public class AuthorListDisplay extends JPanel{
 	private List<String> authorList;
 	private JPanel authorListPanel;
@@ -46,7 +50,7 @@ public class AuthorListDisplay extends JPanel{
 			public void mouseClicked(MouseEvent evt) {
 				List<String> list = new ArrayList<String>();
 				list.add(author.getText());
-				Services.getBrowser().go(new AuthorSearchResultsMain(list));
+				Services.getBrowser().go(new AuthorResult(list));
 			}
 		});
 		
@@ -74,10 +78,10 @@ public class AuthorListDisplay extends JPanel{
 				public void mouseClicked(MouseEvent evt) {
 					List<String> list = new ArrayList<String>();
 					list.add(coauthor.getText());
-					Services.getBrowser().go(new AuthorSearchResultsMain(list));
+					Services.getBrowser().go(new AuthorResult(list));
 				}
 			});
-			authorListPanel.add(Box.createVerticalStrut(2));
+			authorListPanel.add(Box.createVerticalStrut(3));
 			i++;
 		}
 	}	

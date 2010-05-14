@@ -1,10 +1,8 @@
-package edu.washington.cs.cse403d.coauthor.uiprototype;
+package edu.washington.cs.cse403d.coauthor.client.searchui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -12,37 +10,29 @@ import java.awt.event.MouseEvent;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
-import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+
+import edu.washington.cs.cse403d.coauthor.client.Services;
+import edu.washington.cs.cse403d.coauthor.client.utils.HyperLinkButton;
+import edu.washington.cs.cse403d.coauthor.client.utils.FilterPanel;
+import edu.washington.cs.cse403d.coauthor.client.utils.HelpMarker;
 
 
-/*
- * TODO: Make changes to the formatting. Helpmarker is not appearing correctly
- * 
- * 			Maybe gridbaglayout?
- * 
+/**
+ * Displays search result information about multiple authors.
+ * @author Kevin Bang
  */
-/*
-	 * This will produce the search result screen with single-entry
-	 * 	author search.
-	 */
-class AuthorSearchCoauthorResult extends JPanel implements ListSelectionListener{
+public class MultipleAuthorResult extends JPanel {
 	private edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface CDSI = 
 		Services.getCoauthorDataServiceInterface();
 	
@@ -56,7 +46,7 @@ class AuthorSearchCoauthorResult extends JPanel implements ListSelectionListener
 	/*
 	 * Constructor
 	 */
-	public AuthorSearchCoauthorResult(String author) {
+	public MultipleAuthorResult(String author) {
 		setLayout(new BorderLayout());
 		this.theAuthor = author;
 		singleEntryInitialize();
@@ -65,7 +55,7 @@ class AuthorSearchCoauthorResult extends JPanel implements ListSelectionListener
 	/*
 	 * If given list of authors
 	 */
-	public AuthorSearchCoauthorResult(List<String> authorList) {
+	public MultipleAuthorResult(List<String> authorList) {
 		setLayout(new BorderLayout());
 		this.theAuthor = authorList.get(0);
 		this.theAuthorList = authorList;
@@ -92,6 +82,10 @@ class AuthorSearchCoauthorResult extends JPanel implements ListSelectionListener
 		//Set up the co-author list
 		listModel = new DefaultListModel();
 		coauthorList = new JList(listModel);
+		
+		
+		String[] authorArray = new String[1];
+		authorArray[0] = theAuthor; 
 		try {
 			theAuthorList = CDSI.getCoauthors(theAuthor);
 		} catch (RemoteException e) {
@@ -100,7 +94,7 @@ class AuthorSearchCoauthorResult extends JPanel implements ListSelectionListener
 					"Error!",JOptionPane.ERROR_MESSAGE);
 		}			
 		buildCoauthorList();
-		add(new FilterPanel("Coauthor", listModel, CDSI, coauthorList, theAuthor), BorderLayout.PAGE_END);
+		add(new FilterPanel("Coauthor", listModel, CDSI, coauthorList, authorArray), BorderLayout.PAGE_END);
 	}
 	
 	private void multiEntryInitialize() {
@@ -120,7 +114,16 @@ class AuthorSearchCoauthorResult extends JPanel implements ListSelectionListener
 			buildListHelper();
 		else
 			buildListHelper2();
-		coauthorList.addListSelectionListener(this);
+		//coauthorList.addListSelectionListener(this);
+		coauthorList.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent evt) {
+				if(evt.getClickCount() == 2) {
+					String coauthor = (String)coauthorList.getSelectedValue();
+					Services.getBrowser().go(new AuthorResult(coauthor));
+				}
+			}
+		});
 		coauthorList.setLayoutOrientation(JList.VERTICAL);
 		coauthorList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);			
 		JScrollPane listScroller = new JScrollPane(coauthorList);
@@ -164,15 +167,15 @@ class AuthorSearchCoauthorResult extends JPanel implements ListSelectionListener
 		
 		multiEntryTop.add(new JSeparator(SwingConstants.HORIZONTAL));
 		
-		final JLabel author = new JLabel(theAuthor);		
+		final HyperLinkButton author = new HyperLinkButton(theAuthor);		
 		multiEntryTop.add(author);
-		author.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent evt) {
-				List<String> list = new ArrayList<String>();
-				list.add(author.getText());
-				Services.getBrowser().go(new AuthorSearchResultsMain(list));
-			}
-		});
+//		author.addActionListener(new ActionListener() {
+//				public void actionPerformed(ActionEvent evt) {
+//				List<String> list = new ArrayList<String>();
+//				list.add(author.getOriginalText());
+//				Services.getBrowser().go(new AuthorSearchResultsMain(list));
+//			}
+//		});
 		
 		multiEntryTop.add(Box.createVerticalStrut(10));
 		
@@ -192,20 +195,20 @@ class AuthorSearchCoauthorResult extends JPanel implements ListSelectionListener
 		int i = 1;
 		//implement an actionListner in here
 		while (i < theAuthorList.size()) {
-			final JLabel coauthor = new JLabel(theAuthorList.get(i));
+			final HyperLinkButton coauthor = new HyperLinkButton(theAuthorList.get(i));
 			multiEntryTop.add(coauthor);
-			coauthor.addMouseListener(new MouseAdapter() {
-				public void mouseClicked(MouseEvent evt) {
+			coauthor.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
 					List<String> list = new ArrayList<String>();
 					list.add(coauthor.getText());
-					Services.getBrowser().go(new AuthorSearchResultsMain(list));
+					Services.getBrowser().go(new AuthorResult(list));
 				}
 			});
-			multiEntryTop.add(Box.createVerticalStrut(2));
+			multiEntryTop.add(Box.createVerticalStrut(3));
 			i++;
 		}
 	}
-	
+	/*
 	public void valueChanged(ListSelectionEvent e) {
 		if (!e.getValueIsAdjusting()) {
 			String selection = (String) ((DefaultListModel) coauthorList.getModel())
@@ -217,5 +220,5 @@ class AuthorSearchCoauthorResult extends JPanel implements ListSelectionListener
 			//get the new browser
 			Services.getBrowser().go(new AuthorSearchResultsMain(author));
 		}		
-	}	
+	}*/
 }

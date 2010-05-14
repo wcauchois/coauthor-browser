@@ -1,4 +1,4 @@
-package edu.washington.cs.cse403d.coauthor.uiprototype;
+package edu.washington.cs.cse403d.coauthor.client.utils;
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -67,8 +67,13 @@ public abstract class SuggestionsField extends JTextField {
 
 			// Resize the suggestions pane to better fit its content (that is, if it
 			// has only a few items we make it smaller).
-			Rectangle bounds = list.getCellBounds(
-					0, list.getModel().getSize() - 1);
+			Rectangle bounds = null;
+			try {
+				bounds = list.getCellBounds(0, list.getModel().getSize() - 1);
+			} catch(ArrayIndexOutOfBoundsException e) {
+				// HACK(wcauchois): this was getting thrown randomly and I couldn't figure out why
+			}
+					
 			int preferredHeight = Math.min(DEFAULT_POPUP_HEIGHT,
 					(bounds != null) ? (bounds.height + 4) : Integer.MAX_VALUE);
 			listPane.setPreferredSize(new Dimension(
@@ -111,16 +116,26 @@ public abstract class SuggestionsField extends JTextField {
 				list.ensureIndexIsVisible(newIndex);
 			} else if(evt.getKeyCode() == KeyEvent.VK_ENTER) {
 				// Select a suggestion by pressing enter
-				if(popup != null && !list.isSelectionEmpty()) {
-					setText((String)list.getSelectedValue());
-					hideSuggestions();
-				}
+				if(popup != null) {
+					if(!list.isSelectionEmpty()) {
+						setText((String)list.getSelectedValue());
+						hideSuggestions();
+					}
+				} else
+					onSubmit();
 			} else if(evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
 				// Hide suggestions by pressing escape
 				hideSuggestions();
 			}
 		}
 	}
+	
+	/**
+	 * Called when the user presses enter (and the suggestions popup is not
+	 * visible). This could be used to, for example, submit a form when the
+	 * user hits enter.
+	 */
+	protected void onSubmit() { }
 	
 	public SuggestionsField() {
 		popupFactory = PopupFactory.getSharedInstance();

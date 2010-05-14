@@ -1,5 +1,6 @@
-package edu.washington.cs.cse403d.coauthor.uiprototype;
+package edu.washington.cs.cse403d.coauthor.client;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -12,6 +13,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
+import edu.washington.cs.cse403d.coauthor.client.browser.BrowserFrame;
+import edu.washington.cs.cse403d.coauthor.client.searchui.SearchPage;
 import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 
 /**
@@ -38,50 +41,33 @@ public class MainFrame extends BrowserFrame {
 		menu.setMnemonic(KeyEvent.VK_F);
 		menuBar.add(menu);
 		
-		menuItem = new JMenuItem("Start A New Search");
+		menuItem = new JMenuItem("New Search for Author");
 		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
+		menuItem.addActionListener(new ActionListener() {
+			@Override public void actionPerformed(ActionEvent e) {
+				MainFrame.this.go(new SearchPage(SearchPage.AUTHOR_SEARCH));
+			}
+		});
 		menu.add(menuItem);
 		
-		menu.addSeparator();
-		
-		menuItem = new JMenuItem("Save Current Search");
-		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ActionEvent.CTRL_MASK));
-		menu.add(menuItem);
-		
-		menu.addSeparator();
-		
-		menuItem = new JMenuItem("Load Saved Search");
-		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ActionEvent.CTRL_MASK));
-		menu.add(menuItem);
-		menuItem = new JMenuItem("Load Last Search");
-		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, ActionEvent.CTRL_MASK));
+		menuItem = new JMenuItem("New Search for Article");
+		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionEvent.CTRL_MASK));
+		menuItem.addActionListener(new ActionListener() {
+			@Override public void actionPerformed(ActionEvent e) {
+				MainFrame.this.go(new SearchPage(SearchPage.ARTICLE_SEARCH));
+			}
+		});
 		menu.add(menuItem);
 		
 		menu.addSeparator();
 		
 		menuItem = new JMenuItem("Quit");
+		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, ActionEvent.CTRL_MASK));
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				System.exit(1);
 			}
 		});
-		menu.add(menuItem);
-		
-
-		/************** Search **************/
-		menu = new JMenu("Search");
-		menu.setMnemonic(KeyEvent.VK_S);
-		menuBar.add(menu);
-		
-		menuItem = new JMenuItem("Author Search");
-		//need to add actionListner
-		
-		menu.add(menuItem);
-		
-		menuItem = new JMenuItem("Article Search");
-		menu.add(menuItem);
-		
-		menuItem = new JMenuItem("Graph Search");
 		menu.add(menuItem);
 		
 		/************** Tools **************/
@@ -92,6 +78,7 @@ public class MainFrame extends BrowserFrame {
 		menuItem = new JMenuItem("Preferences");
 		menu.add(menuItem);
 		
+		/*************** Help **************/
 		menu = new JMenu("Help");
 		menu.setMnemonic(KeyEvent.VK_H);
 		menuBar.add(menu);
@@ -103,8 +90,7 @@ public class MainFrame extends BrowserFrame {
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				JOptionPane.showMessageDialog(mainFrame, 
-						"Co-Author Browser v.0.9\n"
-						+ "by CTA Inc.",
+						"Author Network\nConstant Time Algorithms, Inc.",
 						"About",
 						JOptionPane.PLAIN_MESSAGE);
 			}
@@ -116,7 +102,7 @@ public class MainFrame extends BrowserFrame {
 	
 	private static final String HOSTNAME = "attu2.cs.washington.edu";
 	public MainFrame() {
-		super(new StartPage());
+		super(new SearchPage());
 		setTitle("Author Network");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setJMenuBar(createMenuBar());
@@ -130,11 +116,14 @@ public class MainFrame extends BrowserFrame {
 		} catch(Exception e) {
 			JOptionPane.showMessageDialog(null,
 				"Couldn't connect to data service (" + e.getMessage() + ")");
+			e.printStackTrace(System.err);
 			System.exit(1);
 		}
 		Services.provideResourceManager(new ResourceManager("/"));
 		MainFrame mainFrame = new MainFrame();
-		mainFrame.setSize(480, 600);
+		
+		//restrict resizing
+		mainFrame.setMinimumSize(new Dimension(480, 600));
 		mainFrame.setVisible(true);
 	}
 }

@@ -1,4 +1,4 @@
-package edu.washington.cs.cse403d.coauthor.uiprototype;	
+package edu.washington.cs.cse403d.coauthor.client.utils;	
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -21,8 +21,12 @@ import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 
 import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
@@ -32,7 +36,11 @@ import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
 	 * 
 	 * TODO: make the article panel work for the multi-author case
 	 */
-class FilterPanel extends JPanel implements ListSelectionListener {
+
+// XXX(wcauchois): this is a very leaky abstraction. the FilterPanel should
+//                 definitely not use the CDSI to populate its fields!
+
+public class FilterPanel extends JPanel implements ListSelectionListener {
 	private CoauthorDataServiceInterface CDSI;
 	private List<Publication> publications;
 	private List<String> coauthors;
@@ -44,11 +52,12 @@ class FilterPanel extends JPanel implements ListSelectionListener {
 	private String flag;
 	private JList list;
 	private String theAuthor;
+	private String[] authorArray;
 	
 	public FilterPanel(String flag, DefaultListModel defaultListModel,
-			CoauthorDataServiceInterface CDSI, JList list, String author) {
+			CoauthorDataServiceInterface CDSI, JList list, String[] authorArray) {
 		listModel = defaultListModel;
-		theAuthor = author;
+		theAuthor = authorArray[0];
 		this.flag = flag;
 		this.CDSI = CDSI;
 		this.list = list;
@@ -64,7 +73,7 @@ class FilterPanel extends JPanel implements ListSelectionListener {
 			}
 		} else {
 			try {
-				publications = CDSI.getPublicationsForAnyAuthor(theAuthor);
+				publications = CDSI.getPublicationsForAllAuthors(authorArray);
 			} catch (RemoteException e) {
 				JOptionPane.showMessageDialog(this,
 						"Um, this isn't really supposed to happen",
@@ -85,6 +94,9 @@ class FilterPanel extends JPanel implements ListSelectionListener {
 	 *return a new listModel with filtered results 
 	 */
 	private DefaultListModel getFilteredResult(String query) {
+		if (query == null)
+			return listModel;
+		
 		DefaultListModel filteredModel = new DefaultListModel();
 		CharSequence newQuery = (CharSequence) query.toLowerCase();
 		/*
@@ -138,7 +150,49 @@ class FilterPanel extends JPanel implements ListSelectionListener {
 		});
 		
 		filterQuery = new JTextField(10);
-		//filterQuery.setPreferredSize(new Dimension(200, filterQuery.getPreferredSize().height));
+		filterQuery.getDocument().addDocumentListener(new DocumentListener() { 
+			@Override
+			public void changedUpdate(DocumentEvent arg0) {
+				int length = filterQuery.getDocument().getLength();
+				String query = "";
+				try {
+					query = filterQuery.getDocument().getText(0, length);
+				} catch (BadLocationException e) {
+					// TODO Auto-generated catch block
+					System.out.println("String Fetch Failed");
+				}
+				list.setModel(getFilteredResult(query));
+			}
+
+			@Override
+			public void insertUpdate(DocumentEvent arg0) {
+				int length = filterQuery.getDocument().getLength();
+				String query = "";
+				try {
+					query = filterQuery.getDocument().getText(0, length);
+				} catch (BadLocationException e) {
+					// TODO Auto-generated catch block
+					System.out.println("String Fetch Failed");
+				}
+				list.setModel(getFilteredResult(query));
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent arg0) {
+				int length = filterQuery.getDocument().getLength();
+				String query = "";
+				try {
+					query = filterQuery.getDocument().getText(0, length);
+				} catch (BadLocationException e) {
+					// TODO Auto-generated catch block
+					System.out.println("String Fetch Failed");
+				}
+				list.setModel(getFilteredResult(query));
+			}			
+		});
+		
+		
+		
 		filterPanel.setLayout(new BoxLayout(filterPanel, BoxLayout.LINE_AXIS));
 		
 		filterPanel.add(filterQuery);
