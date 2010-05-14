@@ -8,7 +8,7 @@ import java.sql.SQLException;
 
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 
-import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
+import com.microsoft.sqlserver.jdbc.SQLServerConnectionPoolDataSource;
 import com.microsoft.sqlserver.jdbc.SQLServerException;
 
 import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
@@ -29,7 +29,7 @@ import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
  */
 public class CoauthorDataServiceMain {
 	private EmbeddedGraphDatabase graphDataSource;
-	private final SQLServerDataSource sqlServerDataSource;
+	private final SQLServerConnectionPoolDataSource sqlServerDataSource;
 	private Connection mainSqlConnection;
 
 	private String graphDbPath;
@@ -41,7 +41,7 @@ public class CoauthorDataServiceMain {
 	private Boolean noReg;
 
 	public CoauthorDataServiceMain() {
-		sqlServerDataSource = new SQLServerDataSource();
+		sqlServerDataSource = new SQLServerConnectionPoolDataSource();
 	}
 
 	public void run(String[] args) {

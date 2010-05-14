@@ -39,18 +39,18 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 	private final Connection sqlConnection;
 	private final EmbeddedGraphDatabase graphDb;
 
-	private PreparedStatement ps_queryAuthorFulltextSuggestions;
-	private PreparedStatement ps_queryAuthorsFulltext;
-	private PreparedStatement ps_getAuthor;
-	private PreparedStatement ps_getAuthorName;
-	private PreparedStatement ps_getCoauthors;
+	private PreparedStatementPool psp_queryAuthorFulltextSuggestions;
+	private PreparedStatementPool psp_queryAuthorsFulltext;
+	private PreparedStatementPool psp_getAuthor;
+	private PreparedStatementPool psp_getAuthorName;
+	private PreparedStatementPool psp_getCoauthors;
 
-	private PreparedStatement ps_queryPublicationsFulltext;
-	private PreparedStatement ps_queryPublicationsFulltextSuggestions;
-	private PreparedStatement ps_getPublication;
-	private PreparedStatement ps_getPublications;
+	private PreparedStatementPool psp_queryPublicationsFulltext;
+	private PreparedStatementPool psp_queryPublicationsFulltextSuggestions;
+	private PreparedStatementPool psp_getPublication;
+	private PreparedStatementPool psp_getPublications;
 
-	private PreparedStatement ps_getPublicationAuthors;
+	private PreparedStatementPool psp_getPublicationAuthors;
 
 	public CoauthorDataService(Connection sqlConnection, EmbeddedGraphDatabase graphDb) throws RemoteException,
 			SQLException {
@@ -65,30 +65,30 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 			logStream = System.out;
 		}
 
-		prepareStatements();
+		initPreparedStatementPools();
 	}
 
-	private void prepareStatements() throws SQLException {
-		ps_queryAuthorsFulltext = sqlConnection
-				.prepareStatement("SELECT [name] FROM [Authors] WHERE CONTAINS(name, ?) ORDER BY [name] ASC");
-		ps_queryPublicationsFulltext = sqlConnection
-				.prepareStatement("SELECT [title] FROM [Publications] WHERE CONTAINS(title, ?) ORDER BY [title] ASC");
-		ps_queryAuthorFulltextSuggestions = sqlConnection
-				.prepareStatement("SELECT TOP 50 [name] FROM [Authors] WHERE CONTAINS(name, ?)");
-		ps_queryPublicationsFulltextSuggestions = sqlConnection
-				.prepareStatement("SELECT TOP 50 [title] FROM [Publications] WHERE CONTAINS(title, ?)");
-		ps_getAuthor = sqlConnection.prepareStatement("SELECT [id] FROM [Authors] WHERE [name] = ?");
-		ps_getAuthorName = sqlConnection.prepareStatement("SELECT [name] FROM [Authors] WHERE [id] = ?");
-		ps_getCoauthors = sqlConnection.prepareStatement("(SELECT a.name "
+	private void initPreparedStatementPools() throws SQLException {
+		psp_queryAuthorsFulltext = new PreparedStatementPool(
+				"SELECT [name] FROM [Authors] WHERE CONTAINS(name, ?) ORDER BY [name] ASC", sqlConnection);
+		psp_queryPublicationsFulltext = new PreparedStatementPool(
+				"SELECT [title] FROM [Publications] WHERE CONTAINS(title, ?) ORDER BY [title] ASC", sqlConnection);
+		psp_queryAuthorFulltextSuggestions = new PreparedStatementPool(
+				"SELECT TOP 50 [name] FROM [Authors] WHERE CONTAINS(name, ?)", sqlConnection);
+		psp_queryPublicationsFulltextSuggestions = new PreparedStatementPool(
+				"SELECT TOP 50 [title] FROM [Publications] WHERE CONTAINS(title, ?)", sqlConnection);
+		psp_getAuthor = new PreparedStatementPool("SELECT [id] FROM [Authors] WHERE [name] = ?", sqlConnection);
+		psp_getAuthorName = new PreparedStatementPool("SELECT [name] FROM [Authors] WHERE [id] = ?", sqlConnection);
+		psp_getCoauthors = new PreparedStatementPool("(SELECT a.name "
 				+ "FROM [Authors] as a, [CoauthorRelations] as c " + "WHERE c.aid1 = ? AND c.aid2 = a.id) " + "UNION "
 				+ "(SELECT a.name " + "FROM [Authors] as a, [CoauthorRelations] as c "
-				+ "WHERE c.aid2 = ? AND c.aid1 = a.id)");
-
-		ps_getPublication = sqlConnection.prepareStatement("SELECT * FROM [Publications] WHERE title = ?");
-		ps_getPublications = sqlConnection.prepareStatement("SELECT * FROM [Publications] WHERE CONTAINS(title, ?)");
-
-		ps_getPublicationAuthors = sqlConnection
-				.prepareStatement("SELECT a.name FROM Authors AS a, PublicationAuthors AS pa WHERE pa.pid = ? AND pa.aid = a.id");
+				+ "WHERE c.aid2 = ? AND c.aid1 = a.id)", sqlConnection);
+		psp_getPublication = new PreparedStatementPool("SELECT * FROM [Publications] WHERE title = ?", sqlConnection);
+		psp_getPublications = new PreparedStatementPool("SELECT * FROM [Publications] WHERE CONTAINS(title, ?)",
+				sqlConnection);
+		psp_getPublicationAuthors = new PreparedStatementPool(
+				"SELECT a.name FROM Authors AS a, PublicationAuthors AS pa WHERE pa.pid = ? AND pa.aid = a.id",
+				sqlConnection);
 	}
 
 	private List<String> getPublicationAuthors(long publicationId) {
@@ -96,9 +96,10 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 
 		List<String> result = new ArrayList<String>();
 
+		PreparedStatement getPubs = psp_getPublicationAuthors.leasePreparedStatement();
 		try {
-			ps_getPublicationAuthors.setLong(1, publicationId);
-			ResultSet rs = ps_getPublicationAuthors.executeQuery();
+			getPubs.setLong(1, publicationId);
+			ResultSet rs = getPubs.executeQuery();
 
 			while (rs.next()) {
 				result.add(rs.getString(1));
@@ -106,6 +107,8 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 		} catch (SQLException e) {
 			e.printStackTrace(logStream);
 			throw new IllegalStateException("SQL Error: " + e.getLocalizedMessage() + " SQLSTATE: " + e.getSQLState());
+		} finally {
+			psp_getPublicationAuthors.returnPreparedStatement(getPubs);
 		}
 
 		return result;
@@ -117,26 +120,33 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 		}
 		logStream.println("getAuthorId(" + authorName + ")");
 
+		PreparedStatement getAuthor = psp_getAuthor.leasePreparedStatement();
 		try {
-			ps_getAuthor.setString(1, authorName);
-			ResultSet rs = ps_getAuthor.executeQuery();
+			synchronized (this) {
+				getAuthor.setString(1, authorName);
+				ResultSet rs = getAuthor.executeQuery();
 
-			if (!rs.next()) {
-				throw new IllegalStateException("No such author: " + authorName);
-			} else {
-				return rs.getLong(1);
+				if (!rs.next()) {
+					throw new IllegalStateException("No such author: " + authorName);
+				} else {
+					return rs.getLong(1);
+				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace(logStream);
 			throw new IllegalStateException("SQL Error: " + e.getLocalizedMessage() + " SQLSTATE: " + e.getSQLState());
+		} finally {
+			psp_getAuthor.returnPreparedStatement(getAuthor);
 		}
 	}
 
 	private String getAuthorName(long authorId) {
 		logStream.println("getAuthorName(" + authorId + ")");
+
+		PreparedStatement getAuthor = psp_getAuthorName.leasePreparedStatement();
 		try {
-			ps_getAuthorName.setLong(1, authorId);
-			ResultSet rs = ps_getAuthorName.executeQuery();
+			getAuthor.setLong(1, authorId);
+			ResultSet rs = getAuthor.executeQuery();
 
 			if (!rs.next()) {
 				throw new IllegalStateException("No such author for id: " + authorId);
@@ -146,6 +156,8 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 		} catch (SQLException e) {
 			e.printStackTrace(logStream);
 			throw new IllegalStateException("SQL Error: " + e.getLocalizedMessage() + " SQLSTATE: " + e.getSQLState());
+		} finally {
+			psp_getAuthorName.returnPreparedStatement(getAuthor);
 		}
 	}
 
@@ -186,17 +198,17 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 
 	@Override
 	public List<String> getAuthors(String searchQuery) throws RemoteException {
-		return getAuthorsHelper(searchQuery, ps_queryAuthorsFulltext);
+		return getAuthorsHelper(searchQuery, psp_queryAuthorsFulltext);
 	}
 
 	@Override
 	public List<String> getAuthorSuggestions(String searchQuery) throws RemoteException {
-		List<String> results = getAuthorsHelper(searchQuery, ps_queryAuthorFulltextSuggestions);
+		List<String> results = getAuthorsHelper(searchQuery, psp_queryAuthorFulltextSuggestions);
 		Collections.sort(results);
 		return results;
 	}
 
-	private List<String> getAuthorsHelper(String searchQuery, PreparedStatement preparedQuery) {
+	private List<String> getAuthorsHelper(String searchQuery, PreparedStatementPool psp_pool) {
 		if (searchQuery == null || searchQuery.isEmpty()) {
 			throw new IllegalArgumentException("Must provide a non-empty searchQuery");
 		}
@@ -215,9 +227,10 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 			containsParam.append('"' + queryParts[i] + " *\"");
 		}
 
+		PreparedStatement getAuthors = psp_pool.leasePreparedStatement();
 		try {
-			preparedQuery.setString(1, containsParam.toString());
-			ResultSet queryResults = preparedQuery.executeQuery();
+			getAuthors.setString(1, containsParam.toString());
+			ResultSet queryResults = getAuthors.executeQuery();
 
 			while (queryResults.next()) {
 				result.add(queryResults.getString(1));
@@ -225,6 +238,8 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 		} catch (SQLException e) {
 			e.printStackTrace(logStream);
 			throw new IllegalStateException("Error querying data service: " + e.getMessage());
+		} finally {
+			psp_pool.returnPreparedStatement(getAuthors);
 		}
 
 		return result;
@@ -239,17 +254,21 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 
 		List<String> result = new ArrayList<String>();
 
+		PreparedStatement getCoauthors = psp_getCoauthors.leasePreparedStatement();
 		try {
-			ps_getCoauthors.setLong(1, authorId);
-			ps_getCoauthors.setLong(2, authorId);
-			ResultSet queryResults = ps_getCoauthors.executeQuery();
+			getCoauthors.setLong(1, authorId);
+			getCoauthors.setLong(2, authorId);
+			ResultSet queryResults = getCoauthors.executeQuery();
 
 			while (queryResults.next()) {
 				result.add(queryResults.getString(1));
 			}
+			queryResults.close();
 		} catch (SQLException e) {
 			e.printStackTrace(logStream);
 			throw new IllegalStateException("Error querying data service: " + e.getMessage());
+		} finally {
+			psp_getCoauthors.returnPreparedStatement(getCoauthors);
 		}
 
 		Collections.sort(result);
@@ -416,7 +435,7 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 		return result;
 	}
 
-	private List<String> getPublicationTitlesHelper(String searchQuery, PreparedStatement preparedQuery) {
+	private List<String> getPublicationTitlesHelper(String searchQuery, PreparedStatementPool psp_pool) {
 		if (searchQuery == null || searchQuery.length() < 4) {
 			throw new IllegalArgumentException("The search query must be non-empty and atleast 4 characters");
 		}
@@ -435,28 +454,33 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 			containsParam.append('"' + queryParts[i] + " *\"");
 		}
 
+		PreparedStatement getPublicationTitles = psp_pool.leasePreparedStatement();
 		try {
-			preparedQuery.setString(1, containsParam.toString());
-			ResultSet queryResults = preparedQuery.executeQuery();
+			getPublicationTitles.setString(1, containsParam.toString());
+			ResultSet queryResults = getPublicationTitles.executeQuery();
 
 			while (queryResults.next()) {
 				result.add(queryResults.getString(1));
 			}
+			queryResults.close();
 		} catch (SQLException e) {
 			e.printStackTrace(logStream);
 			throw new IllegalStateException("Error querying data service: " + e.getMessage());
+		} finally {
+			psp_pool.returnPreparedStatement(getPublicationTitles);
 		}
 		return result;
 	}
 
 	@Override
 	public List<String> getPublicationTitles(String searchQuery) throws RemoteException {
-		return getPublicationTitlesHelper(searchQuery, ps_queryPublicationsFulltext);
+		List<String> result = getPublicationTitlesHelper(searchQuery, psp_queryPublicationsFulltext);
+		return result;
 	}
 
 	@Override
 	public List<String> getPublicationTitleSuggestions(String searchQuery) throws RemoteException {
-		List<String> results = getPublicationTitlesHelper(searchQuery, ps_queryPublicationsFulltextSuggestions);
+		List<String> results = getPublicationTitlesHelper(searchQuery, psp_queryPublicationsFulltextSuggestions);
 		Collections.sort(results);
 		return results;
 	}
@@ -469,9 +493,10 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 
 		logStream.println("getPublication(" + publicationTitle + ")");
 
+		PreparedStatement getPublication = psp_getPublication.leasePreparedStatement();
 		try {
-			ps_getPublication.setString(1, publicationTitle);
-			ResultSet queryResults = ps_getPublication.executeQuery();
+			getPublication.setString(1, publicationTitle);
+			ResultSet queryResults = getPublication.executeQuery();
 
 			while (queryResults.next()) {
 				return createPublicationFromCurrentResult(queryResults, true);
@@ -479,6 +504,8 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 		} catch (SQLException e) {
 			e.printStackTrace(logStream);
 			throw new IllegalStateException("Error querying data service: " + e.getMessage());
+		} finally {
+			psp_getPublication.returnPreparedStatement(getPublication);
 		}
 		throw new IllegalArgumentException("No publication exists in the database with title: " + publicationTitle);
 	}
@@ -503,9 +530,10 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 			containsParam.append('"' + queryParts[i] + "\"");
 		}
 
+		PreparedStatement getPublications = psp_getPublications.leasePreparedStatement();
 		try {
-			ps_getPublications.setString(1, containsParam.toString());
-			ResultSet queryResults = ps_getPublications.executeQuery();
+			getPublications.setString(1, containsParam.toString());
+			ResultSet queryResults = getPublications.executeQuery();
 
 			while (queryResults.next()) {
 				result.add(createPublicationFromCurrentResult(queryResults, true));
@@ -513,6 +541,8 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 		} catch (SQLException e) {
 			e.printStackTrace(logStream);
 			throw new IllegalStateException("Error querying data service: " + e.getMessage());
+		} finally {
+			psp_getPublications.returnPreparedStatement(getPublications);
 		}
 		return result;
 	}
