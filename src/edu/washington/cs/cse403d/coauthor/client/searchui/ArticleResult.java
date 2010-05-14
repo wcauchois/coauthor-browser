@@ -35,19 +35,31 @@ import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
 /**
  * Displays search result information about a publication, including a list
  * of co-authors.
+ * 
+ * Since many articles in the database does not have full publication data
+ * such as journal or ISBN, detailed information is given only when such info
+ * is available. 
+ * 
  * @author Kevin Bang
  */
 public class ArticleResult extends BrowserPage {
 	private CoauthorDataServiceInterface CDSI =	Services.getCoauthorDataServiceInterface();
 	private String articleTitle;
+	private Publication publication;
+	
+	//Fields needed to build the information
 	private JLabel title;
 	private JPanel articleInfo;
 	private JPanel authorInfo;
-	private Publication publication;
 	private JPanel contentPane;
 	private JList authorList;
 	private DefaultListModel listModel;
 	
+	/**
+	 * Constructor. 
+	 * 
+	 * @param query the article title
+	 */
 	public ArticleResult(String query) {
 		articleTitle = query;
 		try {
@@ -65,21 +77,24 @@ public class ArticleResult extends BrowserPage {
 		setLayout(new BorderLayout());
 		setPreferredSize(new Dimension(380, 400));
 		
-		
+		//Initialize the base container
 		contentPane = new JPanel();
 		contentPane.setVisible(true);
 		contentPane.setLayout(new BorderLayout());
 		
+		//Build components
 		buildTitle();
 		buildAuthorInfo();
 		buildArticleInfo();
 		
+		//Build Authors Label
 		JLabel authorLabel = new JLabel("Authors:");
 		Font f = authorLabel.getFont();
 		float s = authorLabel.getFont().getSize2D();
 		s += 4.0f;
 		authorLabel.setFont(f.deriveFont(s));		
 		
+		//Build top container which includes title and author label
 		JPanel topPart = new JPanel();
 		topPart.setLayout(new BoxLayout(topPart, BoxLayout.Y_AXIS));
 		topPart.add(title);
@@ -94,6 +109,10 @@ public class ArticleResult extends BrowserPage {
 		add(contentPane);
 	}
 	
+	/**
+	 * Internal helper method which builds the title component
+	 * of the result page
+	 */
 	private void buildTitle() {
 		title = new JLabel(publication.getTitle());
 		Font f = title.getFont();
@@ -102,6 +121,9 @@ public class ArticleResult extends BrowserPage {
 		title.setFont(f.deriveFont(s));
 	}
 	
+	/**
+	 * Internal helper method which builds article information.
+	 */
 	private void buildArticleInfo() {
 		articleInfo = new JPanel();
 		articleInfo.setVisible(true);
@@ -162,7 +184,8 @@ public class ArticleResult extends BrowserPage {
 			EE = new HyperLinkButton("This article does not have an electronic edition");
 		else {
 			EE = new HyperLinkButton(publication.getEe());
-			//Clipboard Access
+	
+			//Accesses the clipboard when URL is clicked
 			EE.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					StringSelection data = new StringSelection(EE.getText());
@@ -175,12 +198,9 @@ public class ArticleResult extends BrowserPage {
 		articleInfo.add(EE);
 	}
 	
-	private void showCopyNotice() {
-		JOptionPane.showMessageDialog(this,
-				"The URL has been copied to the clipboard.",
-				"Notice", JOptionPane.INFORMATION_MESSAGE);
-	}
-	
+	/**
+	 * Internal helper method which builds author list content panel
+	 */
 	private void buildAuthorInfo() {
 		authorInfo = new JPanel();
 		authorInfo.setVisible(true);
@@ -213,6 +233,9 @@ public class ArticleResult extends BrowserPage {
 		
 	}
 	
+	/**
+	 * Internal helper method that builds a JList containing author names
+	 */
 	private void buildList() {
 		listModel = new DefaultListModel();
 		List<String> list = publication.getAuthors();
@@ -223,9 +246,25 @@ public class ArticleResult extends BrowserPage {
 		}
 	}
 	
+	/**
+	 * Displays a notice message regarding clipboard interaction
+	 */
+	private void showCopyNotice() {
+		JOptionPane.showMessageDialog(this,
+				"The URL has been copied to the clipboard.",
+				"Notice", JOptionPane.INFORMATION_MESSAGE);
+	}
+	
+	/**
+	 * Returns the title of the page
+	 */
 	public String getTitle() {
 		return articleTitle;
 	}
+	
+	/**
+	 * Crumb Bar
+	 */
 	@SuppressWarnings("unchecked")
 	public Class[] getCrumbs() {
 		return new Class[] { SearchPage.class };

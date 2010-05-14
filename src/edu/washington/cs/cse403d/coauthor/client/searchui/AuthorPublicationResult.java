@@ -21,10 +21,10 @@ import edu.washington.cs.cse403d.coauthor.client.utils.FilterPanel;
 import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
 
 /**
- * Displays search result information about a single author. 
+ * In author search result, builds and displays publication data for the author.
  * @author Kevin Bang
  */
-class SingleAuthorResult extends JPanel {
+class AuthorPublicationResult extends JPanel {
 	private edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface CDSI = 
 		Services.getCoauthorDataServiceInterface();
 	
@@ -34,7 +34,7 @@ class SingleAuthorResult extends JPanel {
 	private List<Publication> publications;
 	private DefaultListModel listModel;
 	
-	public SingleAuthorResult(String author) {
+	public AuthorPublicationResult(String author) {
 		setLayout(new BorderLayout());
 		theAuthor = author;
 		singleEntryInitialize();
@@ -43,7 +43,7 @@ class SingleAuthorResult extends JPanel {
 	/*for multi-entry search 
 	 * 
 	 */
-	public SingleAuthorResult(List<String> authors) {
+	public AuthorPublicationResult(List<String> authors) {
 		setLayout(new BorderLayout());
 		theAuthor = authors.get(0);
 		authorList = authors;
