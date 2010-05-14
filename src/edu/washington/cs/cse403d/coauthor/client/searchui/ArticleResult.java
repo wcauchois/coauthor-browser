@@ -63,6 +63,7 @@ public class ArticleResult extends BrowserPage {
 	private void initialize() {
 		//Wrapping around does not work
 		setLayout(new BorderLayout());
+		setPreferredSize(new Dimension(380, 400));
 		
 		
 		contentPane = new JPanel();
