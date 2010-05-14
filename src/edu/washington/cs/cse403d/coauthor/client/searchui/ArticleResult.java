@@ -199,15 +199,15 @@ public class ArticleResult extends BrowserPage {
 			@Override
 			public void mouseClicked(MouseEvent evt) {
 				if(evt.getClickCount() == 2) {
-					String article = (String)authorList.getSelectedValue();
-					Services.getBrowser().go(new ArticleResult(article));
+					String author = (String)authorList.getSelectedValue();
+					Services.getBrowser().go(new AuthorResult(author));
 				}
 			}
 		});
 		authorList.setLayoutOrientation(JList.VERTICAL);
 		authorList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);			
 		JScrollPane listScroller = new JScrollPane(authorList);
-		listScroller.setPreferredSize(new Dimension(60, 120));
+		listScroller.setPreferredSize(new Dimension(60, 60));
 		authorInfo.add(listScroller);
 		authorInfo.add(Box.createVerticalStrut(10));
 		
