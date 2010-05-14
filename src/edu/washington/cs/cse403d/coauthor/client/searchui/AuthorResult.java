@@ -11,6 +11,8 @@ import edu.washington.cs.cse403d.coauthor.client.utils.StringUtils;
 /**
  * This page displays search results information for single or multiple
  * authors.
+ * 
+ * 
  * @author Kevin Bang
  */
 public class AuthorResult extends BrowserPage {
@@ -33,16 +35,16 @@ public class AuthorResult extends BrowserPage {
 		c.gridy = 0;
 		
 		if(queries.size() == 1) {
-			add(new MultipleAuthorResult(queries.get(0)), c);
+			add(new AuthorCoauthorResult(queries.get(0)), c);
 		} else
-			add(new MultipleAuthorResult(queries), c);
+			add(new AuthorCoauthorResult(queries), c);
 		
 		c.gridx = 0;
 		c.gridy = 1;
 		if(queries.size() == 1) 
-			add(new SingleAuthorResult(queries.get(0)), c);
+			add(new AuthorPublicationResult(queries.get(0)), c);
 		else
-			add(new SingleAuthorResult(queries), c);
+			add(new AuthorPublicationResult(queries), c);
 	}
 	
 	public String getTitle() {
