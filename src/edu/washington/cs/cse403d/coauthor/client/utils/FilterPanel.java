@@ -32,7 +32,8 @@ public class FilterPanel extends JPanel {
 	private List<Publication> publications;
 	private List<String> coauthors;
 	private DefaultListModel listModel;
-	private boolean filterFlag;
+	
+	private boolean filterFlag; //Decides whether to remove the default text or not
 	
 	private JTextField filterQuery;
 	private JPanel filterPanel;
@@ -41,11 +42,11 @@ public class FilterPanel extends JPanel {
 	
 	/**
 	 * Constructor
+	 * 
 	 * @param flag determines whether the filter is for coauthor or publications 
 	 * @param defaultListModel listModel of the list to be filtered
 	 * @param dataList list of data containing all the items in original list
 	 * @param list original JList to be filtered
-	 * @param authorArray 
 	 */
 	@SuppressWarnings("unchecked")
 	public FilterPanel(String flag, DefaultListModel defaultListModel,
@@ -65,7 +66,7 @@ public class FilterPanel extends JPanel {
 		add(filterPanel);
 	}
 	
-	/*
+	/**
 	 *return a new listModel with filtered results 
 	 */
 	private DefaultListModel getFilteredResult(String query) {
@@ -74,9 +75,8 @@ public class FilterPanel extends JPanel {
 		
 		DefaultListModel filteredModel = new DefaultListModel();
 		CharSequence newQuery = (CharSequence) query.toLowerCase();
-		/*
-		 * sequence to get the filtered results.
-		 */
+		
+		//sequence to get the filtered results.		
 		int i = 0;
 		int j = 0;
 		if (flag == "Pub") {
@@ -101,6 +101,9 @@ public class FilterPanel extends JPanel {
 		return filteredModel;		
 	}
 	
+	/**
+	 * Create the filter panel
+	 */
 	private void createFilterPanel() {
 		filterPanel = new JPanel();
 		filterPanel.setLayout(new BoxLayout(filterPanel, BoxLayout.X_AXIS));

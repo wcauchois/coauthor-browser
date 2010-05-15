@@ -31,13 +31,14 @@ import edu.washington.cs.cse403d.coauthor.client.utils.HelpMarker;
 
 /**
  * In author search, builds and displays coauthor data of the author
+ * 
  * @author Kevin Bang
  */
 class AuthorCoauthorResult extends JPanel {
 	private edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface CDSI = 
 		Services.getCoauthorDataServiceInterface();
 	
-	private String theAuthor; //the query(author name)
+	private String theAuthor;
 	private List<String> theAuthorList;
 	private DefaultListModel listModel;
 	private JList coauthorList;
@@ -46,7 +47,9 @@ class AuthorCoauthorResult extends JPanel {
 	private JPanel multiEntryTop;
 	
 	/**
-	 * Constructor
+	 * Constructor for single author search result screen
+	 * 
+	 * @param author the author that was entered as the query
 	 */
 	public AuthorCoauthorResult(String author) {
 		setVisible(true);
@@ -55,22 +58,28 @@ class AuthorCoauthorResult extends JPanel {
 		singleEntryInitialize();
 	}
 	
-	/*
-	 * If given list of authors
+	/**
+	 * Constructor for multi-entry author search result screen
+	 * 
+	 * @param authorList list of queries(author names)
 	 */
 	public AuthorCoauthorResult(List<String> authorList) {
+		setVisible(true);
 		setLayout(new BorderLayout());
 		this.theAuthor = authorList.get(0);
 		this.theAuthorList = authorList;
 		multiEntryInitialize();			
 	}
 	
+	/**
+	 * Internal helper method for single-author search result
+	 */
 	private void singleEntryInitialize() {
 		singleEntryTop = new JPanel();
 		singleEntryTop.setLayout(new BoxLayout(singleEntryTop, BoxLayout.Y_AXIS));
 		singleEntryTop.setVisible(true);	
 	
-		//The single entry query. Increase size
+		//Title
 		JLabel title = new JLabel("Results for: " + theAuthor);
 		Font f = title.getFont();
 		float s = title.getFont().getSize2D();
@@ -79,6 +88,7 @@ class AuthorCoauthorResult extends JPanel {
 		singleEntryTop.add(title);
 		singleEntryTop.add(Box.createRigidArea(new Dimension(0, 5)));
 		
+		//Coauthor list label
 		JLabel coauthors = new JLabel("Coauthors");
 		f = coauthors.getFont();
 		s = coauthors.getFont().getSize2D();
@@ -86,10 +96,9 @@ class AuthorCoauthorResult extends JPanel {
 		coauthors.setFont(f.deriveFont(s));
 		singleEntryTop.add(coauthors);
 		
-		//Set up the co-author list
+		//Coauthor list
 		listModel = new DefaultListModel();
 		coauthorList = new JList(listModel);
-		 
 		try {
 			theAuthorList = CDSI.getCoauthors(theAuthor);
 		} catch (RemoteException e) {
@@ -100,16 +109,20 @@ class AuthorCoauthorResult extends JPanel {
 		buildCoauthorList();
 		add(new FilterPanel("Coauthor", listModel, theAuthorList
 				, coauthorList));
-		
 		add(singleEntryTop, BorderLayout.PAGE_START);
 	}
 	
+	/**
+	 * Internal helper method for multi-entry coauthor search result
+	 */
 	private void multiEntryInitialize() {
-		setVisible(true);
 		multiEntryTopBuild();
 		add(multiEntryTop, BorderLayout.PAGE_START);
 	}	
 	
+	/**
+	 * Internal helper method for multiEntryInitialize()
+	 */
 	private void multiEntryTopBuild() {
 		multiEntryTop = new JPanel();
 		multiEntryTop.setLayout(new BoxLayout(multiEntryTop, BoxLayout.Y_AXIS));
@@ -129,6 +142,7 @@ class AuthorCoauthorResult extends JPanel {
 		multiEntryTop.add(author);		
 		multiEntryTop.add(Box.createVerticalStrut(10));
 		
+		//Coauthors
 		JLabel coauthor = new JLabel("Coauthors");
 		f = coauthor.getFont();
 		s = coauthor.getFont().getSize2D();
@@ -142,7 +156,7 @@ class AuthorCoauthorResult extends JPanel {
 	}
 	
 	/**
-	 * Builds the co-author list
+	 * Builds the co-author list for single author search result
 	 */
 	private void buildCoauthorList() {
 		if (theAuthor != null)
@@ -166,8 +180,9 @@ class AuthorCoauthorResult extends JPanel {
 		listScroller.setAlignmentX(Component.LEFT_ALIGNMENT);
 		singleEntryTop.add(listScroller);
 	}
-	/*
-	 * add author names to the JList
+	
+	/**
+	 * add author names to the JList, single author search case
 	 */
 	private void buildListHelper() {
 		int i = 0;			
@@ -177,8 +192,8 @@ class AuthorCoauthorResult extends JPanel {
 		}
 	}
 	
-	/*
-	 * for multi-entry query
+	/**
+	 * add author names to the JList, multi author search case
 	 */
 	private void buildListHelper2() {
 		int i = 1;
@@ -187,9 +202,12 @@ class AuthorCoauthorResult extends JPanel {
 			i++;
 		}
 	}
-	private void addCoauthors() {
-		int i = 1;
 	
+	/**
+	 * Create a formatted display of coauthors for multi author search result
+	 */
+	private void addCoauthors() {
+		int i = 1;	
 		while (i < theAuthorList.size()) {
 			final HyperLinkButton coauthor = new HyperLinkButton(theAuthorList.get(i));
 			multiEntryTop.add(coauthor);

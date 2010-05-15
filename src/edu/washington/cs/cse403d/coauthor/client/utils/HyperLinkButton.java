@@ -56,6 +56,7 @@ public class HyperLinkButton extends JLabel {
 	
 	/**
 	 * Constructor for when clickable format is not needed
+	 * 
 	 * @param text the text to display
 	 * @param bool additional arg just to distinguish this case
 	 */

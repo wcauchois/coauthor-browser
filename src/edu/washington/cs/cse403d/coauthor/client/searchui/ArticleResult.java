@@ -47,7 +47,7 @@ public class ArticleResult extends BrowserPage {
 	private String articleTitle;
 	private Publication publication;
 	
-	//Fields needed to build the information
+	//Fields needed to build the article information section
 	private JLabel title;
 	private JPanel articleInfo;
 	private JPanel authorInfo;
@@ -72,6 +72,9 @@ public class ArticleResult extends BrowserPage {
 		initialize();
 	}
 	
+	/**
+	 * Internal helper method for the constructor
+	 */
 	private void initialize() {
 		//Wrapping around does not work
 		setLayout(new BorderLayout());

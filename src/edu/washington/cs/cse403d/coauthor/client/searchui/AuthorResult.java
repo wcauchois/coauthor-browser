@@ -10,22 +10,33 @@ import edu.washington.cs.cse403d.coauthor.client.utils.StringUtils;
 
 /**
  * This page displays search results information for single or multiple
- * authors.
- * 
+ * authors. 
  * 
  * @author Kevin Bang
  */
 public class AuthorResult extends BrowserPage {
 	private List<String> queries;
 	
+	/**
+	 * Constructor for single author search case
+	 * @param singleAuthor the query
+	 */
 	public AuthorResult(String singleAuthor) {
 		this(Arrays.asList(singleAuthor));
 	}
+	
+	/**
+	 * Constructor for multi entry search case
+	 * @param queries
+	 */
 	public AuthorResult(List<String> queries) {
 		this.queries = queries;
 		initialize();				
 	}
 	
+	/**
+	 * Internal helper method
+	 */
 	private void initialize() {
 		this.setVisible(true);
 		setLayout(new GridBagLayout());
