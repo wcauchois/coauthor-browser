@@ -22,6 +22,7 @@ import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
 
 /**
  * In author search result, builds and displays publication data for the author.
+ * 
  * @author Kevin Bang
  */
 class AuthorPublicationResult extends JPanel {
@@ -34,14 +35,19 @@ class AuthorPublicationResult extends JPanel {
 	private List<Publication> publications;
 	private DefaultListModel listModel;
 	
+	/**
+	 * Constructor for a single author search
+	 * 
+	 * @param author the author name that was passed as the query
+	 */
 	public AuthorPublicationResult(String author) {
 		setLayout(new BorderLayout());
 		theAuthor = author;
 		singleEntryInitialize();
 	}
 	
-	/*for multi-entry search 
-	 * 
+	/**
+	 * constructor for multi-entry author search
 	 */
 	public AuthorPublicationResult(List<String> authors) {
 		setLayout(new BorderLayout());
@@ -50,12 +56,13 @@ class AuthorPublicationResult extends JPanel {
 		multiEntryInitialize();	
 	}
 
+	/**
+	 * Internal helper method for single author search information display
+	 */
 	private void singleEntryInitialize() {
 		setVisible(true);
 		
-		//TODO: create BoxLayout that contains Publication, 
-		//		help marker, and JSeperator.
-		//		Do this for every header
+		//Title
 		JLabel title = new JLabel("Publications");
 		Font f = title.getFont();
 		Float s = title.getFont().getSize2D();
@@ -63,12 +70,9 @@ class AuthorPublicationResult extends JPanel {
 		title.setFont(f.deriveFont(s));
 		add(title, BorderLayout.PAGE_START);
 		
+		//Build the list of publication
 		listModel = new DefaultListModel();
-		pubList = new JList(listModel);
-		
-		String[] authorArray = new String[1];
-		authorArray[0] = theAuthor;
-		
+		pubList = new JList(listModel);		
 		try {
 			publications = CDSI.getPublicationsForAnyAuthor(theAuthor);
 		} catch (RemoteException e) {
@@ -77,13 +81,19 @@ class AuthorPublicationResult extends JPanel {
 					"Error!",JOptionPane.ERROR_MESSAGE);
 		}
 		buildPubList();
+		
+		//Add the filter panel
 		add(new FilterPanel("Pub", listModel, publications
 				, pubList), BorderLayout.PAGE_END);
 	}
 	
+	/**
+	 * Internal helper method for multi-entry author search information display
+	 */
 	private void multiEntryInitialize() {
 		setVisible(true);
 		
+		//Title
 		JLabel title = new JLabel("Collaborations");
 		Font f = title.getFont();
 		Float s = title.getFont().getSize2D();
@@ -91,9 +101,11 @@ class AuthorPublicationResult extends JPanel {
 		title.setFont(f.deriveFont(s));
 		add(title, BorderLayout.PAGE_START);
 		
+		//Build the list of collaboration
 		listModel = new DefaultListModel();
 		pubList = new JList(listModel);
 		
+		//Build the list
 		int size = authorList.size();
 		String[] authorArray = new String[size];
 		for (int i = 0; i < size; i++) {
@@ -114,11 +126,19 @@ class AuthorPublicationResult extends JPanel {
 			buildPubList();
 			add(new FilterPanel("Pub", listModel, publications
 					, pubList), BorderLayout.PAGE_END);
-		}		
+		}
 	}	
 	
+	/**
+	 * Internal helper method that builds a scrollable list of publication 
+	 */
 	private void buildPubList() {
-		buildListHelper();
+		int i = 0;			
+		while (i < publications.size()){
+			listModel.add(i, publications.get(i).getTitle());
+				i++;
+		}
+		
 		pubList.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent evt) {
@@ -133,13 +153,5 @@ class AuthorPublicationResult extends JPanel {
 		JScrollPane listScroller = new JScrollPane(pubList);
 		listScroller.setPreferredSize(new Dimension(400, 120));
 		add(listScroller, BorderLayout.CENTER);			
-	}
-
-	private void buildListHelper() {
-		int i = 0;			
-		while (i < publications.size()){
-			listModel.add(i, publications.get(i).getTitle());
-				i++;
-			}
 	}
 }
