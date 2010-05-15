@@ -54,6 +54,14 @@ public class HyperLinkButton extends JLabel {
 		});
 	}
 	
+	/**
+	 * Constructor for when clickable format is not needed
+	 * @param text the text to display
+	 * @param bool additional arg just to distinguish this case
+	 */
+	public HyperLinkButton(String text, boolean bool) {
+		setText(text);
+	}
 	private List<ActionListener> listeners = new ArrayList<ActionListener>();
 	
 	/**

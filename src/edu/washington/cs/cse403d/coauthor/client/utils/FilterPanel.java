@@ -1,8 +1,5 @@
 package edu.washington.cs.cse403d.coauthor.client.utils;	
 
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -19,19 +16,18 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.text.BadLocationException;
 
 import edu.washington.cs.cse403d.coauthor.client.Services;
 import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
 
-	/*
-	 * Creates list of articles the author has worked on (as THE author)
-	 * 
-	 * TODO: make the article panel work for the multi-author case
-	 */
-
+/**
+ * Created a filter bar below the coauthor/publication list in
+ * the result screen.
+ * 
+ * @author Kevin Bang
+ *
+ */
 public class FilterPanel extends JPanel {
 	private List<Publication> publications;
 	private List<String> coauthors;
@@ -39,15 +35,21 @@ public class FilterPanel extends JPanel {
 	private boolean filterFlag;
 	
 	private JTextField filterQuery;
-	private JButton filterButton;
-	private JButton returnButton;
 	private JPanel filterPanel;
 	private String flag;
 	private JList list;
 	
+	/**
+	 * Constructor
+	 * @param flag determines whether the filter is for coauthor or publications 
+	 * @param defaultListModel listModel of the list to be filtered
+	 * @param dataList list of data containing all the items in original list
+	 * @param list original JList to be filtered
+	 * @param authorArray 
+	 */
 	@SuppressWarnings("unchecked")
 	public FilterPanel(String flag, DefaultListModel defaultListModel,
-			List dataList, JList list, String[] authorArray) {
+			List dataList, JList list) {
 		
 		filterFlag = false;
 		listModel = defaultListModel;
@@ -102,21 +104,6 @@ public class FilterPanel extends JPanel {
 	private void createFilterPanel() {
 		filterPanel = new JPanel();
 		filterPanel.setLayout(new BoxLayout(filterPanel, BoxLayout.X_AXIS));
-		/*
-		filterButton = new JButton("Filter");
-		filterButton.addActionListener(new ActionListener() { 
-				public void actionPerformed(ActionEvent evt) {
-					String query = filterQuery.getText();
-					list.setModel(getFilteredResult(query));			
-				}
-		});
-		
-		returnButton = new JButton("Return");
-		returnButton.addActionListener(new ActionListener() { 
-			public void actionPerformed(ActionEvent evt) {
-				list.setModel(listModel);			
-			}
-		});*/
 		
 		filterQuery = new JTextField(30);
 		
@@ -176,17 +163,16 @@ public class FilterPanel extends JPanel {
 		});
 		
 		
-		
-		
 		filterPanel.add(filterQuery);
 		filterPanel.add(Box.createHorizontalStrut(5));
-		//filterPanel.add(filterButton);
-		//filterPanel.add(Box.createHorizontalStrut(5));
 		filterPanel.add(new JSeparator(SwingConstants.VERTICAL));
 		filterPanel.add(Box.createHorizontalStrut(5));
-		filterPanel.add(new HelpMarker(Services.getResourceManager().
-				loadStrings("strings.xml").get("Filter.help")));
-		//filterPanel.add(returnButton);
+		if(flag == "Coauthor")
+			filterPanel.add(new HelpMarker(Services.getResourceManager().
+				loadStrings("strings.xml").get("CoauthorFilter.help")));
+		else
+			filterPanel.add(new HelpMarker(Services.getResourceManager().
+				loadStrings("strings.xml").get("PublicationFilter.help")));
 		filterPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
 	}
 }

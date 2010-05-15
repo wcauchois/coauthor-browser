@@ -181,7 +181,7 @@ public class ArticleResult extends BrowserPage {
 		
 		final HyperLinkButton EE;
 		if(publication.getEe() == null)
-			EE = new HyperLinkButton("This article does not have an electronic edition");
+			EE = new HyperLinkButton("This article does not have an electronic edition", false);
 		else {
 			EE = new HyperLinkButton(publication.getEe());
 	

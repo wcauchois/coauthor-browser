@@ -1,6 +1,7 @@
 package edu.washington.cs.cse403d.coauthor.client.searchui;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -41,12 +42,14 @@ class AuthorCoauthorResult extends JPanel {
 	private DefaultListModel listModel;
 	private JList coauthorList;
 	
+	private JPanel singleEntryTop;
 	private JPanel multiEntryTop;
 	
 	/**
 	 * Constructor
 	 */
 	public AuthorCoauthorResult(String author) {
+		setVisible(true);
 		setLayout(new BorderLayout());
 		this.theAuthor = author;
 		singleEntryInitialize();
@@ -63,29 +66,30 @@ class AuthorCoauthorResult extends JPanel {
 	}
 	
 	private void singleEntryInitialize() {
-		setVisible(true);			
-		
+		singleEntryTop = new JPanel();
+		singleEntryTop.setLayout(new BoxLayout(singleEntryTop, BoxLayout.Y_AXIS));
+		singleEntryTop.setVisible(true);	
+	
 		//The single entry query. Increase size
-		JLabel title = new JLabel(theAuthor);
+		JLabel title = new JLabel("Results for: " + theAuthor);
 		Font f = title.getFont();
 		float s = title.getFont().getSize2D();
-		s += 8.0f;
+		s += 10.0f;
 		title.setFont(f.deriveFont(s));
-				
-		add(title, BorderLayout.PAGE_START);		
+		singleEntryTop.add(title);
+		singleEntryTop.add(Box.createRigidArea(new Dimension(0, 5)));
 		
-		//HelpMarker not appearing right now.
-		add(new HelpMarker(
-				Services.getResourceManager().
-				loadStrings("strings.xml").get("AuthorSearchPane.help")), 
-				BorderLayout.PAGE_END);
+		JLabel coauthors = new JLabel("Coauthors");
+		f = coauthors.getFont();
+		s = coauthors.getFont().getSize2D();
+		s += 6.0f;
+		coauthors.setFont(f.deriveFont(s));
+		singleEntryTop.add(coauthors);
+		
 		//Set up the co-author list
 		listModel = new DefaultListModel();
 		coauthorList = new JList(listModel);
-		
-		
-		String[] authorArray = new String[1];
-		authorArray[0] = theAuthor; 
+		 
 		try {
 			theAuthorList = CDSI.getCoauthors(theAuthor);
 		} catch (RemoteException e) {
@@ -95,60 +99,16 @@ class AuthorCoauthorResult extends JPanel {
 		}			
 		buildCoauthorList();
 		add(new FilterPanel("Coauthor", listModel, theAuthorList
-				, coauthorList, authorArray), BorderLayout.PAGE_END);
+				, coauthorList));
+		
+		add(singleEntryTop, BorderLayout.PAGE_START);
 	}
 	
 	private void multiEntryInitialize() {
-		setVisible(true);			
+		setVisible(true);
 		multiEntryTopBuild();
 		add(multiEntryTop, BorderLayout.PAGE_START);
 	}	
-	
-	/**
-	 * Builds the co-author list
-	 */
-	private void buildCoauthorList() {
-		if (theAuthor != null)
-			buildListHelper();
-		else
-			buildListHelper2();
-		//coauthorList.addListSelectionListener(this);
-		coauthorList.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent evt) {
-				if(evt.getClickCount() == 2) {
-					String coauthor = (String)coauthorList.getSelectedValue();
-					Services.getBrowser().go(new AuthorResult(coauthor));
-				}
-			}
-		});
-		coauthorList.setLayoutOrientation(JList.VERTICAL);
-		coauthorList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);			
-		JScrollPane listScroller = new JScrollPane(coauthorList);
-		listScroller.setPreferredSize(new Dimension(230, 80));
-		add(listScroller, BorderLayout.CENTER);
-	}
-	/*
-	 * add author names to the JList
-	 */
-	private void buildListHelper() {
-		int i = 0;			
-		while (i < theAuthorList.size()){
-			listModel.add(i, theAuthorList.get(i));
-			i++;
-		}
-	}
-	
-	/*
-	 * for multi-entry query
-	 */
-	private void buildListHelper2() {
-		int i = 1;
-		while (i < theAuthorList.size()) {
-			listModel.add(i - 1, theAuthorList.get(i));
-			i++;
-		}
-	}
 	
 	private void multiEntryTopBuild() {
 		multiEntryTop = new JPanel();
@@ -181,6 +141,52 @@ class AuthorCoauthorResult extends JPanel {
 		multiEntryTop.add(Box.createVerticalStrut(10));
 	}
 	
+	/**
+	 * Builds the co-author list
+	 */
+	private void buildCoauthorList() {
+		if (theAuthor != null)
+			buildListHelper();
+		else
+			buildListHelper2();
+		//coauthorList.addListSelectionListener(this);
+		coauthorList.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent evt) {
+				if(evt.getClickCount() == 2) {
+					String coauthor = (String)coauthorList.getSelectedValue();
+					Services.getBrowser().go(new AuthorResult(coauthor));
+				}
+			}
+		});
+		coauthorList.setLayoutOrientation(JList.VERTICAL);
+		coauthorList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		coauthorList.setVisibleRowCount(5);
+		JScrollPane listScroller = new JScrollPane(coauthorList);
+		listScroller.setAlignmentX(Component.LEFT_ALIGNMENT);
+		singleEntryTop.add(listScroller);
+	}
+	/*
+	 * add author names to the JList
+	 */
+	private void buildListHelper() {
+		int i = 0;			
+		while (i < theAuthorList.size()){
+			listModel.add(i, theAuthorList.get(i));
+			i++;
+		}
+	}
+	
+	/*
+	 * for multi-entry query
+	 */
+	private void buildListHelper2() {
+		int i = 1;
+		while (i < theAuthorList.size()) {
+			listModel.add(i - 1, theAuthorList.get(i));
+			i++;
+		}
+	}
 	private void addCoauthors() {
 		int i = 1;
 	
