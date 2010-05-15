@@ -14,4 +14,16 @@
 		</ul>
 		<i>Tip:</i> Use suggestions (displayed while you are typing in a box below the text field) to make sure you enter the author's name correctly.
 	]]></string>
+
+	<string name="Filter.help"><![CDATA[
+		Type query in the box to search within the list above:
+		<ul>
+			<li>
+				Click on the box to remove help text and begin your search.
+			</li>
+			<li>
+				Remove all query you have entered to return to the original result.
+			</li>
+		</ul>
+	]]></string>
 </strings>
