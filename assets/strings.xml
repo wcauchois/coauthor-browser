@@ -15,15 +15,49 @@
 		<i>Tip:</i> Use suggestions (displayed while you are typing in a box below the text field) to make sure you enter the author's name correctly.
 	]]></string>
 
-	<string name="Filter.help"><![CDATA[
-		Type query in the box to search within the list above:
+	<string name="CoauthorFilter.help"><![CDATA[
+		This is a list of coauthors of the author you searched for. From this section, you can:
 		<ul>
 			<li>
-				Click on the box to remove help text and begin your search.
+				Perform a new search on a specific coauthor in the list. This is accomplished by double-clicking on the name of coauthor in the list.
 			</li>
+		
 			<li>
-				Remove all query you have entered to return to the original result.
+				Filter the list to find a specific coauthor in the list.
 			</li>
+				<ul>
+					<li>
+						Click on the filter box to remove help text and begin your search. 
+					</li>
+
+					<li>
+						Remove all query you have entered to return to the original result.
+					</li>
+
+				</ul>
+		</ul>
+	]]></string>
+
+	<string name="PublicationFilter.help"><![CDATA[
+		This is a list of publication of the author you searched for. From this section, you can:
+		<ul>
+			<li>
+				Perform a new search on a specific article in the list. This is accomplished by double-clicking on the article title in the list.
+			</li>
+		
+			<li>
+				Filter the list to find a specific article in the list.
+			</li>
+				<ul>
+					<li>
+						Click on the filter box to remove help text and begin your search. 
+					</li>
+
+					<li>
+						Remove all query you have entered to return to the original result.
+					</li>
+
+				</ul>
 		</ul>
 	]]></string>
 </strings>

@@ -59,7 +59,7 @@ class AuthorPublicationResult extends JPanel {
 		JLabel title = new JLabel("Publications");
 		Font f = title.getFont();
 		Float s = title.getFont().getSize2D();
-		s += 8.0f;
+		s += 6.0f;
 		title.setFont(f.deriveFont(s));
 		add(title, BorderLayout.PAGE_START);
 		
@@ -78,7 +78,7 @@ class AuthorPublicationResult extends JPanel {
 		}
 		buildPubList();
 		add(new FilterPanel("Pub", listModel, publications
-				, pubList, authorArray), BorderLayout.PAGE_END);
+				, pubList), BorderLayout.PAGE_END);
 	}
 	
 	private void multiEntryInitialize() {
@@ -113,7 +113,7 @@ class AuthorPublicationResult extends JPanel {
 		} else {
 			buildPubList();
 			add(new FilterPanel("Pub", listModel, publications
-					, pubList, authorArray), BorderLayout.PAGE_END);
+					, pubList), BorderLayout.PAGE_END);
 		}		
 	}	
 	
