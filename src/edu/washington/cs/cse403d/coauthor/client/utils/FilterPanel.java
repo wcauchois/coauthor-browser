@@ -1,7 +1,10 @@
 package edu.washington.cs.cse403d.coauthor.client.utils;	
 
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -19,6 +22,8 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.BadLocationException;
+
+import edu.washington.cs.cse403d.coauthor.client.Services;
 import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
 
 	/*
@@ -27,10 +32,11 @@ import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
 	 * TODO: make the article panel work for the multi-author case
 	 */
 
-public class FilterPanel extends JPanel implements ListSelectionListener {
+public class FilterPanel extends JPanel {
 	private List<Publication> publications;
 	private List<String> coauthors;
 	private DefaultListModel listModel;
+	private boolean filterFlag;
 	
 	private JTextField filterQuery;
 	private JButton filterButton;
@@ -42,6 +48,8 @@ public class FilterPanel extends JPanel implements ListSelectionListener {
 	@SuppressWarnings("unchecked")
 	public FilterPanel(String flag, DefaultListModel defaultListModel,
 			List dataList, JList list, String[] authorArray) {
+		
+		filterFlag = false;
 		listModel = defaultListModel;
 		this.flag = flag;
 		this.list = list;
@@ -51,12 +59,6 @@ public class FilterPanel extends JPanel implements ListSelectionListener {
 			coauthors = dataList;			
 		else
 			publications = dataList;		
-		createFilterPanel();
-		add(filterPanel);
-	}
-	
-	public FilterPanel() {
-		setVisible(true);
 		createFilterPanel();
 		add(filterPanel);
 	}
@@ -97,14 +99,10 @@ public class FilterPanel extends JPanel implements ListSelectionListener {
 		return filteredModel;		
 	}
 	
-	
-	public void valueChanged(ListSelectionEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}	
-	
 	private void createFilterPanel() {
 		filterPanel = new JPanel();
+		filterPanel.setLayout(new BoxLayout(filterPanel, BoxLayout.X_AXIS));
+		/*
 		filterButton = new JButton("Filter");
 		filterButton.addActionListener(new ActionListener() { 
 				public void actionPerformed(ActionEvent evt) {
@@ -118,61 +116,77 @@ public class FilterPanel extends JPanel implements ListSelectionListener {
 			public void actionPerformed(ActionEvent evt) {
 				list.setModel(listModel);			
 			}
+		});*/
+		
+		filterQuery = new JTextField(30);
+		
+		//Default message
+		String filterHelp = "Type query here to filter the result";		
+		filterQuery.setText(filterHelp);
+		
+		filterQuery.addMouseListener(new MouseAdapter () {
+			public void mouseClicked(MouseEvent evt) {
+				filterQuery.setText(null);
+				filterFlag = true;
+			}
 		});
 		
-		filterQuery = new JTextField(10);
 		filterQuery.getDocument().addDocumentListener(new DocumentListener() { 
 			@Override
 			public void changedUpdate(DocumentEvent arg0) {
 				int length = filterQuery.getDocument().getLength();
 				String query = "";
-				try {
-					query = filterQuery.getDocument().getText(0, length);
-				} catch (BadLocationException e) {
-					// TODO Auto-generated catch block
-					System.out.println("String Fetch Failed");
+				if (filterFlag) {
+					try {
+						query = filterQuery.getDocument().getText(0, length);
+					} catch (BadLocationException e) {
+						System.out.println("String Fetch Failed");
+					}
+					list.setModel(getFilteredResult(query));
 				}
-				list.setModel(getFilteredResult(query));
-			}
-
+				}
 			@Override
 			public void insertUpdate(DocumentEvent arg0) {
 				int length = filterQuery.getDocument().getLength();
 				String query = "";
-				try {
-					query = filterQuery.getDocument().getText(0, length);
-				} catch (BadLocationException e) {
-					// TODO Auto-generated catch block
-					System.out.println("String Fetch Failed");
+				if (filterFlag) {
+					try {
+						query = filterQuery.getDocument().getText(0, length);
+					} catch (BadLocationException e) {
+						// TODO Auto-generated catch block
+						System.out.println("String Fetch Failed");
+					}
+					list.setModel(getFilteredResult(query));
 				}
-				list.setModel(getFilteredResult(query));
 			}
-
 			@Override
 			public void removeUpdate(DocumentEvent arg0) {
 				int length = filterQuery.getDocument().getLength();
 				String query = "";
-				try {
-					query = filterQuery.getDocument().getText(0, length);
-				} catch (BadLocationException e) {
-					// TODO Auto-generated catch block
-					System.out.println("String Fetch Failed");
-				}
-				list.setModel(getFilteredResult(query));
-			}			
+				if (filterFlag) {
+					try {
+						query = filterQuery.getDocument().getText(0, length);
+					} catch (BadLocationException e) {
+						// TODO Auto-generated catch block
+						System.out.println("String Fetch Failed");
+					}
+					list.setModel(getFilteredResult(query));
+				}		
+			}
 		});
 		
 		
 		
-		filterPanel.setLayout(new BoxLayout(filterPanel, BoxLayout.LINE_AXIS));
 		
 		filterPanel.add(filterQuery);
 		filterPanel.add(Box.createHorizontalStrut(5));
-		filterPanel.add(filterButton);
-		filterPanel.add(Box.createHorizontalStrut(5));
+		//filterPanel.add(filterButton);
+		//filterPanel.add(Box.createHorizontalStrut(5));
 		filterPanel.add(new JSeparator(SwingConstants.VERTICAL));
 		filterPanel.add(Box.createHorizontalStrut(5));
-		filterPanel.add(returnButton);
+		filterPanel.add(new HelpMarker(Services.getResourceManager().
+				loadStrings("strings.xml").get("Filter.help")));
+		//filterPanel.add(returnButton);
 		filterPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
 	}
 }
