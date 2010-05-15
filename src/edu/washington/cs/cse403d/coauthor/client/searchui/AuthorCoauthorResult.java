@@ -29,24 +29,24 @@ import edu.washington.cs.cse403d.coauthor.client.utils.HelpMarker;
 
 
 /**
- * Displays search result information about multiple authors.
+ * In author search, builds and displays coauthor data of the author
  * @author Kevin Bang
  */
-public class MultipleAuthorResult extends JPanel {
+class AuthorCoauthorResult extends JPanel {
 	private edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface CDSI = 
 		Services.getCoauthorDataServiceInterface();
 	
 	private String theAuthor; //the query(author name)
 	private List<String> theAuthorList;
-	//private List<String> coauthors;
 	private DefaultListModel listModel;
 	private JList coauthorList;
 	
 	private JPanel multiEntryTop;
-	/*
+	
+	/**
 	 * Constructor
 	 */
-	public MultipleAuthorResult(String author) {
+	public AuthorCoauthorResult(String author) {
 		setLayout(new BorderLayout());
 		this.theAuthor = author;
 		singleEntryInitialize();
@@ -55,7 +55,7 @@ public class MultipleAuthorResult extends JPanel {
 	/*
 	 * If given list of authors
 	 */
-	public MultipleAuthorResult(List<String> authorList) {
+	public AuthorCoauthorResult(List<String> authorList) {
 		setLayout(new BorderLayout());
 		this.theAuthor = authorList.get(0);
 		this.theAuthorList = authorList;
