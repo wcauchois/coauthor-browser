@@ -1,4 +1,4 @@
-package edu.washington.cs.cse403d.coauthor.dataservice;
+package edu.washington.cs.cse403d.coauthor.dataservice.impl;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
@@ -20,6 +20,8 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.kernel.EmbeddedGraphDatabase;
 
 import edu.washington.cs.cse403d.coauthor.dataservice.datasources.dblp.Parse;
+import edu.washington.cs.cse403d.coauthor.dataservice.impl.asyn.GetAuthorId;
+import edu.washington.cs.cse403d.coauthor.dataservice.impl.asyn.GetAuthorName;
 import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 import edu.washington.cs.cse403d.coauthor.shared.model.PathLink;
 import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
@@ -41,7 +43,7 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 
 	private PreparedStatementPool psp_queryAuthorFulltextSuggestions;
 	private PreparedStatementPool psp_queryAuthorsFulltext;
-	private PreparedStatementPool psp_getAuthor;
+	private PreparedStatementPool psp_getAuthorId;
 	private PreparedStatementPool psp_getAuthorName;
 	private PreparedStatementPool psp_getCoauthors;
 
@@ -77,7 +79,7 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 				"SELECT TOP 50 [name] FROM [Authors] WHERE CONTAINS(name, ?)", sqlConnection);
 		psp_queryPublicationsFulltextSuggestions = new PreparedStatementPool(
 				"SELECT TOP 50 [title] FROM [Publications] WHERE CONTAINS(title, ?)", sqlConnection);
-		psp_getAuthor = new PreparedStatementPool("SELECT [id] FROM [Authors] WHERE [name] = ?", sqlConnection);
+		psp_getAuthorId = new PreparedStatementPool("SELECT [id] FROM [Authors] WHERE [name] = ?", sqlConnection);
 		psp_getAuthorName = new PreparedStatementPool("SELECT [name] FROM [Authors] WHERE [id] = ?", sqlConnection);
 		psp_getCoauthors = new PreparedStatementPool("(SELECT a.name "
 				+ "FROM [Authors] as a, [CoauthorRelations] as c " + "WHERE c.aid1 = ? AND c.aid2 = a.id) " + "UNION "
@@ -104,6 +106,7 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 			while (rs.next()) {
 				result.add(rs.getString(1));
 			}
+			rs.close();
 		} catch (SQLException e) {
 			e.printStackTrace(logStream);
 			throw new IllegalStateException("SQL Error: " + e.getLocalizedMessage() + " SQLSTATE: " + e.getSQLState());
@@ -112,53 +115,6 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 		}
 
 		return result;
-	}
-
-	private long getAuthorId(String authorName) {
-		if (authorName == null || authorName.isEmpty()) {
-			throw new IllegalArgumentException("Must provide a non-empty author name");
-		}
-		logStream.println("getAuthorId(" + authorName + ")");
-
-		PreparedStatement getAuthor = psp_getAuthor.leasePreparedStatement();
-		try {
-			synchronized (this) {
-				getAuthor.setString(1, authorName);
-				ResultSet rs = getAuthor.executeQuery();
-
-				if (!rs.next()) {
-					throw new IllegalStateException("No such author: " + authorName);
-				} else {
-					return rs.getLong(1);
-				}
-			}
-		} catch (SQLException e) {
-			e.printStackTrace(logStream);
-			throw new IllegalStateException("SQL Error: " + e.getLocalizedMessage() + " SQLSTATE: " + e.getSQLState());
-		} finally {
-			psp_getAuthor.returnPreparedStatement(getAuthor);
-		}
-	}
-
-	private String getAuthorName(long authorId) {
-		logStream.println("getAuthorName(" + authorId + ")");
-
-		PreparedStatement getAuthor = psp_getAuthorName.leasePreparedStatement();
-		try {
-			getAuthor.setLong(1, authorId);
-			ResultSet rs = getAuthor.executeQuery();
-
-			if (!rs.next()) {
-				throw new IllegalStateException("No such author for id: " + authorId);
-			} else {
-				return rs.getString(1);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace(logStream);
-			throw new IllegalStateException("SQL Error: " + e.getLocalizedMessage() + " SQLSTATE: " + e.getSQLState());
-		} finally {
-			psp_getAuthorName.returnPreparedStatement(getAuthor);
-		}
 	}
 
 	private Publication createPublicationFromCurrentResult(ResultSet results, boolean populateAuthors)
@@ -176,11 +132,22 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 	}
 
 	private void processPath(List<Node> nodeList, List<PathLink> resultPath, boolean populatePublications) {
+		GetAuthorName[] authorNameFetches = new GetAuthorName[nodeList.size()];
+
+		for (int i = 0; i < nodeList.size(); ++i) {
+			authorNameFetches[i] = new GetAuthorName(nodeList.get(i).getId(), psp_getAuthorName);
+		}
+
+		String[] authorNames = new String[nodeList.size()];
+		for (int i = 0; i < nodeList.size(); ++i) {
+			authorNames[i] = authorNameFetches[i].blockForResult();
+		}
+
 		long previousNodeId = nodeList.get(0).getId();
-		String previousNodeName = getAuthorName(previousNodeId);
+		String previousNodeName = authorNames[0];
 		for (int i = 1; i < nodeList.size(); ++i) {
 			long thisNodeId = nodeList.get(i).getId();
-			String thisNodeName = getAuthorName(thisNodeId);
+			String thisNodeName = authorNames[i];
 
 			PathLink thisLink;
 			if (populatePublications) {
@@ -235,6 +202,7 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 			while (queryResults.next()) {
 				result.add(queryResults.getString(1));
 			}
+			queryResults.close();
 		} catch (SQLException e) {
 			e.printStackTrace(logStream);
 			throw new IllegalStateException("Error querying data service: " + e.getMessage());
@@ -250,7 +218,8 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 		logStream.println("getCoauthors(" + author + ")");
 		// Checks parameter and ensure it exists in the database. If anything is
 		// wrong, exceptions are thrown
-		long authorId = getAuthorId(author);
+		GetAuthorId getAuthorId = new GetAuthorId(author, psp_getAuthorId);
+		long authorId = getAuthorId.blockForResult();
 
 		List<String> result = new ArrayList<String>();
 
@@ -279,8 +248,11 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 	public List<PathLink> getOneShortestPathBetweenAuthors(String authorA, String authorB, boolean populatePublications)
 			throws RemoteException {
 		logStream.println("getOneShortestPathBetweenAuthors(" + authorA + ", " + authorB + ")");
-		long authorAId = getAuthorId(authorA);
-		long authorBId = getAuthorId(authorB);
+
+		GetAuthorId getAuthorIdA = new GetAuthorId(authorA, psp_getAuthorId);
+		GetAuthorId getAuthorIdB = new GetAuthorId(authorB, psp_getAuthorId);
+		long authorAId = getAuthorIdA.blockForResult();
+		long authorBId = getAuthorIdB.blockForResult();
 
 		List<PathLink> result = new ArrayList<PathLink>();
 
@@ -299,7 +271,6 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 			}
 
 			processPath(results, result, populatePublications);
-
 		} catch (Exception e) {
 			e.printStackTrace(logStream);
 		} finally {
@@ -311,8 +282,11 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 	public List<List<PathLink>> getAllShortestPathsBetweenAuthors(String authorA, String authorB,
 			boolean populatePublications) throws RemoteException {
 		logStream.println("getAllShortestPathsBetweenAuthors(" + authorA + ", " + authorB + ")");
-		long authorAId = getAuthorId(authorA);
-		long authorBId = getAuthorId(authorB);
+
+		GetAuthorId getAuthorIdA = new GetAuthorId(authorA, psp_getAuthorId);
+		GetAuthorId getAuthorIdB = new GetAuthorId(authorB, psp_getAuthorId);
+		long authorAId = getAuthorIdA.blockForResult();
+		long authorBId = getAuthorIdB.blockForResult();
 
 		List<List<PathLink>> result = new ArrayList<List<PathLink>>();
 
@@ -351,11 +325,18 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 
 		logStream.println("getPublicationsForAllAuthors(" + Arrays.toString(authors) + ")");
 
+		GetAuthorId[] getAuthorIds = new GetAuthorId[authors.length];
+		for (int i = 0; i < authors.length; ++i) {
+			// Checks parameters and ensure each author exists in the database.
+			// If anything is wrong, exceptions are thrown
+			getAuthorIds[i] = new GetAuthorId(authors[i], psp_getAuthorId);
+		}
+
 		long[] authorIds = new long[authors.length];
 		for (int i = 0; i < authors.length; ++i) {
 			// Checks parameters and ensure each author exists in the database.
 			// If anything is wrong, exceptions are thrown
-			authorIds[i] = getAuthorId(authors[i]);
+			authorIds[i] = getAuthorIds[i].blockForResult();
 		}
 
 		return getPublicationsForAllAuthors(authorIds);
@@ -392,6 +373,7 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 			while (results.next()) {
 				result.add(createPublicationFromCurrentResult(results, false));
 			}
+			results.close();
 		} catch (SQLException e) {
 			e.printStackTrace(logStream);
 			throw new IllegalStateException("SQL Error: " + e.getLocalizedMessage() + " SQLSTATE: " + e.getSQLState());
@@ -408,12 +390,20 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 
 		logStream.println("getPublicationsForAnyAuthor(" + Arrays.toString(authors) + ")");
 
+		GetAuthorId[] getAuthorIds = new GetAuthorId[authors.length];
+		for (int i = 0; i < authors.length; ++i) {
+			// Checks parameters and ensure each author exists in the database.
+			// If anything is wrong, exceptions are thrown
+			getAuthorIds[i] = new GetAuthorId(authors[i], psp_getAuthorId);
+		}
+
 		long[] authorIds = new long[authors.length];
 		for (int i = 0; i < authors.length; ++i) {
 			// Checks parameters and ensure each author exists in the database.
 			// If anything is wrong, exceptions are thrown
-			authorIds[i] = getAuthorId(authors[i]);
+			authorIds[i] = getAuthorIds[i].blockForResult();
 		}
+
 		String paramString = Arrays.toString(authorIds);
 
 		List<Publication> result = new ArrayList<Publication>();
@@ -427,6 +417,7 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 			while (results.next()) {
 				result.add(createPublicationFromCurrentResult(results, false));
 			}
+			results.close();
 		} catch (SQLException e) {
 			e.printStackTrace(logStream);
 			throw new IllegalStateException("SQL Error: " + e.getLocalizedMessage() + " SQLSTATE: " + e.getSQLState());
@@ -493,21 +484,27 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 
 		logStream.println("getPublication(" + publicationTitle + ")");
 
+		Publication result = null;
+
 		PreparedStatement getPublication = psp_getPublication.leasePreparedStatement();
 		try {
 			getPublication.setString(1, publicationTitle);
 			ResultSet queryResults = getPublication.executeQuery();
 
-			while (queryResults.next()) {
-				return createPublicationFromCurrentResult(queryResults, true);
+			if (!queryResults.next()) {
+				throw new IllegalArgumentException("No publication exists in the database with title: "
+						+ publicationTitle);
+			} else {
+				result = createPublicationFromCurrentResult(queryResults, true);
 			}
+			queryResults.close();
 		} catch (SQLException e) {
 			e.printStackTrace(logStream);
 			throw new IllegalStateException("Error querying data service: " + e.getMessage());
 		} finally {
 			psp_getPublication.returnPreparedStatement(getPublication);
 		}
-		throw new IllegalArgumentException("No publication exists in the database with title: " + publicationTitle);
+		return result;
 	}
 
 	@Override
@@ -538,6 +535,7 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 			while (queryResults.next()) {
 				result.add(createPublicationFromCurrentResult(queryResults, true));
 			}
+			queryResults.close();
 		} catch (SQLException e) {
 			e.printStackTrace(logStream);
 			throw new IllegalStateException("Error querying data service: " + e.getMessage());

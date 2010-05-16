@@ -1,4 +1,4 @@
-package edu.washington.cs.cse403d.coauthor.dataservice;
+package edu.washington.cs.cse403d.coauthor.dataservice.impl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -107,6 +107,7 @@ public class PreparedStatementPool {
 		}
 		try {
 			if (ps.isClosed()) {
+				currentPoolSize--;
 				throw new IllegalStateException("NEVER CLOSE YOUR PreparedStatements!!!");
 			} else {
 				queue.offer(ps);
