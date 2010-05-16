@@ -100,7 +100,7 @@ public class MainFrame extends BrowserFrame {
 		return menuBar;
 	}
 	
-	private static final String HOSTNAME = "attu2.cs.washington.edu";
+	 private static final String HOSTNAME = "attu2.cs.washington.edu";
 	public MainFrame() {
 		super(new SearchPage());
 		setTitle("Author Network");
