@@ -20,6 +20,7 @@ import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
  */
 public class ExampleCoauthorDataClient {
 	public static final String HOSTNAME = "attu2.cs.washington.edu";
+//	public static final String HOSTNAME = "localhost";
 
 	public static void main(String[] args) {
 		final CoauthorDataServiceInterface c;
@@ -33,43 +34,43 @@ public class ExampleCoauthorDataClient {
 
 		final long start = System.currentTimeMillis();
 
-		new Thread() {
-			@Override
-			public void run() {
-				try {
-					System.out.println(c
-							.getPublication("Zone-based virtual backbone formation in wireless ad hoc networks"));
-					System.out.println((System.currentTimeMillis() - start));
-				} catch (RemoteException e) {
-					e.printStackTrace();
-				}
-			}
-		}.start();
-
-		new Thread() {
-			@Override
-			public void run() {
-				try {
-					System.out.println(printPubList(c
-							.getPublications("Zone-based virtual backbone formation wireless ad hoc networks")));
-					System.out.println((System.currentTimeMillis() - start));
-				} catch (RemoteException e) {
-					e.printStackTrace();
-				}
-			}
-		}.start();
-
-		new Thread() {
-			@Override
-			public void run() {
-				try {
-					System.out.println(c.getAuthors("Thomas E. Anderson"));
-					System.out.println((System.currentTimeMillis() - start));
-				} catch (RemoteException e) {
-					e.printStackTrace();
-				}
-			}
-		}.start();
+//		new Thread() {
+//			@Override
+//			public void run() {
+//				try {
+//					System.out.println(c
+//							.getPublication("Zone-based virtual backbone formation in wireless ad hoc networks"));
+//					System.out.println((System.currentTimeMillis() - start));
+//				} catch (RemoteException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		}.start();
+//
+//		new Thread() {
+//			@Override
+//			public void run() {
+//				try {
+//					System.out.println(printPubList(c
+//							.getPublications("Zone-based virtual backbone formation wireless ad hoc networks")));
+//					System.out.println((System.currentTimeMillis() - start));
+//				} catch (RemoteException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		}.start();
+//
+//		new Thread() {
+//			@Override
+//			public void run() {
+//				try {
+//					System.out.println(c.getAuthors("Thomas E. Anderson"));
+//					System.out.println((System.currentTimeMillis() - start));
+//				} catch (RemoteException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		}.start();
 
 		new Thread() {
 			@Override
@@ -95,67 +96,67 @@ public class ExampleCoauthorDataClient {
 			}
 		}.start();
 
-		new Thread() {
-			@Override
-			public void run() {
-				try {
-					System.out.println(printPubList(c.getPublicationsForAllAuthors("Brian N. Bershad",
-							"Edward D. Lazowska", "Henry M. Levy", "Thomas E. Anderson")));
-					System.out.println((System.currentTimeMillis() - start));
-				} catch (RemoteException e) {
-					e.printStackTrace();
-				}
-			}
-		}.start();
-
-		new Thread() {
-			@Override
-			public void run() {
-				try {
-					System.out.println(printPubList(c.getPublicationsForAnyAuthor("Brian N. Bershad",
-							"Edward D. Lazowska", "Henry M. Levy", "Thomas E. Anderson")));
-					System.out.println((System.currentTimeMillis() - start));
-				} catch (RemoteException e) {
-					e.printStackTrace();
-				}
-			}
-		}.start();
-
-		new Thread() {
-			@Override
-			public void run() {
-				try {
-					System.out.println(c.getPublicationTitleSuggestions("Wireless Networks"));
-					System.out.println((System.currentTimeMillis() - start));
-				} catch (RemoteException e) {
-					e.printStackTrace();
-				}
-			}
-		}.start();
-
-		new Thread() {
-			@Override
-			public void run() {
-				try {
-					System.out.println(c.getOneShortestPathBetweenAuthors("Brian N. Bershad", "David D. Clark", false));
-					System.out.println((System.currentTimeMillis() - start));
-				} catch (RemoteException e) {
-					e.printStackTrace();
-				}
-			}
-		}.start();
-
-		new Thread() {
-			@Override
-			public void run() {
-				try {
-					System.out.println(c.getOneShortestPathBetweenAuthors("Brian N. Bershad", "David D. Clark", true));
-					System.out.println((System.currentTimeMillis() - start));
-				} catch (RemoteException e) {
-					e.printStackTrace();
-				}
-			}
-		}.start();
+//		new Thread() {
+//			@Override
+//			public void run() {
+//				try {
+//					System.out.println(printPubList(c.getPublicationsForAllAuthors("Brian N. Bershad",
+//							"Edward D. Lazowska", "Henry M. Levy", "Thomas E. Anderson")));
+//					System.out.println((System.currentTimeMillis() - start));
+//				} catch (RemoteException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		}.start();
+//
+//		new Thread() {
+//			@Override
+//			public void run() {
+//				try {
+//					System.out.println(printPubList(c.getPublicationsForAnyAuthor("Brian N. Bershad",
+//							"Edward D. Lazowska", "Henry M. Levy", "Thomas E. Anderson")));
+//					System.out.println((System.currentTimeMillis() - start));
+//				} catch (RemoteException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		}.start();
+//
+//		new Thread() {
+//			@Override
+//			public void run() {
+//				try {
+//					System.out.println(c.getPublicationTitleSuggestions("Wireless Networks"));
+//					System.out.println((System.currentTimeMillis() - start));
+//				} catch (RemoteException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		}.start();
+//
+//		new Thread() {
+//			@Override
+//			public void run() {
+//				try {
+//					System.out.println(c.getOneShortestPathBetweenAuthors("Brian N. Bershad", "David D. Clark", false));
+//					System.out.println((System.currentTimeMillis() - start));
+//				} catch (RemoteException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		}.start();
+//
+//		new Thread() {
+//			@Override
+//			public void run() {
+//				try {
+//					System.out.println(c.getOneShortestPathBetweenAuthors("Brian N. Bershad", "David D. Clark", true));
+//					System.out.println((System.currentTimeMillis() - start));
+//				} catch (RemoteException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		}.start();
 	}
 
 	private static String printPubList(List<Publication> pubs) {
