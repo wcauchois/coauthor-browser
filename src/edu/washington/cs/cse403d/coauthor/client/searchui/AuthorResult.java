@@ -19,6 +19,7 @@ public class AuthorResult extends BrowserPage {
 	
 	/**
 	 * Constructor for single author search case
+	 * 
 	 * @param singleAuthor the query
 	 */
 	public AuthorResult(String singleAuthor) {
@@ -27,6 +28,7 @@ public class AuthorResult extends BrowserPage {
 	
 	/**
 	 * Constructor for multi entry search case
+	 * 
 	 * @param queries
 	 */
 	public AuthorResult(List<String> queries) {
