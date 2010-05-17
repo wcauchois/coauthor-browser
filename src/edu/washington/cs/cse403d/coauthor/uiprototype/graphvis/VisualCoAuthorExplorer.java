@@ -55,6 +55,7 @@ public class VisualCoAuthorExplorer {
 	private Graph coAuthors;
 	private Visualization colorLayoutVis;
 	private Display dispCtrls;
+	public String name;
 	
 
 	
@@ -66,10 +67,10 @@ public class VisualCoAuthorExplorer {
 	public VisualCoAuthorExplorer(String authorName){
 		
 
-		graphInit("Marty Stepp");
+		graphInit(authorName);
 		visualizationInit(coAuthors);
 		displayInit(this.colorLayoutVis);
-		
+		name = authorName;
     }
 	
 	
@@ -269,6 +270,7 @@ public class VisualCoAuthorExplorer {
         Control nodeClicked = new ControlAdapter(){
         	public void itemClicked(VisualItem item, MouseEvent e ){
         		String clickedOn = item.getString("name");
+        		name = clickedOn;
         		System.out.println(clickedOn);
         		addCoAuthors(clickedOn);
            	}
