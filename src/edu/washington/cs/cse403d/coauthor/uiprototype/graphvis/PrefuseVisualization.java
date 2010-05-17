@@ -52,24 +52,15 @@ public class PrefuseVisualization {
 	
 	public static void main(String[] args) {
 		String s = "Marty Stepp";
+		String cur = "";
 		VisualCoAuthorExplorer vx = new VisualCoAuthorExplorer(s);
 		// create a new window to hold the visualization
 		JFrame frame = new JFrame("prefuse example");
-		frame.setBounds(800, 100, 1, 1);
-	    // ensure application exits when window is closed
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.add(vx.getDisplay());
-		frame.pack();           // layout components in window
-		frame.setVisible(true); // show the window
-
-		vx.updateVis();
 		
-		String cur = "";
 		while(true)
 		{
 			if (!cur.equals(s))
 			{
-				System.out.println("here");
 				frame.remove(vx.getDisplay());
 				vx = new VisualCoAuthorExplorer(s);
 				// create a new window to hold the visualization
