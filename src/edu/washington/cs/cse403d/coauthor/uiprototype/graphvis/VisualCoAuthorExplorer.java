@@ -6,6 +6,7 @@ package edu.washington.cs.cse403d.coauthor.uiprototype.graphvis;
 	import java.rmi.Naming;
 	import java.rmi.RemoteException;
 	import java.util.ArrayList;
+import java.util.Iterator;
 	import java.util.List;
 	import java.util.Locale;
 	import java.util.Scanner;
@@ -41,7 +42,7 @@ package edu.washington.cs.cse403d.coauthor.uiprototype.graphvis;
 	import prefuse.util.PrefuseLib;
 	import prefuse.visual.NodeItem;
 	import prefuse.visual.VisualGraph;
-	import prefuse.visual.VisualItem;
+import prefuse.visual.VisualItem;
 
 /**
  * 
@@ -117,9 +118,42 @@ public class VisualCoAuthorExplorer {
 	 */
 	private void addCoAuthors(String authorName){
 		
+		
 		List<String> moreAuthors = getCoAuthorList(authorName);        
 		
-		System.out.println(moreAuthors);
+		// find the node of the searched for author
+		Iterator authItr = this.coAuthors.nodes();
+		Node clickedOn = null;
+		while(authItr.hasNext()){
+			Node current = (Node) authItr.next();
+			if(current.get("name").equals(authorName)){
+				clickedOn = current;
+				System.out.println("Author node found! ID is: " + clickedOn.getRow());
+			}
+		}
+		
+		// look for returned authors already in the graph; remove all authors already in
+		// the graph from the search results
+		authItr = this.coAuthors.nodes();
+		while(authItr.hasNext()){
+			Node current = (Node) authItr.next();
+			if(moreAuthors.contains(current.get("name"))){ // the graph already contains a node for one of the returned coauthors 
+				this.coAuthors.addEdge(clickedOn, current);	// add an edge between the clicked-on node and the coauthor node it has in the graph
+				moreAuthors.remove(current.get("name"));
+			}
+		}
+		
+		// add nodes for all query-returned co-authors that were not originally in the graph
+		Iterator coAuItr = moreAuthors.iterator();
+		while(coAuItr.hasNext()){
+			String current = (String) coAuItr.next();
+			Node added = this.coAuthors.addNode();
+			added.set("name", current);
+			this.coAuthors.addEdge(clickedOn, added);
+		}
+		
+		this.updateVis();
+//		System.out.println(moreAuthors);
 	}
 	
 	
@@ -139,7 +173,7 @@ public class VisualCoAuthorExplorer {
 			return null;
 		}
     	
-		String centerNode = authorName; // CHANGE THIS VARIABLE TO CHANGE THE SEARCH/VISUALIZATION RESULTS
+		String centerNode = authorName; 
 		List<String> coAu = null;
 		try{
 			coAu = c.getCoauthors(centerNode);
@@ -163,7 +197,8 @@ public class VisualCoAuthorExplorer {
 		List<String> coAu = getCoAuthorList(authorName);
 		Table nodes = new Table();
 		nodes.addColumn("name", String.class);
-
+		
+		System.out.println("Number of Authors returned: " + coAu.size());
 		// table of edges; source and target refer to row index in the table of
 		// nodes
 		Table e = new Table();
@@ -171,8 +206,6 @@ public class VisualCoAuthorExplorer {
 		e.addColumn("source", int.class);
 		e.addColumn("target", int.class);
 		
-//			System.out.println(e.getSchema());
-	  	
 		// Add Searched-for author to table of Nodes
 		nodes.addRow();
 		nodes.setString(0,"name",centerNode); 
@@ -219,8 +252,7 @@ public class VisualCoAuthorExplorer {
 	    vis.setRendererFactory(new DefaultRendererFactory(r));
 	      
 	    // -- 4. the processing actions ---------------------------------------
-	    
-	    
+	 
 	    ColorAction fill = new ColorAction("graph.nodes",
 	    		 VisualItem.FILLCOLOR, ColorLib.rgb(190, 215, 206));
 	    // use black for node text

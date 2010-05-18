@@ -51,19 +51,19 @@ public class PrefuseVisualization {
 
 	
 	public static void main(String[] args) {
-		String s = "Marty Stepp";
+		String s = "Jessica Miller";
 		String cur = "";
 		VisualCoAuthorExplorer vx = new VisualCoAuthorExplorer(s);
 		// create a new window to hold the visualization
 		JFrame frame = new JFrame("prefuse example");
 		
-		while(true)
-		{
-			if (!cur.equals(s))
-			{
-				frame.remove(vx.getDisplay());
+//		while(true)
+//		{
+//			if (!cur.equals(s))
+//			{
+			/*	frame.remove(vx.getDisplay());
 				vx = new VisualCoAuthorExplorer(s);
-				// create a new window to hold the visualization
+			*/	// create a new window to hold the visualization
 				//frame = new JFrame("prefuse example");
 				frame.setBounds(800, 100, 1, 1);
 			    // ensure application exits when window is closed
@@ -74,10 +74,10 @@ public class PrefuseVisualization {
 				frame.setVisible(true); // show the window
 				vx.updateVis();
 				cur = s;
-			}
+//			}
 			cur = s;
 			s = vx.name;
-		}
+//		}
 			
     }
 	
