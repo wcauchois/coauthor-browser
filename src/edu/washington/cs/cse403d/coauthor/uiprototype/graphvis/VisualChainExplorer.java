@@ -17,22 +17,22 @@ public class VisualChainExplorer extends VisualExplorer{
 	
 	public VisualChainExplorer(String authorStart, String authorEnd) throws RemoteException{
 		this.databaseInit();
-		this.graphInit(authorEnd, authorEnd);
+		this.graphInit(authorStart, authorEnd);
 		this.visualizationInit(coAuthors);
 		this.displayInit(colorLayoutVis);
 
 	}
 		
 	protected void graphInit(String authorStart, String authorEnd) throws RemoteException{
-	
-		this.authorChain= backend.getOneShortestPathBetweenAuthors("Jessica Miller", "Ross Tate", true); // Jessica Miller->Stephen G. Kobourov-> Michael Stepp-> Ross Tate
-		System.out.println(authorChain);
+		System.out.println(authorStart + " " + authorEnd);
+		this.authorChain= backend.getOneShortestPathBetweenAuthors(authorStart, authorEnd, false); // Jessica Miller->Stephen G. Kobourov-> Michael Stepp-> Ross Tate
+		//System.out.println(authorChain);
 		Table nodes = new Table();
 		nodes.addColumn("name", String.class);
 		
 		// table of edges; source and target refer to row index in the table of
 		// nodes
-		Table edges = new Table();
+		Table edges = new Table(); // Jessica Miller->Stephen G. Kobourov-> Michael Stepp-> Ross Tate
 
 		edges.addColumn("source", int.class);
 		edges.addColumn("target", int.class);
@@ -40,18 +40,24 @@ public class VisualChainExplorer extends VisualExplorer{
 		// Add Searched-for author to table of Nodes
 		nodes.addRow();
 		nodes.setString(0, "name", authorStart);
-		for(int i = 1; i < authorChain.size(); i++){
-			System.out.println(authorChain.get(i-1) + "->" + authorChain.get(i));
+		int k;
+		for(k = 1; k < authorChain.size(); k++){
+			System.out.println(authorChain.get(k-1).getAuthorBName() + "->" + authorChain.get(k).getAuthorBName());
 			nodes.addRow();
 			edges.addRow();
-			nodes.setString(i, "name", authorChain.get(i).getAuthorAName());
-	  		edges.setInt(i-1, "source", i-1);
-	  		edges.setInt(i-1, "target", i);
+			nodes.setString(k, "name", authorChain.get(k-1).getAuthorBName());
+	  		edges.setInt(k-1, "source", k-1);
+	  		edges.setInt(k-1, "target", k);
 		}
 		
-		for(int i = 0; i < 2; i++){
-			System.out.println(nodes.get(i,"name"));
-		}	
+		// end of result fencepost
+		nodes.addRow();
+		edges.addRow();
+		nodes.setString(k, "name", authorChain.get(k-1).getAuthorBName());
+  		edges.setInt(k-1, "source", k-1);
+  		edges.setInt(k-1, "target", k);
+
+	
 		this.coAuthors = new Graph(nodes,edges,false);
 		
 	
