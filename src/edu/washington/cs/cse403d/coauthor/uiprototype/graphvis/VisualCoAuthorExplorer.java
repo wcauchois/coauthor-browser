@@ -24,7 +24,7 @@ public class VisualCoAuthorExplorer extends VisualExplorer {
 		graphInit(authorName);
 		visualizationInit(coAuthors);
 		displayInit(this.colorLayoutVis);
-		curSelected = authorName;
+	//	curSelected = authorName;
 		
     }
 	
