@@ -7,7 +7,8 @@ import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
 
 public class VisualChainExplorer extends VisualExplorer{
 	
-	public static void main(String[] args){
-		
+	public void main(String[] args){
+		databaseInit();
+		System.out.println("blah");
 	}
 }

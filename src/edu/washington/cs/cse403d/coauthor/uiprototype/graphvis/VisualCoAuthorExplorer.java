@@ -20,11 +20,12 @@ public class VisualCoAuthorExplorer extends VisualExplorer {
 	 * @param authorName 
 	 */
 	public VisualCoAuthorExplorer(String authorName){
-		
+		databaseInit();
 		graphInit(authorName);
 		visualizationInit(coAuthors);
 		displayInit(this.colorLayoutVis);
 		curSelected = authorName;
+		
     }
 	
 	
