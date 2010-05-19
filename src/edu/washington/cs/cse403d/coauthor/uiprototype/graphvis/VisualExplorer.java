@@ -44,7 +44,7 @@ public abstract class VisualExplorer {
 	protected Graph coAuthors;
 	protected Visualization colorLayoutVis;
 	protected Display dispCtrls;
-
+	protected CoauthorDataServiceInterface backend;
 	
 	/**
 	 * @return the underlying graph data structure
@@ -70,6 +70,17 @@ public abstract class VisualExplorer {
 	}
 	
 	
+	public void databaseInit(){
+		// setup of database connections
+
+		try {
+			backend = (CoauthorDataServiceInterface) Naming.lookup("rmi://" + HOSTNAME + "/"
+					+ CoauthorDataServiceInterface.SERVICE_NAME);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
+	}
 	
 	
 	/**
@@ -78,20 +89,12 @@ public abstract class VisualExplorer {
 	 * @return a list of co-author names for the given author
 	 */
 	protected List<String> getCoAuthorList(String authorName){
-		// setup of database connections
-		CoauthorDataServiceInterface c;
-		try {
-			c = (CoauthorDataServiceInterface) Naming.lookup("rmi://" + HOSTNAME + "/"
-					+ CoauthorDataServiceInterface.SERVICE_NAME);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+
     	
 		String centerNode = authorName; 
 		List<String> coAu = null;
 		try{
-			coAu = c.getCoauthors(centerNode);
+			coAu = backend.getCoauthors(centerNode);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}

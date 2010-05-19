@@ -20,11 +20,12 @@ public class VisualCoAuthorExplorer extends VisualExplorer {
 	 * @param authorName 
 	 */
 	public VisualCoAuthorExplorer(String authorName){
-		
+		databaseInit();
 		graphInit(authorName);
 		visualizationInit(coAuthors);
 		displayInit(this.colorLayoutVis);
-		curSelected = authorName;
+	//	curSelected = authorName;
+		
     }
 	
 	
@@ -41,13 +42,12 @@ public class VisualCoAuthorExplorer extends VisualExplorer {
 		Table nodes = new Table();
 		nodes.addColumn("name", String.class);
 		
-		System.out.println("Number of Authors returned: " + coAu.size());
 		// table of edges; source and target refer to row index in the table of
 		// nodes
-		Table e = new Table();
-//			System.out.println(nodes);
-		e.addColumn("source", int.class);
-		e.addColumn("target", int.class);
+		Table edges = new Table();
+
+		edges.addColumn("source", int.class);
+		edges.addColumn("target", int.class);
 		
 		// Add Searched-for author to table of Nodes
 		nodes.addRow();
@@ -57,15 +57,15 @@ public class VisualCoAuthorExplorer extends VisualExplorer {
 	  	// for each co-Author, add an edge linking him/her to the first
 	  	// entry in the Authors table
 		// populate the both the author and edges table
-		for(int i = 1; i < coAu.size() + 1; i++){
+		for(int i = 1; i < coAu.size(); i++){
 	  		nodes.addRow();
-	  		e.addRow();
-	  		nodes.setString(i, "name", coAu.get(i-1));
-	  		e.setInt(i-1, "source", 0);
-	  		e.setInt(i-1, "target", i);
+	  		edges.addRow();
+	  		nodes.setString(i, "name", coAu.get(i));
+	  		edges.setInt(i-1, "source", 0);
+	  		edges.setInt(i-1, "target", i);
 	  	}
 
-		this.coAuthors = new Graph(nodes,e,false);
+		this.coAuthors = new Graph(nodes,edges,false);
 	}
 
 }
