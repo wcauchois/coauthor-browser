@@ -56,7 +56,7 @@ public class VisualCoAuthorExplorer {
 	private Graph coAuthors;
 	private Visualization colorLayoutVis;
 	private Display dispCtrls;
-	public String name;
+	public String curSelected;
 	
 
 	
@@ -71,7 +71,7 @@ public class VisualCoAuthorExplorer {
 		graphInit(authorName);
 		visualizationInit(coAuthors);
 		displayInit(this.colorLayoutVis);
-		name = authorName;
+		curSelected = authorName;
     }
 	
 	
@@ -106,7 +106,6 @@ public class VisualCoAuthorExplorer {
 	public void updateVis(){
 		colorLayoutVis.run("color");
 		colorLayoutVis.run("layout");
-
 	}
 	
 	
@@ -117,8 +116,6 @@ public class VisualCoAuthorExplorer {
 	 * @param authorName
 	 */
 	private void addCoAuthors(String authorName){
-		
-		
 		List<String> moreAuthors = getCoAuthorList(authorName);        
 		
 		// find the node of the searched for author
@@ -254,13 +251,13 @@ public class VisualCoAuthorExplorer {
 	    // -- 4. the processing actions ---------------------------------------
 	 
 	    ColorAction fill = new ColorAction("graph.nodes",
-	    		 VisualItem.FILLCOLOR, ColorLib.rgb(190, 215, 206));
+	    		 VisualItem.FILLCOLOR, ColorLib.rgb(220,220,220));
 	    // use black for node text
 	    ColorAction text = new ColorAction("graph.nodes",
-	            VisualItem.TEXTCOLOR, ColorLib.gray(0));
+	            VisualItem.TEXTCOLOR, ColorLib.rgb(0,0,255));
 	    // use light grey for edges
 	    ColorAction edges = new ColorAction("graph.edges",
-	            VisualItem.STROKECOLOR, ColorLib.gray(200));
+	            VisualItem.STROKECOLOR, ColorLib.rgb(49,79,79));
 	    
 	    // create an action list containing all color assignments
 	    ActionList color = new ActionList();
@@ -302,7 +299,7 @@ public class VisualCoAuthorExplorer {
         Control nodeClicked = new ControlAdapter(){
         	public void itemClicked(VisualItem item, MouseEvent e ){
         		String clickedOn = item.getString("name");
-        		name = clickedOn;
+        	//	name = clickedOn;
         		System.out.println(clickedOn);
         		addCoAuthors(clickedOn);
            	}

@@ -2,6 +2,7 @@ package edu.washington.cs.cse403d.coauthor.client.searchui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,6 +11,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -17,6 +19,7 @@ import javax.swing.SwingConstants;
 import edu.washington.cs.cse403d.coauthor.client.Services;
 import edu.washington.cs.cse403d.coauthor.client.browser.BrowserPage;
 import edu.washington.cs.cse403d.coauthor.client.utils.HelpMarker;
+import edu.washington.cs.cse403d.coauthor.uiprototype.graphvis.PrefuseVisualization;
 
 /**
  * This is the first page the user sees when he opens the coauthor application.
@@ -42,6 +45,7 @@ public class SearchPage extends BrowserPage {
 		
 		tabbedPane.addTab("Author Search", new AuthorSearchPane(this));
 		tabbedPane.addTab("Article Search", new ArticleSearchPane());
+		tabbedPane.addTab("Visual Search", new VisualSearchPane());
 		
 		if(searchType == AUTHOR_SEARCH)
 			tabbedPane.setSelectedIndex(0);
@@ -76,6 +80,37 @@ public class SearchPage extends BrowserPage {
 	private class ArticleSearchPane extends SearchPane {
 		
 	}
+	
+	private class VisualSearchPane extends JPanel 
+	{
+		private JTextField field = new JTextField();
+		private JButton search = new JButton("Search");
+		private PrefuseVisualization pv;
+		
+		public VisualSearchPane() 
+		{
+			pv = new PrefuseVisualization();
+			field.setPreferredSize(new Dimension(150, field.getPreferredSize().height));
+			JPanel searchPane = new JPanel();
+			searchPane.add(field);
+			searchPane.add(search);
+			add(searchPane,BorderLayout.CENTER);
+			
+			final JPanel submitPane = new JPanel();
+			submitPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
+			add(submitPane, BorderLayout.SOUTH);
+			submitPane.add(pv.getD());
+			
+			search.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
+					submitPane.remove(pv.getD());
+					pv = new PrefuseVisualization(field.getText());
+					submitPane.add(pv.getD());
+				}
+			});
+		}
+	}
+	
 	public String getTitle() {
 		return "Search";
 	}
