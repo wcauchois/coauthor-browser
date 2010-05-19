@@ -76,7 +76,7 @@ public class PrefuseVisualization {
 				cur = s;
 //			}
 			cur = s;
-			s = vx.name;
+//			s = vx.name;
 //		}
 			
     }
