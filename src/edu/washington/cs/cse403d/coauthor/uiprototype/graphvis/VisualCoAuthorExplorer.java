@@ -1,63 +1,17 @@
 package edu.washington.cs.cse403d.coauthor.uiprototype.graphvis;
 
-	import javax.swing.JFrame;
-
-	import java.awt.event.MouseEvent;
-	import java.rmi.Naming;
-	import java.rmi.RemoteException;
-	import java.util.ArrayList;
-import java.util.Iterator;
 	import java.util.List;
-	import java.util.Locale;
-	import java.util.Scanner;
-
-
-	import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
-	import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
-
-
-	import prefuse.Constants;
-	import prefuse.Display;
-	import prefuse.Visualization;
-	import prefuse.action.ActionList;
-	import prefuse.action.RepaintAction;
-	import prefuse.action.assignment.ColorAction;
-	import prefuse.action.assignment.DataColorAction;
-	import prefuse.action.layout.graph.ForceDirectedLayout;
-	import prefuse.activity.Activity;
-	import prefuse.controls.Control;
-	import prefuse.controls.ControlAdapter;
-	import prefuse.controls.DragControl;
-	import prefuse.controls.PanControl;
-	import prefuse.controls.WheelZoomControl;
-	import prefuse.controls.ZoomControl;
-	import prefuse.controls.ZoomToFitControl;
 	import prefuse.data.Graph;
-	import prefuse.data.Node;
 	import prefuse.data.Table;
-	import prefuse.data.util.TableIterator;
-	import prefuse.render.DefaultRendererFactory;
-	import prefuse.render.LabelRenderer;
-	import prefuse.util.ColorLib;
-	import prefuse.util.PrefuseLib;
-	import prefuse.visual.NodeItem;
-	import prefuse.visual.VisualGraph;
-import prefuse.visual.VisualItem;
 
 /**
  * 
  * @author Sergey
  *
  */
-public class VisualCoAuthorExplorer {
+public class VisualCoAuthorExplorer extends VisualExplorer {
 
-	
-	public static final String HOSTNAME = "attu2.cs.washington.edu";
-	private Graph coAuthors;
-	private Visualization colorLayoutVis;
-	private Display dispCtrls;
 	public String curSelected;
-	
 
 	
 	/**
@@ -67,119 +21,11 @@ public class VisualCoAuthorExplorer {
 	 */
 	public VisualCoAuthorExplorer(String authorName){
 		
-
 		graphInit(authorName);
 		visualizationInit(coAuthors);
 		displayInit(this.colorLayoutVis);
 		curSelected = authorName;
     }
-	
-	
-	/**
-	 * @return the underlying graph data structure
-	 */
-	public Graph getGraph(){
-		return this.coAuthors;
-		
-	}
-	
-	/**
-	 * @return the Visualization that sets all the colors and node layouts
-	 */
-	public Visualization getVisualization(){
-		return this.colorLayoutVis;
-	}
-	
-	/**
-	 * Display is added into a JFrame/other gui object
-	 * @return the display for this graph visualization
-	 */
-	public Display getDisplay(){
-		return this.dispCtrls;
-	}
-	
-	
-	/**
-	 * use this to update the graph display when there are any changes to the 
-	 * underlying data structures, i.e. adding nodes to the table
-	 */
-	public void updateVis(){
-		colorLayoutVis.run("color");
-		colorLayoutVis.run("layout");
-	}
-	
-	
-	/**
-	 * private method to add the co-authors of the passed authorName and visualize them
-	 * @todo currently accesses the server and gets a list of co-author names; still need to 
-	 * figure out how to coherently add the names to the graph
-	 * @param authorName
-	 */
-	private void addCoAuthors(String authorName){
-		List<String> moreAuthors = getCoAuthorList(authorName);        
-		
-		// find the node of the searched for author
-		Iterator authItr = this.coAuthors.nodes();
-		Node clickedOn = null;
-		while(authItr.hasNext()){
-			Node current = (Node) authItr.next();
-			if(current.get("name").equals(authorName)){
-				clickedOn = current;
-				System.out.println("Author node found! ID is: " + clickedOn.getRow());
-			}
-		}
-		
-		// look for returned authors already in the graph; remove all authors already in
-		// the graph from the search results
-		authItr = this.coAuthors.nodes();
-		while(authItr.hasNext()){
-			Node current = (Node) authItr.next();
-			if(moreAuthors.contains(current.get("name"))){ // the graph already contains a node for one of the returned coauthors 
-				this.coAuthors.addEdge(clickedOn, current);	// add an edge between the clicked-on node and the coauthor node it has in the graph
-				moreAuthors.remove(current.get("name"));
-			}
-		}
-		
-		// add nodes for all query-returned co-authors that were not originally in the graph
-		Iterator coAuItr = moreAuthors.iterator();
-		while(coAuItr.hasNext()){
-			String current = (String) coAuItr.next();
-			Node added = this.coAuthors.addNode();
-			added.set("name", current);
-			this.coAuthors.addEdge(clickedOn, added);
-		}
-		
-		this.updateVis();
-//		System.out.println(moreAuthors);
-	}
-	
-	
-	/**
-	 * sends a request to the backend for a list of co-authors of the passed authorName
-	 * @param authorName 
-	 * @return a list of co-author names for the given author
-	 */
-	private List<String> getCoAuthorList(String authorName){
-		// setup of database connections
-		CoauthorDataServiceInterface c;
-		try {
-			c = (CoauthorDataServiceInterface) Naming.lookup("rmi://" + HOSTNAME + "/"
-					+ CoauthorDataServiceInterface.SERVICE_NAME);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-    	
-		String centerNode = authorName; 
-		List<String> coAu = null;
-		try{
-			coAu = c.getCoauthors(centerNode);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
-		
-		return coAu;
-	}
 	
 	
 	/**
@@ -221,101 +67,7 @@ public class VisualCoAuthorExplorer {
 
 		this.coAuthors = new Graph(nodes,e,false);
 	}
-	
-	/**
-	 * initializes the visualization parameters
-	 * 
-	 * only used in constructor
-	 * @param initialGraph
-	 */
-	private void visualizationInit(Graph initialGraph){
-		  	
-        // add the graph to the visualization as the data group "graph"
-        // nodes and edges are accessible as "graph.nodes" and "graph.edges"
-		
-		Visualization vis = new Visualization();
-	    VisualGraph vg  = (VisualGraph) vis.add("graph", initialGraph);
-	    vis.setInteractive("graph.edges", null, true);
-	    
-	    // -- 3. the renderers and renderer factory ---------------------------
-	    
-	    // draw the "name" label for NodeItems
-	    LabelRenderer r = new LabelRenderer("name");
-	    r.setRoundedCorner(8, 8); // round the corners
-	    	    
-	    // create a new default renderer factory
-	    // return our name label renderer as the default for all non-EdgeItems
-	    // includes straight line edges for EdgeItems by default
-	    vis.setRendererFactory(new DefaultRendererFactory(r));
-	      
-	    // -- 4. the processing actions ---------------------------------------
-	 
-	    ColorAction fill = new ColorAction("graph.nodes",
-	    		 VisualItem.FILLCOLOR, ColorLib.rgb(220,220,220));
-	    // use black for node text
-	    ColorAction text = new ColorAction("graph.nodes",
-	            VisualItem.TEXTCOLOR, ColorLib.rgb(0,0,255));
-	    // use light grey for edges
-	    ColorAction edges = new ColorAction("graph.edges",
-	            VisualItem.STROKECOLOR, ColorLib.rgb(49,79,79));
-	    
-	    // create an action list containing all color assignments
-	    ActionList color = new ActionList();
-	    color.add(fill);
-	    color.add(text);
-	    color.add(edges);
-	    
-	    // create an action list with an animated layout
-	    ActionList layout = new ActionList(Activity.INFINITY);
-	    layout.add(new ForceDirectedLayout("graph"));
-	    layout.add(new RepaintAction());
-	    
-	    // add the actions to the visualization
-	    vis.putAction("color", color);
-	    vis.putAction("layout", layout);
-	    
-	    NodeItem focus = (NodeItem) vg.getNode(0);
-	    PrefuseLib.setX(focus, null, 700);
-	    PrefuseLib.setY(focus, null, 700);
-	    
-	    this.colorLayoutVis = vis;
 
-	}
-	
-	
-	/**
-	 * initializes the display 
-	 * 
-	 * only used in constructor
-	 * @param initialVis
-	 */
-	private void displayInit(Visualization initialVis){
-		  
-        // -- 5. the display and interactive controls -------------------------
-        
-        Display d = new Display(initialVis);
-        // control to detect when a node has been clicked on and perform the appropriate actions
-        
-        Control nodeClicked = new ControlAdapter(){
-        	public void itemClicked(VisualItem item, MouseEvent e ){
-        		String clickedOn = item.getString("name");
-        	//	name = clickedOn;
-        		System.out.println(clickedOn);
-        		addCoAuthors(clickedOn);
-           	}
-        };
-        
-        d.setSize(500, 500); 
-        d.addControlListener(new DragControl());
-        d.addControlListener(new PanControl()); 
-        d.addControlListener(new ZoomControl());
-        d.addControlListener(new WheelZoomControl());
-        d.addControlListener(new ZoomToFitControl());
-        d.addControlListener(nodeClicked);
-        
-        this.dispCtrls = d;
-
-	}
 }
 
 
