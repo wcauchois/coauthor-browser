@@ -21,6 +21,7 @@ import prefuse.controls.PanControl;
 import prefuse.controls.WheelZoomControl;
 import prefuse.controls.ZoomControl;
 import prefuse.controls.ZoomToFitControl;
+import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Node;
 import prefuse.render.DefaultRendererFactory;
@@ -83,6 +84,7 @@ public abstract class VisualExplorer {
 	}
 	
 	
+	
 	/**
 	 * sends a request to the backend for a list of co-authors of the passed authorName
 	 * @param authorName 
@@ -102,6 +104,7 @@ public abstract class VisualExplorer {
 		return coAu;
 	}
 	
+	
 	/**
 	 * protected method to add the co-authors of the passed authorName and visualize them
 	 * figure out how to coherently add the names to the graph
@@ -112,20 +115,11 @@ public abstract class VisualExplorer {
 		
 		List<String> moreAuthors = getCoAuthorList(authorName);        
 		
-		// find the node of the searched for author
-		Iterator authItr = this.coAuthors.nodes();
-		Node clickedOn = null;
-		while(authItr.hasNext()){
-			Node current = (Node) authItr.next();
-			if(current.get("name").equals(authorName)){
-				clickedOn = current;
-				System.out.println("Author node found! ID is: " + clickedOn.getRow());
-			}
-		}
+		Node clickedOn = findAuthor(authorName);
 		
 		// look for returned authors already in the graph; remove all authors already in
 		// the graph from the search results
-		authItr = this.coAuthors.nodes();
+		Iterator authItr = this.coAuthors.nodes();
 		while(authItr.hasNext()){
 			Node current = (Node) authItr.next();
 			if(moreAuthors.contains(current.get("name"))){ // the graph already contains a node for one of the returned coauthors 
@@ -142,11 +136,60 @@ public abstract class VisualExplorer {
 			added.set("name", current);
 			this.coAuthors.addEdge(clickedOn, added);
 		}
-		
 		this.updateVis();
-//		System.out.println(moreAuthors);
 	}
 	
+	protected Node findAuthor(String authorName){
+		// find the node of the searched for author
+		Iterator authItr = this.coAuthors.nodes();
+		Node searchedFor = null;
+		while(authItr.hasNext()){
+			Node current = (Node) authItr.next();
+			if(current.get("name").equals(authorName)){
+				searchedFor = current;
+				System.out.println("Author node found! ID is: " + searchedFor.getRow());
+			}
+		}
+		return searchedFor;
+	}
+	
+	/**
+	 * adds coauthor nodes to all nodes currently in the graph
+	 */
+	public void addCoAuthorsToAllNodes(){
+		System.out.println("Adding coauthors to all nodes in graph");
+		Iterator graphItr = this.coAuthors.nodes();
+		
+		int nodeCt = this.coAuthors.getNodeCount();
+		
+		for (int i = 0; i < nodeCt; i++){
+			Node current = (Node) graphItr.next();
+			this.addCoAuthors((String) current.get("name"));
+		}
+		this.updateVis();
+	}
+	
+	public void removeCoAuthors(String authorName){
+		
+		Node removeCoAuthorsFrom = findAuthor(authorName);
+		
+		Iterator edgeItr = removeCoAuthorsFrom.edges();
+		
+		while(edgeItr.hasNext()){
+			Edge currentEdge = (Edge) edgeItr.next();
+			Node currentNode = currentEdge.getTargetNode();
+			if(currentNode.getChildCount() == 0 && !authorName.equals(currentNode.getString("name"))){
+				System.out.println("This node will be deleted: " + currentNode.getString("name"));
+				this.coAuthors.removeNode(currentNode);
+			}
+		}
+		
+		System.out.println("You are now removing the co-authors of " + authorName);
+		System.out.println("Number of Children: " + removeCoAuthorsFrom.getChildCount());
+		
+		this.updateVis();
+	}
+
 	/**
 	 * use this to update the graph display when there are any changes to the 
 	 * underlying data structures, i.e. adding nodes to the table
@@ -236,8 +279,18 @@ public abstract class VisualExplorer {
         	public void itemClicked(VisualItem item, MouseEvent e ){
         		String clickedOn = item.getString("name");
         		System.out.println(clickedOn);
-        		addCoAuthors(clickedOn);
+        		addCoAuthors(item.getString("name"));
            	}
+        	public void keyTyped(java.awt.event.KeyEvent e){
+        		if(e.getKeyChar() == '1'){
+        			addCoAuthorsToAllNodes();
+        		}
+        	}
+        	public void itemKeyTyped(VisualItem item, java.awt.event.KeyEvent e){
+        		if(e.getKeyChar() == '2'){
+        			removeCoAuthors(item.getString("name"));
+        		}
+        	}
         };
         
         d.setSize(500, 500); 
