@@ -110,9 +110,14 @@ public class MainFrame extends BrowserFrame {
 	
 	public static void main(String[] args) {
 		try {
-			Services.provideCoauthorDataServiceInterface(
-				(CoauthorDataServiceInterface)Naming.lookup(
-				"rmi://" + HOSTNAME + "/" + CoauthorDataServiceInterface.SERVICE_NAME));
+			CoauthorDataServiceInterface cdsi = (CoauthorDataServiceInterface)Naming.lookup(
+					"rmi://" + HOSTNAME + "/" + CoauthorDataServiceInterface.SERVICE_NAME);
+			if(false) { // Disable prototype cached CDSI
+				Services.provideCoauthorDataServiceInterface(
+						new CachedCoauthorData(cdsi));
+			} else {
+				Services.provideCoauthorDataServiceInterface(cdsi);
+			}
 		} catch(Exception e) {
 			JOptionPane.showMessageDialog(null,
 				"Couldn't connect to data service (" + e.getMessage() + ")");
