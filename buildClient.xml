@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="createClient" name="Create DataProvider for the Coauthorship network">
+    <target name="createClient">
+        <jar destfile="coauthorBrowser.jar" filesetmanifest="mergewithoutmain">
+            <manifest>
+                <attribute name="Main-Class" value="edu.washington.cs.cse403d.coauthor.client.MainFrame"/>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+            <fileset dir="classes"/>
+            <fileset dir="assets"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/jline-0.9.94.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/prefuse.jar"/>
+        </jar>
+    </target>
+</project>

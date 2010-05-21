@@ -1,6 +1,6 @@
 package edu.washington.cs.cse403d.coauthor.client;
 
-import java.io.FileReader;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +27,9 @@ public class ResourceManager {
 	private String baseDir;
 	private URL getResourceURL(String name) {
 		return getClass().getResource(baseDir + name);
+	}
+	private InputStream getResourceStream(String name) {
+		return getClass().getResourceAsStream(baseDir + name);
 	}
 	public String getBaseDir() {
 		return baseDir;
@@ -86,14 +89,14 @@ public class ResourceManager {
 		if(resources.containsKey(name))
 			return (Map<String, String>)resources.get(name);
 		else {
-			URL url = getResourceURL(name);
+			InputStream stringsStream = getResourceStream(name);
 			Map<String, String> strings = new HashMap<String, String>();
 			try {
 				XMLReader xr = XMLReaderFactory.createXMLReader();
 				StringsBuilder handler = new StringsBuilder(strings);
 				xr.setContentHandler(handler);
 				xr.setErrorHandler(handler);
-				xr.parse(new InputSource(new FileReader(url.getFile())));
+				xr.parse(new InputSource(stringsStream));
 			} catch(Throwable t) {
 				throw new ResourceException(name, t);
 			}
@@ -106,5 +109,5 @@ public class ResourceManager {
 	 */
 	public ResourceManager(String baseDir) {
 		this.baseDir = baseDir;
-	}	
+	}
 }
