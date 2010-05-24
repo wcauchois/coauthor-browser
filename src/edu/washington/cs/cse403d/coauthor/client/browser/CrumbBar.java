@@ -19,7 +19,11 @@ import edu.washington.cs.cse403d.coauthor.client.Services;
  * @author William Cauchois
  */
 public class CrumbBar extends JPanel {
+	private static final long serialVersionUID = -1426200955180885790L;
+	
 	private static class HistoryAction extends AbstractAction {
+		private static final long serialVersionUID = -3056671239632507226L;
+		
 		private BrowserPage page;
 		@Override public void actionPerformed(ActionEvent evt) {
 			Services.getBrowser().go(page);

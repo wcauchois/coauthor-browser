@@ -20,6 +20,8 @@ import javax.swing.border.Border;
  * @author Kevin Bang
  */
 public class HyperLinkButton extends JLabel {
+	private static final long serialVersionUID = -3243707269210364722L;
+
 	/**
 	 * Constructor.
 	 * Creates a new HyperLinkButton instance with given text.

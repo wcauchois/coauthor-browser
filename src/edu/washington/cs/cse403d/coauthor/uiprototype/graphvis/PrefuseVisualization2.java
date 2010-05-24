@@ -13,8 +13,6 @@ import javax.swing.JSplitPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
-
 import prefuse.Display;
 import prefuse.Visualization;
 import prefuse.action.ActionList;
@@ -34,12 +32,10 @@ import prefuse.data.Graph;
 import prefuse.data.Table;
 import prefuse.data.Tuple;
 import prefuse.data.event.TupleSetListener;
-import prefuse.data.io.GraphMLReader;
 import prefuse.data.tuple.TupleSet;
 import prefuse.render.DefaultRendererFactory;
 import prefuse.render.LabelRenderer;
 import prefuse.util.ColorLib;
-import prefuse.util.GraphLib;
 import prefuse.util.PrefuseLib;
 import prefuse.util.force.ForceSimulator;
 import prefuse.util.ui.JForcePanel;
@@ -49,13 +45,15 @@ import prefuse.util.ui.UILib;
 import prefuse.visual.NodeItem;
 import prefuse.visual.VisualGraph;
 import prefuse.visual.VisualItem;
+import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 
 /**
  * @author <a href="http://jheer.org">jeffrey heer</a>
  */
 public class PrefuseVisualization2 extends JPrefuseApplet {
-
-    private static final String graph = "graph";
+	private static final long serialVersionUID = -7762796460708658753L;
+	
+	private static final String graph = "graph";
     private static final String nodes = "graph.nodes";
     private static final String edges = "graph.edges";
     public static final String HOSTNAME = "attu2.cs.washington.edu";

@@ -15,6 +15,8 @@ import edu.washington.cs.cse403d.coauthor.client.utils.StringUtils;
  * @author Kevin Bang
  */
 public class AuthorResult extends BrowserPage {
+	private static final long serialVersionUID = -3718649382487574216L;
+	
 	private List<String> queries;
 	
 	/**
