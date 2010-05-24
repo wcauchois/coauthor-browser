@@ -13,6 +13,7 @@ import prefuse.Visualization;
 import prefuse.action.ActionList;
 import prefuse.action.RepaintAction;
 import prefuse.action.assignment.ColorAction;
+import prefuse.action.filter.GraphDistanceFilter;
 import prefuse.action.layout.graph.ForceDirectedLayout;
 import prefuse.activity.Activity;
 import prefuse.controls.Control;
@@ -29,6 +30,7 @@ import prefuse.render.DefaultRendererFactory;
 import prefuse.render.LabelRenderer;
 import prefuse.util.ColorLib;
 import prefuse.util.PrefuseLib;
+import prefuse.util.force.ForceSimulator;
 import prefuse.visual.NodeItem;
 import prefuse.visual.VisualGraph;
 import prefuse.visual.VisualItem;
@@ -227,9 +229,9 @@ public abstract class VisualExplorer {
 	 * underlying data structures, i.e. adding nodes to the table
 	 */
 	public void updateVis(){
-		colorLayoutVis.run("color");
-		colorLayoutVis.run("layout");
-
+		colorLayoutVis.run("animate");
+		colorLayoutVis.run("draw");
+		
 	}
 	
 
@@ -261,8 +263,10 @@ public abstract class VisualExplorer {
 	      
 	    // -- 4. the processing actions ---------------------------------------
 	 
-	    ColorAction fill = new ColorAction("graph.nodes",
-	    		 VisualItem.FILLCOLOR, ColorLib.rgb(190, 215, 206));
+	    
+	    /*
+	//    ColorAction fill = new ColorAction("graph.nodes",
+	 //   		 VisualItem.FILLCOLOR, ColorLib.rgb(190, 215, 206));
 	    // use black for node text
 	    ColorAction text = new ColorAction("graph.nodes",
 	            VisualItem.TEXTCOLOR, ColorLib.gray(0));
@@ -270,24 +274,71 @@ public abstract class VisualExplorer {
 	    ColorAction edges = new ColorAction("graph.edges",
 	            VisualItem.STROKECOLOR, ColorLib.gray(200));
 	    
+	  
+	    
+        ColorAction highlight = new ColorAction("graph.nodes",
+        		VisualItem.FILLCOLOR, ColorLib.rgb(190, 215, 206));
+        highlight.add("_fixed", ColorLib.rgb(255,0,0));
+  //      highlight.add("_highlight", ColorLib.rgb(255,0,255));
+	    
 	    // create an action list containing all color assignments
-	    ActionList color = new ActionList();
-	    color.add(fill);
-	    color.add(text);
-	    color.add(edges);
+	    ActionList draw = new ActionList();
+	//    draw.add(fill);
+	    draw.add(text);
+	    draw.add(edges);
+	    draw.add(new ColorAction("graph.edges", VisualItem.FILLCOLOR, ColorLib.gray(200)));
+        draw.add(new ColorAction("graph.edges", VisualItem.STROKECOLOR, ColorLib.gray(200)));
 	    
 	    // create an action list with an animated layout
-	    ActionList layout = new ActionList(Activity.INFINITY);
-	    layout.add(new ForceDirectedLayout("graph"));
-	    layout.add(new RepaintAction());
+	    ActionList animate = new ActionList(Activity.INFINITY);
+	    animate.add(new ForceDirectedLayout("graph"));
+	    animate.add(highlight);
+	    
+	    animate.add(new RepaintAction());
 	    
 	    // add the actions to the visualization
-	    vis.putAction("color", color);
-	    vis.putAction("layout", layout);
+	    vis.putAction("draw", draw);
+	    vis.putAction("animate", animate);
+	    vis.runAfter("draw", "animate");
+	    
+	    */
+	    
+ // -- set up the actions ----------------------------------------------
+        
+        int maxhops = 4, hops = 4;
+        ColorAction fill = new ColorAction("graph", 
+                VisualItem.FILLCOLOR, ColorLib.rgb(200,200,255));
+        fill.add("_fixed", ColorLib.rgb(255,100,100));
+        fill.add("_highlight", ColorLib.rgb(255,0,255));
+
+        ActionList draw = new ActionList();
+        draw.add(new ColorAction("graph.nodes", VisualItem.FILLCOLOR, ColorLib.green(1)));
+        draw.add(new ColorAction("graph.nodes", VisualItem.STROKECOLOR, 0));
+        draw.add(new ColorAction("graph.nodes", VisualItem.TEXTCOLOR, ColorLib.rgb(0,0,0)));
+        draw.add(new ColorAction("graph.edges", VisualItem.FILLCOLOR, ColorLib.gray(200)));
+        draw.add(new ColorAction("graph.edges", VisualItem.STROKECOLOR, ColorLib.gray(200)));
+        draw.add(new RepaintAction());
+        draw.add(fill);
+        
+        ForceDirectedLayout fdl = new ForceDirectedLayout("graph");
+        ForceSimulator fsim = fdl.getForceSimulator();
+        fsim.getForces()[0].setParameter(0, -1.2f);
+        
+        ActionList animate = new ActionList(Activity.INFINITY);
+        animate.add(fdl);
+    //    animate.add(fill);
+        animate.add(new RepaintAction());
+        
+        // finally, we register our ActionList with the Visualization.
+        // we can later execute our Actions by invoking a method on our
+        // Visualization, using the name we've chosen below.
+        vis.putAction("draw", draw);
+        vis.putAction("animate", animate);
+        vis.runAfter("draw", "animate");
 	    
 	    NodeItem focus = (NodeItem) vg.getNode(0);
-	    PrefuseLib.setX(focus, null, 700);
-	    PrefuseLib.setY(focus, null, 700);
+	    PrefuseLib.setX(focus, null, focus.getX());
+	    PrefuseLib.setY(focus, null, focus.getY());
 	    
 	    this.colorLayoutVis = vis;
 
@@ -330,7 +381,7 @@ public abstract class VisualExplorer {
         d.setSize(500, 500); 
         d.addControlListener(new DragControl());
         d.addControlListener(new PanControl()); 
-        d.addControlListener(new ZoomControl());
+        d.addControlListener(new ZoomControl(1));
         d.addControlListener(new WheelZoomControl());
         d.addControlListener(new ZoomToFitControl());
         d.addControlListener(nodeClicked);
