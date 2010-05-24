@@ -11,7 +11,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -27,6 +26,8 @@ import edu.washington.cs.cse403d.coauthor.uiprototype.graphvis.PrefuseVisualizat
  * @author William Cauchois
  */
 public class SearchPage extends BrowserPage {
+	private static final long serialVersionUID = 7147013052609498390L;
+	
 	public static final int AUTHOR_SEARCH = 0;
 	public static final int ARTICLE_SEARCH = 1;
 	public SearchPage() {
@@ -54,6 +55,8 @@ public class SearchPage extends BrowserPage {
 	}
 	// XXX: move AuthorSearchPane out too!!
 	private class SearchPane extends JPanel {
+		private static final long serialVersionUID = -2380014657227857630L;
+		
 		protected JTextField query = new JTextField();
 		protected JButton submit = new JButton("Search");
 		public SearchPane() {
@@ -78,11 +81,11 @@ public class SearchPage extends BrowserPage {
 	}
 	
 	private class ArticleSearchPane extends SearchPane {
-		
+		private static final long serialVersionUID = 7982107874230017944L;
 	}
 	
-	private class VisualSearchPane extends JPanel 
-	{
+	private class VisualSearchPane extends JPanel {
+		private static final long serialVersionUID = 8486284382808952443L;
 		private JTextField field = new JTextField();
 		private JButton search = new JButton("Search");
 		private PrefuseVisualization pv;

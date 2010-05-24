@@ -1,15 +1,11 @@
 package edu.washington.cs.cse403d.coauthor.uiprototype.graphvis;
 
-import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.util.List;
 
 import prefuse.data.Graph;
 import prefuse.data.Table;
-
-import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 import edu.washington.cs.cse403d.coauthor.shared.model.PathLink;
-import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
 
 public class VisualChainExplorer extends VisualExplorer{
 	

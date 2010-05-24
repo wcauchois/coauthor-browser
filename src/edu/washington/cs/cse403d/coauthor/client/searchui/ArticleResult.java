@@ -11,7 +11,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.Box;
@@ -43,6 +42,8 @@ import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
  * @author Kevin Bang
  */
 public class ArticleResult extends BrowserPage {
+	private static final long serialVersionUID = 5163500245181788114L;
+	
 	private CoauthorDataServiceInterface CDSI =	Services.getCoauthorDataServiceInterface();
 	private String articleTitle;
 	private Publication publication;

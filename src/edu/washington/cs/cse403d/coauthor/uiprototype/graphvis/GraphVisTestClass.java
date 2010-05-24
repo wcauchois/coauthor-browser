@@ -1,13 +1,8 @@
 package edu.washington.cs.cse403d.coauthor.uiprototype.graphvis;
 
-import java.rmi.Naming;
 import java.rmi.RemoteException;
-import java.util.List;
 
 import javax.swing.JFrame;
-
-import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
-import edu.washington.cs.cse403d.coauthor.shared.model.PathLink;
 
 public class GraphVisTestClass {
 	
@@ -25,7 +20,7 @@ public class GraphVisTestClass {
 		
 		List<PathLink> chain= backend.getOneShortestPathBetweenAuthors("Jessica Miller", "Ross Tate", true); // Jessica Miller->Stephen G. Kobourov-> Michael Stepp-> Ross Tate
 		System.out.println(chain);*/
-		String s = "Jessica Miller";
+//		String s = "Jessica Miller";
 //		VisualCoAuthorExplorer vx = new VisualCoAuthorExplorer(s);
 		VisualCoAuthorExplorer vx = new VisualCoAuthorExplorer(s);
 		// create a new window to hold the visualization

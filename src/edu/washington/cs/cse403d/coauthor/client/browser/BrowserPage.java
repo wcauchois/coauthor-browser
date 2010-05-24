@@ -13,6 +13,8 @@ import javax.swing.JPanel;
  * @author William Cauchois
  */
 public abstract class BrowserPage extends JPanel {
+	private static final long serialVersionUID = -3276055792444479236L;
+	
 	/**
 	 * Returns the title for this page (like in HTML). Currently, the only place
 	 * the title is used is in the CrumbBar, to provide a label for the button

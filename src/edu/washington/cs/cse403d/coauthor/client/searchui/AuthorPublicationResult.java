@@ -26,6 +26,8 @@ import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
  * @author Kevin Bang
  */
 class AuthorPublicationResult extends JPanel {
+	private static final long serialVersionUID = -5845394814423230884L;
+
 	private edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface CDSI = 
 		Services.getCoauthorDataServiceInterface();
 	
