@@ -1,8 +1,9 @@
 package edu.washington.cs.cse403d.coauthor.uiprototype.graphvis;
 
-	import java.util.List;
+	import java.util.ArrayList;
+import java.util.List;
 	import prefuse.data.Graph;
-	import prefuse.data.Table;
+import prefuse.data.Table;
 
 /**
  * 
@@ -21,24 +22,34 @@ public class VisualCoAuthorExplorer extends VisualExplorer {
 	 */
 	public VisualCoAuthorExplorer(String authorName){
 		databaseInit();
-		graphInit(authorName);
-		visualizationInit(coAuthors);
-		displayInit(this.colorLayoutVis);
-	//	curSelected = authorName;
-		
-    }
+		List<String> initialCoAuthorList = getCoAuthorList(authorName);
+		constructorHelper(authorName, initialCoAuthorList);
+	}
 	
+	public VisualCoAuthorExplorer(String authorName, List<String> initialCoAuthorList){
+		databaseInit();
+		constructorHelper(authorName, initialCoAuthorList);
+	}
+	
+	public void constructorHelper(String authorName, List<String> initialCoAuthorList){
+		graphInit(authorName, initialCoAuthorList);
+		visualizationInit(coAuthors);
+		displayInit(this.colorLayoutVis);	
+		
+	}
 	
 	/**
 	 * initializes the coAuthors Graph around authorName
 	 * 
 	 * only used in constructor
 	 * @param authorName
+	 * @param initialCoAuthorList
 	 */
-	private void graphInit(String authorName){
+	private void graphInit(String authorName, List<String> initialCoAuthorList){
 		
 		String centerNode = authorName; // CHANGE THIS VARIABLE TO CHANGE THE SEARCH/VISUALIZATION RESULTS
-		List<String> coAu = getCoAuthorList(authorName);
+	//	List<String> initialCoAuthorList = getTestCoauthors();
+		System.out.println(initialCoAuthorList);
 		Table nodes = new Table();
 		nodes.addColumn("name", String.class);
 		
@@ -57,17 +68,26 @@ public class VisualCoAuthorExplorer extends VisualExplorer {
 	  	// for each co-Author, add an edge linking him/her to the first
 	  	// entry in the Authors table
 		// populate the both the author and edges table
-		for(int i = 1; i < coAu.size(); i++){
+		for(int i = 0; i < initialCoAuthorList.size(); i++){
 	  		nodes.addRow();
 	  		edges.addRow();
-	  		nodes.setString(i, "name", coAu.get(i));
-	  		edges.setInt(i-1, "source", 0);
-	  		edges.setInt(i-1, "target", i);
+	  		nodes.setString(i+1, "name", initialCoAuthorList.get(i));
+	  		edges.setInt(i, "source", 0);
+	  		edges.setInt(i, "target", i+1);
 	  	}
 
 		this.coAuthors = new Graph(nodes,edges,false);
 	}
 
+
+
+	public List<String> getTestCoauthors(){
+		List<String> co = new ArrayList<String>();
+		co.add("Jeff Prouty");
+		co.add("Sergey Alekhnovich");
+		co.add("Miles Sackler");
+		co.add("Bill Cauchois");
+		co.add("Kevin Bang");
+		return co;
+	}
 }
-
-

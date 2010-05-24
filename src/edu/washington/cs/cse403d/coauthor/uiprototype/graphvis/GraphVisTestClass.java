@@ -27,7 +27,7 @@ public class GraphVisTestClass {
 		System.out.println(chain);*/
 		String s = "Jessica Miller";
 //		VisualCoAuthorExplorer vx = new VisualCoAuthorExplorer(s);
-		VisualCoAuthorExplorer vx = new VisualCoAuthorExplorer("Wei Li");
+		VisualCoAuthorExplorer vx = new VisualCoAuthorExplorer(s);
 		// create a new window to hold the visualization
 		JFrame frame = new JFrame("prefuse example");
 		frame.setBounds(800, 100, 1, 1);

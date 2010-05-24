@@ -3,6 +3,7 @@ package edu.washington.cs.cse403d.coauthor.uiprototype.graphvis;
 import java.awt.event.MouseEvent;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -173,20 +174,42 @@ public abstract class VisualExplorer {
 		
 		Node removeCoAuthorsFrom = findAuthor(authorName);
 		
-		Iterator edgeItr = removeCoAuthorsFrom.edges();
-		
-		while(edgeItr.hasNext()){
+		//Iterator edgeItr = removeCoAuthorsFrom.edges();
+	/*	while(edgeItr.hasNext()){
 			Edge currentEdge = (Edge) edgeItr.next();
+			System.out.println("Current edge row is: " + currentEdge.getRow());
 			Node currentNode = currentEdge.getTargetNode();
 			if(currentNode.getChildCount() == 0 && !authorName.equals(currentNode.getString("name"))){
 				System.out.println("This node will be deleted: " + currentNode.getString("name"));
+				this.coAuthors.removeEdge(currentEdge);
 				this.coAuthors.removeNode(currentNode);
 			}
+		}
+	*/	
+//		Iterator childItr = removeCoAuthorsFrom.children();
+		/*while(childItr.hasNext()){
+			Node currentNode = (Node) childItr.next();
+			System.out.println("This node will be deleted: " + currentNode.getString("name"));
+			if (currentNode.getChildCount() > 0)
+				this.removeCoAuthors(currentNode.getString("name"));
+			this.coAuthors.removeNode(currentNode);
+
+		}*/
+
+	/*	Iterator nodeItr = this.coAuthors.nodes();
+		List<Integer> toBeDeleted = new ArrayList<Integer>();
+		while(nodeItr.hasNext()){
+			Node currentNode = (Node) nodeItr.next();
+			System.out.println("This node will be deleted: " + currentNode.getString("name"));
+			if (currentNode.getDegree() == 0)
+				System.out.println("Degree of node is: " + currentNode.getDegree());
+				toBeDeleted.add(currentNode.)
+
 		}
 		
 		System.out.println("You are now removing the co-authors of " + authorName);
 		System.out.println("Number of Children: " + removeCoAuthorsFrom.getChildCount());
-		
+		*/
 		this.updateVis();
 	}
 
