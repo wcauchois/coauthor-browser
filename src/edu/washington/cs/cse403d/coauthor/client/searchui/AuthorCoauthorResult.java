@@ -11,6 +11,7 @@ import java.awt.event.MouseEvent;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
@@ -24,9 +25,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 
 import edu.washington.cs.cse403d.coauthor.client.Services;
-import edu.washington.cs.cse403d.coauthor.client.utils.HyperLinkButton;
 import edu.washington.cs.cse403d.coauthor.client.utils.FilterPanel;
-import edu.washington.cs.cse403d.coauthor.client.utils.HelpMarker;
+import edu.washington.cs.cse403d.coauthor.client.utils.HyperLinkButton;
 
 
 /**
@@ -35,6 +35,8 @@ import edu.washington.cs.cse403d.coauthor.client.utils.HelpMarker;
  * @author Kevin Bang
  */
 class AuthorCoauthorResult extends JPanel {
+	private static final long serialVersionUID = 4589385555472884742L;
+
 	private edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface CDSI = 
 		Services.getCoauthorDataServiceInterface();
 	

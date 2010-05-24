@@ -28,6 +28,8 @@ import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
  *
  */
 public class FilterPanel extends JPanel {
+	private static final long serialVersionUID = -9090832682261141465L;
+	
 	private List<Publication> publications;
 	private List<String> coauthors;
 	private DefaultListModel listModel;

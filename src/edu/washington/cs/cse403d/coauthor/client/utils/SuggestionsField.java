@@ -29,6 +29,8 @@ import javax.swing.event.DocumentListener;
  * Derived classes should override the getSuggestions() method.
  */
 public abstract class SuggestionsField extends JTextField {
+	private static final long serialVersionUID = 9021317121823904596L;
+
 	private static final int DEFAULT_POPUP_HEIGHT = 80;
 	
 	// The list of suggestions is put inside a scrolling pane

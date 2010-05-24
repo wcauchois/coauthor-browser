@@ -12,6 +12,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 public abstract class QuerySuggestionsField extends SuggestionsField {
+	private static final long serialVersionUID = -851636475744113831L;
+	
 	private static final int MIN_QUERY_LENGTH = 4;
 	
 	protected abstract List<String> issueQuery(String part) throws Exception;

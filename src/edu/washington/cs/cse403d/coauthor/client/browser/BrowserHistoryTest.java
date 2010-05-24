@@ -9,6 +9,8 @@ import org.junit.*;
 
 public class BrowserHistoryTest {
 	private static class TestPage extends BrowserPage {
+		private static final long serialVersionUID = -908681053791042181L;
+		
 		public int id;
 		public TestPage(int id) {
 			this.id = id;

@@ -24,6 +24,8 @@ import edu.washington.cs.cse403d.coauthor.client.Services;
  * @author William Cauchois
  */
 public class HelpMarker extends JLabel {
+	private static final long serialVersionUID = -8699541921536433409L;
+	
 	private ImageIcon icon, hoverIcon;
 	private PopupFactory popupFactory;
 	private Popup popup = null;
@@ -34,6 +36,8 @@ public class HelpMarker extends JLabel {
 		"ul { margin-left: 15px }"
 	};
 	private class ToolTip extends JPanel {
+		private static final long serialVersionUID = -1589166890467253186L;
+
 		public ToolTip(String htmlContent) {
 			JTextPane text = new JTextPane();
 			HTMLEditorKit kit = new HTMLEditorKit();

@@ -33,6 +33,8 @@ import edu.washington.cs.cse403d.coauthor.client.Services;
 // TODO(wcauchois): replace FilterPanel with this?
 
 public class FilterField extends JTextField {
+	private static final long serialVersionUID = 3250394717406844585L;
+	
 	private JList theList;
 	private Font italicFont, defaultFont;
 	private boolean isPristine;
