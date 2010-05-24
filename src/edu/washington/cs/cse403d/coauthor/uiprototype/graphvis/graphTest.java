@@ -32,13 +32,13 @@ public class graphTest// implements Graph
 		
 		for (int i = 1; i < authors.size(); i++)
 			g.addEdge(i-1, authors.get(0), authors.get(i));
-		Layout<String, Integer> layout = new CircleLayout(g);
+		Layout<String, Integer> layout = new CircleLayout<String, Integer>(g);
 		layout.setSize(new Dimension(300,300));
 		layout.setSize(new Dimension(300,300));
 		VisualizationViewer<String, Integer> vv = new VisualizationViewer<String, Integer>(layout);
 		vv.setPreferredSize(new Dimension(350,350));
-		vv.getRenderContext().setVertexLabelTransformer(new ToStringLabeller());
-		DefaultModalGraphMouse gm = new DefaultModalGraphMouse();
+		vv.getRenderContext().setVertexLabelTransformer(new ToStringLabeller<String>());
+		DefaultModalGraphMouse<String, Integer> gm = new DefaultModalGraphMouse<String, Integer>();
 		gm.setMode(ModalGraphMouse.Mode.TRANSFORMING);
 		vv.setGraphMouse(gm);
 		
@@ -47,7 +47,6 @@ public class graphTest// implements Graph
 				return Color.GREEN;
 		}
 		};
-		float dash[] = {10};
 		final Stroke edgeStroke = new BasicStroke(1.0f, BasicStroke.CAP_BUTT,BasicStroke.JOIN_MITER);//, 10.0f, dash, 0.0f);
 		Transformer<Integer, Stroke> edgeStrokeTransformer = new Transformer<Integer, Stroke>() {
 			public Stroke transform(Integer i) {
@@ -56,7 +55,7 @@ public class graphTest// implements Graph
 		};
 		vv.getRenderContext().setVertexFillPaintTransformer(vertexPaint);
 		vv.getRenderContext().setEdgeStrokeTransformer(edgeStrokeTransformer);
-		vv.getRenderContext().setVertexLabelTransformer(new ToStringLabeller());
+		vv.getRenderContext().setVertexLabelTransformer(new ToStringLabeller<String>());
 		
 		vv.getRenderer().getVertexLabelRenderer().setPosition(Position.CNTR);
 		JFrame frame = new JFrame("Simple Graph View 2");

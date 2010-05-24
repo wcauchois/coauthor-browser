@@ -23,14 +23,12 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import edu.washington.cs.cse403d.coauthor.client.ResourceManager;
 import edu.washington.cs.cse403d.coauthor.client.Services;
 import edu.washington.cs.cse403d.coauthor.client.browser.BrowserPage;
-import edu.washington.cs.cse403d.coauthor.client.utils.FilterField;
 import edu.washington.cs.cse403d.coauthor.client.utils.HelpMarker;
 import edu.washington.cs.cse403d.coauthor.client.utils.QuerySuggestionsField;
 
@@ -42,7 +40,11 @@ import edu.washington.cs.cse403d.coauthor.client.utils.QuerySuggestionsField;
  *
  */
 public class AuthorSearchPane extends JPanel {
+	private static final long serialVersionUID = 8238457344764714088L;
+	
 	private class AuthorField extends QuerySuggestionsField {
+		private static final long serialVersionUID = -5382087475322086605L;
+		
 		private final Color invalidMarkColor = Color.RED;
 		private boolean markedInvalid = false;
 		public void markInvalid() {
@@ -72,6 +74,7 @@ public class AuthorSearchPane extends JPanel {
 	private List<AuthorField> authorFields = new LinkedList<AuthorField>();
 	private ExecutorService executor;
 	private class AuthorsPane extends JPanel {
+		private static final long serialVersionUID = 5760485859149199999L;
 		private class FocusPolicy extends FocusTraversalPolicy {
 			private Component getComponentPlusN(Component comp, int n) {
 				int i = authorFields.indexOf(comp);
@@ -146,6 +149,7 @@ public class AuthorSearchPane extends JPanel {
 		}
 		// Encapsulates a tiny bit of behavior shared between PlusButton and MinusButton.
 		private class PlusMinusButton extends JButton {
+			private static final long serialVersionUID = -2618192905029860348L;
 			private final Dimension size = new Dimension(27, 27);
 			public PlusMinusButton(ImageIcon theIcon) {
 				super(theIcon);
@@ -156,6 +160,7 @@ public class AuthorSearchPane extends JPanel {
 			}
 		}
 		private class MinusButton extends PlusMinusButton implements ActionListener {
+			private static final long serialVersionUID = 5607704703462649531L;
 			private JComponent[] otherCells;
 			public MinusButton(JComponent... otherCells) {
 				super(minusIcon);
@@ -173,6 +178,7 @@ public class AuthorSearchPane extends JPanel {
 			}
 		}
 		private class PlusButton extends PlusMinusButton implements ActionListener {
+			private static final long serialVersionUID = -7097084536014124409L;
 			public PlusButton() {
 				super(plusIcon);
 				addActionListener(this);

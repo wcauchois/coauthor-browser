@@ -24,11 +24,15 @@ import edu.washington.cs.cse403d.coauthor.client.Services;
  * @author William Cauchois
  */
 public class BrowserFrame extends JFrame implements Browser {
+	private static final long serialVersionUID = 2084399509406597681L;
+	
 	private BrowserHistory history;
 	private JPanel pagePane = new JPanel();
 	private JPanel navPane = new JPanel();
 	private CrumbBar crumbBar = new CrumbBar();
 	private abstract class NavButton extends JButton implements ActionListener {
+		private static final long serialVersionUID = 8896732421593552612L;
+
 		public NavButton(String iconImage) {
 			setIcon(Services.getResourceManager().loadImageIcon(iconImage));
 			setPreferredSize(new Dimension(30, 30));
@@ -36,6 +40,8 @@ public class BrowserFrame extends JFrame implements Browser {
 		}
 	}
 	private class BackButton extends NavButton {
+		private static final long serialVersionUID = -6991005901303570281L;
+		
 		public BackButton() {
 			super("HistoryBack.png");
 			setEnabled(false);
@@ -49,6 +55,8 @@ public class BrowserFrame extends JFrame implements Browser {
 		}
 	}
 	private class ForwardButton extends NavButton {
+		private static final long serialVersionUID = 2586986138123539508L;
+		
 		public ForwardButton() {
 			super("HistoryForward.png");
 			setEnabled(false);

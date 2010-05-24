@@ -26,6 +26,7 @@ import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
  *
  */
 public class MainFrame extends BrowserFrame {
+	private static final long serialVersionUID = 2460404616036718278L;
 	
 	public JMenuBar createMenuBar() {
 		// TODO(wcauchois): the menu bar is vastly out of sync with the features we've been implementing.
@@ -99,35 +100,36 @@ public class MainFrame extends BrowserFrame {
 		
 		return menuBar;
 	}
-	
-	 private static final String HOSTNAME = "attu2.cs.washington.edu";
+
+	private static final String HOSTNAME = "attu2.cs.washington.edu";
+	// Disable prototype cached CDSI
+	private static final boolean USE_CACHE = false;
+
 	public MainFrame() {
 		super(new SearchPage());
 		setTitle("Author Network");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setJMenuBar(createMenuBar());
 	}
-	
+
 	public static void main(String[] args) {
 		try {
-			CoauthorDataServiceInterface cdsi = (CoauthorDataServiceInterface)Naming.lookup(
-					"rmi://" + HOSTNAME + "/" + CoauthorDataServiceInterface.SERVICE_NAME);
-			if(false) { // Disable prototype cached CDSI
-				Services.provideCoauthorDataServiceInterface(
-						new CachedCoauthorData(cdsi));
+			CoauthorDataServiceInterface cdsi = (CoauthorDataServiceInterface) Naming.lookup("rmi://" + HOSTNAME + "/"
+					+ CoauthorDataServiceInterface.SERVICE_NAME);
+			if (USE_CACHE) {
+				Services.provideCoauthorDataServiceInterface(new CachedCoauthorData(cdsi));
 			} else {
 				Services.provideCoauthorDataServiceInterface(cdsi);
 			}
-		} catch(Exception e) {
-			JOptionPane.showMessageDialog(null,
-				"Couldn't connect to data service (" + e.getMessage() + ")");
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "Couldn't connect to data service (" + e.getMessage() + ")");
 			e.printStackTrace(System.err);
 			System.exit(1);
 		}
 		Services.provideResourceManager(new ResourceManager("/"));
 		MainFrame mainFrame = new MainFrame();
-		
-		//restrict resizing
+
+		// restrict resizing
 		mainFrame.setMinimumSize(new Dimension(480, 600));
 		mainFrame.setVisible(true);
 	}

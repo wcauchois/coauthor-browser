@@ -50,6 +50,7 @@ public class ResourceManager {
 		}
 	}
 	private static class ResourceException extends RuntimeException {
+		private static final long serialVersionUID = -5627375823535704513L;
 		public ResourceException(String resourceName, Throwable cause) {
 			super("Couldn't load resource " + resourceName, cause);
 		}

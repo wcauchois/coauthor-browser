@@ -6,7 +6,6 @@ import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.List;
 
-import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 import prefuse.Display;
 import prefuse.Visualization;
 import prefuse.action.ActionList;
@@ -31,6 +30,7 @@ import prefuse.util.PrefuseLib;
 import prefuse.visual.NodeItem;
 import prefuse.visual.VisualGraph;
 import prefuse.visual.VisualItem;
+import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 
 /**
  * @author Sergey
@@ -110,6 +110,7 @@ public abstract class VisualExplorer {
 	 * figure out how to coherently add the names to the graph
 	 * @param authorName
 	 */
+	@SuppressWarnings("unchecked")
 	protected void addCoAuthors(String authorName){
 		
 		
@@ -119,9 +120,9 @@ public abstract class VisualExplorer {
 		
 		// look for returned authors already in the graph; remove all authors already in
 		// the graph from the search results
-		Iterator authItr = this.coAuthors.nodes();
+		Iterator<Node> authItr = this.coAuthors.nodes();
 		while(authItr.hasNext()){
-			Node current = (Node) authItr.next();
+			Node current = authItr.next();
 			if(moreAuthors.contains(current.get("name"))){ // the graph already contains a node for one of the returned coauthors 
 				this.coAuthors.addEdge(clickedOn, current);	// add an edge between the clicked-on node and the coauthor node it has in the graph
 				moreAuthors.remove(current.get("name"));
@@ -129,9 +130,9 @@ public abstract class VisualExplorer {
 		}
 		
 		// add nodes for all query-returned co-authors that were not originally in the graph
-		Iterator coAuItr = moreAuthors.iterator();
+		Iterator<String> coAuItr = moreAuthors.iterator();
 		while(coAuItr.hasNext()){
-			String current = (String) coAuItr.next();
+			String current = coAuItr.next();
 			Node added = this.coAuthors.addNode();
 			added.set("name", current);
 			this.coAuthors.addEdge(clickedOn, added);
@@ -139,12 +140,13 @@ public abstract class VisualExplorer {
 		this.updateVis();
 	}
 	
+	@SuppressWarnings("unchecked")
 	protected Node findAuthor(String authorName){
 		// find the node of the searched for author
-		Iterator authItr = this.coAuthors.nodes();
+		Iterator<Node> authItr = this.coAuthors.nodes();
 		Node searchedFor = null;
 		while(authItr.hasNext()){
-			Node current = (Node) authItr.next();
+			Node current = authItr.next();
 			if(current.get("name").equals(authorName)){
 				searchedFor = current;
 				System.out.println("Author node found! ID is: " + searchedFor.getRow());
@@ -156,27 +158,29 @@ public abstract class VisualExplorer {
 	/**
 	 * adds coauthor nodes to all nodes currently in the graph
 	 */
+	@SuppressWarnings("unchecked")
 	public void addCoAuthorsToAllNodes(){
 		System.out.println("Adding coauthors to all nodes in graph");
-		Iterator graphItr = this.coAuthors.nodes();
+		Iterator<Node> graphItr = this.coAuthors.nodes();
 		
 		int nodeCt = this.coAuthors.getNodeCount();
 		
 		for (int i = 0; i < nodeCt; i++){
-			Node current = (Node) graphItr.next();
+			Node current = graphItr.next();
 			this.addCoAuthors((String) current.get("name"));
 		}
 		this.updateVis();
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void removeCoAuthors(String authorName){
 		
 		Node removeCoAuthorsFrom = findAuthor(authorName);
 		
-		Iterator edgeItr = removeCoAuthorsFrom.edges();
+		Iterator<Edge> edgeItr = removeCoAuthorsFrom.edges();
 		
 		while(edgeItr.hasNext()){
-			Edge currentEdge = (Edge) edgeItr.next();
+			Edge currentEdge = edgeItr.next();
 			Node currentNode = currentEdge.getTargetNode();
 			if(currentNode.getChildCount() == 0 && !authorName.equals(currentNode.getString("name"))){
 				System.out.println("This node will be deleted: " + currentNode.getString("name"));
