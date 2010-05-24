@@ -11,17 +11,55 @@ public class VisualChainExplorer extends VisualExplorer{
 	
 	protected List<PathLink> authorChain;
 	
+	
+	
+	/**
+	 * generates a new visualization of the co-authorship chain between the two passed authors
+	 * @param authorStart
+	 * @param authorEnd
+	 * @throws RemoteException
+	 */
 	public VisualChainExplorer(String authorStart, String authorEnd) throws RemoteException{
 		this.databaseInit();
+		this.authorChain= backend.getOneShortestPathBetweenAuthors(authorStart, authorEnd, false); // Jessica Miller->Stephen G. Kobourov-> Michael Stepp-> Ross Tate
+		this.constructorHelper(authorStart, authorEnd, authorChain);
+		
+	}
+	
+	/**
+	 * constructor for cached results
+	 * @param authorStart
+	 * @param authorEnd
+	 * @param authorChain
+	 * @throws RemoteException
+	 */
+	public VisualChainExplorer(String authorStart, String authorEnd, List<PathLink> authorChain) throws RemoteException{
+		this.databaseInit();
+		this.constructorHelper(authorStart, authorEnd, authorChain);
+	}
+	
+	/**
+	 * @param authorStart
+	 * @param authorEnd
+	 * @param authorChain
+	 * @throws RemoteException
+	 */
+	public void constructorHelper(String authorStart, String authorEnd, List<PathLink> authorChain) throws RemoteException{
+		this.authorChain = authorChain;
 		this.graphInit(authorStart, authorEnd);
 		this.visualizationInit(coAuthors);
 		this.displayInit(colorLayoutVis);
 
 	}
-		
+	
+	/**
+	 * initializes the chain graph betwen the two passed co-authors
+	 * @param authorStart
+	 * @param authorEnd
+	 * @throws RemoteException
+	 */
 	protected void graphInit(String authorStart, String authorEnd) throws RemoteException{
 		System.out.println(authorStart + " " + authorEnd);
-		this.authorChain= backend.getOneShortestPathBetweenAuthors(authorStart, authorEnd, false); // Jessica Miller->Stephen G. Kobourov-> Michael Stepp-> Ross Tate
 		//System.out.println(authorChain);
 		Table nodes = new Table();
 		nodes.addColumn("name", String.class);
