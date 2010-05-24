@@ -72,9 +72,11 @@ public abstract class VisualExplorer {
 	}
 	
 	
+	/**
+	 * Sets up a connection to the backend 
+	 */
 	public void databaseInit(){
-		// setup of database connections
-
+	
 		try {
 			backend = (CoauthorDataServiceInterface) Naming.lookup("rmi://" + HOSTNAME + "/"
 					+ CoauthorDataServiceInterface.SERVICE_NAME);
@@ -140,8 +142,12 @@ public abstract class VisualExplorer {
 		this.updateVis();
 	}
 	
+	/**
+	 * used to find the Node in the prefuse graph that has authorName in it's name
+	 * @param authorName 
+	 * @return 
+	 */
 	protected Node findAuthor(String authorName){
-		// find the node of the searched for author
 		Iterator authItr = this.coAuthors.nodes();
 		Node searchedFor = null;
 		while(authItr.hasNext()){
@@ -170,49 +176,52 @@ public abstract class VisualExplorer {
 		this.updateVis();
 	}
 	
+	
+	/**
+	 * removes all children at the node with the passed authorName, assumes that 
+	 * input is a valid node in the graph
+	 * @param authorName
+	 */
 	public void removeCoAuthors(String authorName){
 		
 		Node removeCoAuthorsFrom = findAuthor(authorName);
-		
-		//Iterator edgeItr = removeCoAuthorsFrom.edges();
-	/*	while(edgeItr.hasNext()){
-			Edge currentEdge = (Edge) edgeItr.next();
-			System.out.println("Current edge row is: " + currentEdge.getRow());
-			Node currentNode = currentEdge.getTargetNode();
-			if(currentNode.getChildCount() == 0 && !authorName.equals(currentNode.getString("name"))){
-				System.out.println("This node will be deleted: " + currentNode.getString("name"));
-				this.coAuthors.removeEdge(currentEdge);
-				this.coAuthors.removeNode(currentNode);
-			}
-		}
-	*/	
-//		Iterator childItr = removeCoAuthorsFrom.children();
-		/*while(childItr.hasNext()){
+	
+		Iterator childItr = removeCoAuthorsFrom.children();
+		while(childItr.hasNext()){
 			Node currentNode = (Node) childItr.next();
 			System.out.println("This node will be deleted: " + currentNode.getString("name"));
 			if (currentNode.getChildCount() > 0)
 				this.removeCoAuthors(currentNode.getString("name"));
 			this.coAuthors.removeNode(currentNode);
 
-		}*/
+		}
+		System.out.println("You are now removing the co-authors of " + authorName);
 
-	/*	Iterator nodeItr = this.coAuthors.nodes();
+	}
+
+	/**
+	 * removes all nodes that have degree 0 from the graph
+	 */
+	public void trimOneDegree(){
+		
+		Iterator nodeItr = this.coAuthors.nodes();
 		List<Integer> toBeDeleted = new ArrayList<Integer>();
 		while(nodeItr.hasNext()){
 			Node currentNode = (Node) nodeItr.next();
 			System.out.println("This node will be deleted: " + currentNode.getString("name"));
-			if (currentNode.getDegree() == 0)
+			if (currentNode.getDegree() == 1){
 				System.out.println("Degree of node is: " + currentNode.getDegree());
-				toBeDeleted.add(currentNode.)
-
+				System.out.println("The name at this node is " + this.coAuthors.getNode(currentNode.getRow()).getString("name"));
+				toBeDeleted.add(currentNode.getRow());
+			}	
 		}
 		
-		System.out.println("You are now removing the co-authors of " + authorName);
-		System.out.println("Number of Children: " + removeCoAuthorsFrom.getChildCount());
-		*/
-		this.updateVis();
+		for(int i =0; i<toBeDeleted.size();i++){
+			this.coAuthors.removeNode(toBeDeleted.get(i));
+		}
+		
 	}
-
+	
 	/**
 	 * use this to update the graph display when there are any changes to the 
 	 * underlying data structures, i.e. adding nodes to the table
@@ -307,6 +316,8 @@ public abstract class VisualExplorer {
         	public void keyTyped(java.awt.event.KeyEvent e){
         		if(e.getKeyChar() == '1'){
         			addCoAuthorsToAllNodes();
+        		}else if(e.getKeyChar() == '2'){
+        			trimOneDegree();
         		}
         	}
         	public void itemKeyTyped(VisualItem item, java.awt.event.KeyEvent e){
