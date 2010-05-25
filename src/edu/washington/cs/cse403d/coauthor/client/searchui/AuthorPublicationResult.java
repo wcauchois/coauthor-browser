@@ -85,8 +85,7 @@ class AuthorPublicationResult extends JPanel {
 		buildPubList();
 		
 		//Add the filter panel
-		add(new FilterPanel("Pub", listModel, publications
-				, pubList), BorderLayout.PAGE_END);
+		add(new FilterPanel(pubList), BorderLayout.PAGE_END);
 	}
 	
 	/**
@@ -126,8 +125,7 @@ class AuthorPublicationResult extends JPanel {
 			, BorderLayout.PAGE_END);
 		} else {
 			buildPubList();
-			add(new FilterPanel("Pub", listModel, publications
-					, pubList), BorderLayout.PAGE_END);
+			add(new FilterPanel(pubList), BorderLayout.PAGE_END);
 		}
 	}	
 	

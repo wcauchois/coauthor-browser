@@ -50,7 +50,7 @@ public class FilterField extends JTextField {
 	private void setTextToFilter() {
 		setFont(italicFont);
 		setForeground(Color.GRAY);
-		setText("Filter");
+		setText("Type your query here to filter the result");
 		updateResults("");
 		isPristine = true;
 	}

@@ -56,7 +56,13 @@ class AuthorCoauthorResult extends JPanel {
 	public AuthorCoauthorResult(String author) {
 		setVisible(true);
 		setLayout(new BorderLayout());
-		this.theAuthor = author;
+		try {
+			this.theAuthor = CDSI.getAuthors(author).get(0);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		singleEntryInitialize();
 	}
 	
@@ -109,8 +115,7 @@ class AuthorCoauthorResult extends JPanel {
 					"Error!",JOptionPane.ERROR_MESSAGE);
 		}			
 		buildCoauthorList();
-		add(new FilterPanel("Coauthor", listModel, theAuthorList
-				, coauthorList));
+		add(new FilterPanel(coauthorList));
 		add(singleEntryTop, BorderLayout.PAGE_START);
 	}
 	
