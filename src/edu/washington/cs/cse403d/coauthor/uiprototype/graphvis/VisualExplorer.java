@@ -19,6 +19,8 @@ import prefuse.activity.Activity;
 import prefuse.controls.Control;
 import prefuse.controls.ControlAdapter;
 import prefuse.controls.DragControl;
+import prefuse.controls.FocusControl;
+import prefuse.controls.NeighborHighlightControl;
 import prefuse.controls.PanControl;
 import prefuse.controls.WheelZoomControl;
 import prefuse.controls.ZoomControl;
@@ -96,8 +98,6 @@ public abstract class VisualExplorer {
 	 * @return a list of co-author names for the given author
 	 */
 	protected List<String> getCoAuthorList(String authorName){
-
-    	
 		String centerNode = authorName; 
 		List<String> coAu = null;
 		try{
@@ -116,10 +116,7 @@ public abstract class VisualExplorer {
 	 * @param authorName
 	 */
 	protected void addCoAuthors(String authorName){
-		
-		
 		List<String> moreAuthors = getCoAuthorList(authorName);        
-		
 		Node clickedOn = findAuthor(authorName);
 		
 		// look for returned authors already in the graph; remove all authors already in
@@ -229,9 +226,8 @@ public abstract class VisualExplorer {
 	 * underlying data structures, i.e. adding nodes to the table
 	 */
 	public void updateVis(){
-		colorLayoutVis.run("animate");
+		colorLayoutVis.run("layout");
 		colorLayoutVis.run("draw");
-		
 	}
 	
 
@@ -308,8 +304,8 @@ public abstract class VisualExplorer {
         int maxhops = 4, hops = 4;
         ColorAction fill = new ColorAction("graph", 
                 VisualItem.FILLCOLOR, ColorLib.rgb(200,200,255));
-        fill.add("_fixed", ColorLib.rgb(255,100,100));
-        fill.add("_highlight", ColorLib.rgb(255,0,255));
+        fill.add("_fixed", ColorLib.rgb(255,0,255));
+        fill.add("_highlight", ColorLib.rgb(255,100,100));
 
         ActionList draw = new ActionList();
         draw.add(new ColorAction("graph.nodes", VisualItem.FILLCOLOR, ColorLib.green(1)));
@@ -318,7 +314,6 @@ public abstract class VisualExplorer {
         draw.add(new ColorAction("graph.edges", VisualItem.FILLCOLOR, ColorLib.gray(200)));
         draw.add(new ColorAction("graph.edges", VisualItem.STROKECOLOR, ColorLib.gray(200)));
         draw.add(new RepaintAction());
-        draw.add(fill);
         
         ForceDirectedLayout fdl = new ForceDirectedLayout("graph");
         ForceSimulator fsim = fdl.getForceSimulator();
@@ -326,22 +321,21 @@ public abstract class VisualExplorer {
         
         ActionList animate = new ActionList(Activity.INFINITY);
         animate.add(fdl);
-    //    animate.add(fill);
+        animate.add(fill);
         animate.add(new RepaintAction());
         
         // finally, we register our ActionList with the Visualization.
         // we can later execute our Actions by invoking a method on our
         // Visualization, using the name we've chosen below.
         vis.putAction("draw", draw);
-        vis.putAction("animate", animate);
-        vis.runAfter("draw", "animate");
+        vis.putAction("layout", animate);
+        vis.runAfter("draw", "layout");
 	    
 	    NodeItem focus = (NodeItem) vg.getNode(0);
-	    PrefuseLib.setX(focus, null, focus.getX());
-	    PrefuseLib.setY(focus, null, focus.getY());
+    	PrefuseLib.setX(focus, null, 700);
+ 	    PrefuseLib.setY(focus, null, 700);
 	    
 	    this.colorLayoutVis = vis;
-
 	}
 	
 	
@@ -384,6 +378,8 @@ public abstract class VisualExplorer {
         d.addControlListener(new ZoomControl(1));
         d.addControlListener(new WheelZoomControl());
         d.addControlListener(new ZoomToFitControl());
+        d.addControlListener(new NeighborHighlightControl());
+        d.addControlListener(new FocusControl(2));
         d.addControlListener(nodeClicked);
         
         this.dispCtrls = d;
