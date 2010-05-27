@@ -167,14 +167,29 @@ public abstract class VisualExplorer {
 		Iterator graphItr = this.coAuthors.nodes();
 		
 		int nodeCt = this.coAuthors.getNodeCount();
-		
-		for (int i = 0; i < nodeCt; i++){
-			Node current = (Node) graphItr.next();
-			this.addCoAuthors((String) current.get("name"));
+		if(nodeCt < 100){
+			for (int i = 0; i < nodeCt; i++){
+				Node current = (Node) graphItr.next();
+				this.addCoAuthors((String) current.get("name"));
+			}
+			this.updateVis();
+		}else {
+			System.out.println("Too many nodes in graph to add co-authors to all!");
+		}
+	}
+	
+	/**
+	 * removes the passed parameter node from the current graph
+	 * @param toBeRemoved
+	 */
+	protected void removeNode(int toBeRemoved){
+		if(this.coAuthors.getNode(toBeRemoved).getChildCount() == 0){
+			this.coAuthors.removeNode(toBeRemoved);
+		}else{
+			System.out.println("This node has children; it cannot be removed!");
 		}
 		this.updateVis();
 	}
-	
 	
 	/**
 	 * removes all children at the node with the passed authorName, assumes that 
@@ -368,6 +383,8 @@ public abstract class VisualExplorer {
         	public void itemKeyTyped(VisualItem item, java.awt.event.KeyEvent e){
         		if(e.getKeyChar() == '2'){
         			removeCoAuthors(item.getString("name"));
+        		}else if(e.getKeyChar() == '3'){
+        			removeNode(item.getRow());
         		}
         	}
         };
