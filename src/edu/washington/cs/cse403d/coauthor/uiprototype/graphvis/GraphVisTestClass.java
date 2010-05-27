@@ -20,9 +20,9 @@ public class GraphVisTestClass {
 		
 		List<PathLink> chain= backend.getOneShortestPathBetweenAuthors("Jessica Miller", "Ross Tate", true); // Jessica Miller->Stephen G. Kobourov-> Michael Stepp-> Ross Tate
 		System.out.println(chain);*/
-	//	String s = "Jessica Miller";
-//		VisualCoAuthorExplorer vx = new VisualCoAuthorExplorer(s);
-		VisualChainExplorer vx = new VisualChainExplorer("Jessica Miller", "Ross Tate");
+		String s = "Jessica Miller";
+		VisualCoAuthorExplorer vx = new VisualCoAuthorExplorer(s);
+//		VisualChainExplorer vx = new VisualChainExplorer("Jessica Miller", "Ross Tate");
 		// create a new window to hold the visualization
 		JFrame frame = new JFrame("prefuse example");
 		frame.setBounds(800, 100, 1, 1);
