@@ -14,7 +14,14 @@ import prefuse.action.ActionList;
 import prefuse.action.RepaintAction;
 import prefuse.action.assignment.ColorAction;
 import prefuse.action.filter.GraphDistanceFilter;
+import prefuse.action.layout.CircleLayout;
+import prefuse.action.layout.CollapsedSubtreeLayout;
+import prefuse.action.layout.RandomLayout;
+import prefuse.action.layout.graph.BalloonTreeLayout;
 import prefuse.action.layout.graph.ForceDirectedLayout;
+import prefuse.action.layout.graph.NodeLinkTreeLayout;
+import prefuse.action.layout.graph.RadialTreeLayout;
+import prefuse.action.layout.graph.SquarifiedTreeMapLayout;
 import prefuse.activity.Activity;
 import prefuse.controls.Control;
 import prefuse.controls.ControlAdapter;
@@ -252,13 +259,13 @@ public abstract class VisualExplorer {
 	 * only used in constructor
 	 * @param initialGraph
 	 */
-	protected void visualizationInit(Graph initialGraph){
+	protected void visualizationInit(){
 		  	
         // add the graph to the visualization as the data group "graph"
         // nodes and edges are accessible as "graph.nodes" and "graph.edges"
 		
 		Visualization vis = new Visualization();
-	    VisualGraph vg  = (VisualGraph) vis.add("graph", initialGraph);
+	    VisualGraph vg  = (VisualGraph) vis.add("graph", this.coAuthors);
 	    vis.setInteractive("graph.edges", null, true);
 	    
 	    // -- 3. the renderers and renderer factory ---------------------------
@@ -330,6 +337,7 @@ public abstract class VisualExplorer {
         draw.add(new ColorAction("graph.edges", VisualItem.STROKECOLOR, ColorLib.gray(200)));
         draw.add(new RepaintAction());
         
+      //  RadialTreeLayout fdl = new RadialTreeLayout("graph");
         ForceDirectedLayout fdl = new ForceDirectedLayout("graph");
         ForceSimulator fsim = fdl.getForceSimulator();
         fsim.getForces()[0].setParameter(0, -1.2f);
@@ -360,11 +368,11 @@ public abstract class VisualExplorer {
 	 * only used in constructor
 	 * @param initialVis
 	 */
-	protected void displayInit(Visualization initialVis){
+	protected void displayInit(){
 		  
         // -- 5. the display and interactive controls -------------------------
         
-        Display d = new Display(initialVis);
+        Display d = new Display(this.colorLayoutVis);
         // control to detect when a node has been clicked on and perform the appropriate actions
         
         Control nodeClicked = new ControlAdapter(){

@@ -42,8 +42,8 @@ public class VisualCoAuthorExplorer extends VisualExplorer {
 	 */
 	public void constructorHelper(String authorName, List<String> initialCoAuthorList){
 		graphInit(authorName, initialCoAuthorList);
-		visualizationInit(coAuthors);
-		displayInit(this.colorLayoutVis);	
+		visualizationInit();
+		displayInit();	
 	}
 	
 	/**
