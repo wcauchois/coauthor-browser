@@ -378,8 +378,11 @@ public abstract class VisualExplorer {
         Control nodeClicked = new ControlAdapter(){
         	public void itemClicked(VisualItem item, MouseEvent e ){
         		String clickedOn = item.getString("name");
-        		System.out.println(clickedOn);
+        		Node ckOn = coAuthors.getNode(item.getRow());
+        		ckOn.set("visited", 1);
+        		System.out.println(clickedOn + " visited status is: " + ckOn.getInt("visited"));
         		addCoAuthors(item.getString("name"));
+      
            	}
         	public void keyTyped(java.awt.event.KeyEvent e){
         		if(e.getKeyChar() == '1'){
