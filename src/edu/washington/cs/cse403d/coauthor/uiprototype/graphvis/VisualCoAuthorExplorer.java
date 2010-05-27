@@ -25,11 +25,21 @@ public class VisualCoAuthorExplorer extends VisualExplorer {
 		constructorHelper(authorName, initialCoAuthorList);
 	}
 	
+	/**
+	 * constructor for cached backend results
+	 * @param authorName
+	 * @param initialCoAuthorList
+	 */
 	public VisualCoAuthorExplorer(String authorName, List<String> initialCoAuthorList){
 		databaseInit();
 		constructorHelper(authorName, initialCoAuthorList);
 	}
 	
+	/**
+	 * 
+	 * @param authorName
+	 * @param initialCoAuthorList
+	 */
 	public void constructorHelper(String authorName, List<String> initialCoAuthorList){
 		graphInit(authorName, initialCoAuthorList);
 		visualizationInit(coAuthors);
@@ -79,6 +89,10 @@ public class VisualCoAuthorExplorer extends VisualExplorer {
 
 
 
+	/**
+	 * used in the event the backend is down
+	 * @return
+	 */
 	public List<String> getTestCoauthors(){
 		List<String> co = new ArrayList<String>();
 		co.add("Jeff Prouty");
