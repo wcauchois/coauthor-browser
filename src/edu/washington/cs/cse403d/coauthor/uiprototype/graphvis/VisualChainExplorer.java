@@ -47,8 +47,8 @@ public class VisualChainExplorer extends VisualExplorer{
 	public void constructorHelper(String authorStart, String authorEnd, List<PathLink> authorChain) throws RemoteException{
 		this.authorChain = authorChain;
 		this.graphInit(authorStart, authorEnd);
-		this.visualizationInit(coAuthors);
-		this.displayInit(colorLayoutVis);
+		this.visualizationInit();
+		this.displayInit();
 
 	}
 	
