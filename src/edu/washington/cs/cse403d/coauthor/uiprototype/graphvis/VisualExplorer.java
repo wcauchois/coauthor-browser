@@ -10,6 +10,7 @@ import java.util.List;
 import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 import prefuse.Display;
 import prefuse.Visualization;
+import prefuse.action.Action;
 import prefuse.action.ActionList;
 import prefuse.action.RepaintAction;
 import prefuse.action.assignment.ColorAction;
@@ -337,10 +338,10 @@ public abstract class VisualExplorer {
         draw.add(new ColorAction("graph.edges", VisualItem.STROKECOLOR, ColorLib.gray(200)));
         draw.add(new RepaintAction());
         
-      //  RadialTreeLayout fdl = new RadialTreeLayout("graph");
+  //      RadialTreeLayout fdl = new RadialTreeLayout("graph");
         ForceDirectedLayout fdl = new ForceDirectedLayout("graph");
         ForceSimulator fsim = fdl.getForceSimulator();
-        fsim.getForces()[0].setParameter(0, -1.2f);
+  /*      fsim.getForces()[0].setParameter(0, -1.2f);*/
         
         ActionList animate = new ActionList(Activity.INFINITY);
         animate.add(fdl);
@@ -361,6 +362,44 @@ public abstract class VisualExplorer {
 	    this.colorLayoutVis = vis;
 	}
 	
+	public void switchToRadialLayout(){
+	 	int maxhops = 4, hops = 4;
+	 //	Action curLayout = this.colorLayoutVis.getAction("layout");
+	 	this.colorLayoutVis.removeAction("layout");
+        ColorAction fill = new ColorAction("graph", 
+                VisualItem.FILLCOLOR, ColorLib.rgb(200,200,255));
+        fill.add("_fixed", ColorLib.rgb(255,0,255));
+        fill.add("_highlight", ColorLib.rgb(255,100,100));
+        
+        RadialTreeLayout fdl = new RadialTreeLayout("graph");
+          
+		ActionList animate = new ActionList(Activity.INFINITY);
+		animate.add(fdl);
+		animate.add(fill);
+		animate.add(new RepaintAction());
+		this.colorLayoutVis.putAction("layout", animate);
+		this.updateVis();
+	}
+	
+	public void switchToFDL(){
+	 	int maxhops = 4, hops = 4;
+	 	this.colorLayoutVis.removeAction("layout");
+        ColorAction fill = new ColorAction("graph", 
+                VisualItem.FILLCOLOR, ColorLib.rgb(200,200,255));
+        fill.add("_fixed", ColorLib.rgb(255,0,255));
+        fill.add("_highlight", ColorLib.rgb(255,100,100));
+        
+        ForceDirectedLayout fdl = new ForceDirectedLayout("graph");
+        ForceSimulator fsim = fdl.getForceSimulator();
+        fsim.getForces()[0].setParameter(0, -1.2f);
+        
+		ActionList animate = new ActionList(Activity.INFINITY);
+		animate.add(fdl);
+		animate.add(fill);
+		animate.add(new RepaintAction());
+		this.colorLayoutVis.putAction("layout", animate);
+		this.updateVis();
+	}
 	
 	/**
 	 * initializes the display 
@@ -389,6 +428,10 @@ public abstract class VisualExplorer {
         			addCoAuthorsToAllNodes();
         		}else if(e.getKeyChar() == '2'){
         			trimOneDegree();
+        		} else if(e.getKeyChar() == '4'){
+        			switchToRadialLayout();
+        		} else if(e.getKeyChar() == '5'){
+        			switchToFDL();
         		}
         	}
         	public void itemKeyTyped(VisualItem item, java.awt.event.KeyEvent e){
