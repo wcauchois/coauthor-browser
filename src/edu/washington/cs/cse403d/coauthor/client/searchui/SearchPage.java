@@ -53,36 +53,6 @@ public class SearchPage extends BrowserPage {
 		else if(searchType == ARTICLE_SEARCH)
 			tabbedPane.setSelectedIndex(1);
 	}
-	// XXX: move AuthorSearchPane out too!!
-	private class SearchPane extends JPanel {
-		private static final long serialVersionUID = -2380014657227857630L;
-		
-		protected JTextField query = new JTextField();
-		protected JButton submit = new JButton("Search");
-		public SearchPane() {
-			JPanel topPart = new JPanel();
-			topPart.add(new JLabel("Please enter your search terms below"));
-			topPart.add(new HelpMarker("Click here for more information."));
-			
-			JPanel bottomPart = new JPanel();
-			query.setPreferredSize(new Dimension(100, query.getPreferredSize().height));
-			bottomPart.add(query);
-			bottomPart.add(submit);
-			submit.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent evt) {
-					Services.getBrowser().go(new ArticleResult(query.getText()));
-				}
-			});
-			
-			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-			add(topPart);
-			add(bottomPart);
-		}
-	}
-	
-	private class ArticleSearchPane extends SearchPane {
-		private static final long serialVersionUID = 7982107874230017944L;
-	}
 	
 	private class VisualSearchPane extends JPanel {
 		private static final long serialVersionUID = 8486284382808952443L;
