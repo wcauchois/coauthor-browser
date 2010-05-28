@@ -14,6 +14,7 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import edu.washington.cs.cse403d.coauthor.client.browser.BrowserFrame;
+import edu.washington.cs.cse403d.coauthor.client.graphviz.GraphVizManager;
 import edu.washington.cs.cse403d.coauthor.client.searchui.SearchPage;
 import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 
@@ -127,6 +128,7 @@ public class MainFrame extends BrowserFrame {
 			System.exit(1);
 		}
 		Services.provideResourceManager(new ResourceManager("/"));
+		Services.provideGraphVizManager(new GraphVizManager());
 		MainFrame mainFrame = new MainFrame();
 
 		// restrict resizing

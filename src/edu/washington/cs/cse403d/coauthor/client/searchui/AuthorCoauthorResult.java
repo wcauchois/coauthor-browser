@@ -15,6 +15,7 @@ import java.util.List;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -117,6 +118,16 @@ class AuthorCoauthorResult extends JPanel {
 		buildCoauthorList();
 		add(new FilterPanel(coauthorList));
 		add(singleEntryTop, BorderLayout.PAGE_START);
+		
+		// XXX(wcauchois): better layout for this button!!
+		JButton visualizeButton = new JButton("Visualize");
+		visualizeButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				Services.getGraphVizManager().showGraphFor(theAuthor);
+			}
+		});
+		singleEntryTop.add(visualizeButton);
 	}
 	
 	/**

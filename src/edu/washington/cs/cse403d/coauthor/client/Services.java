@@ -1,6 +1,7 @@
 package edu.washington.cs.cse403d.coauthor.client;
 
 import edu.washington.cs.cse403d.coauthor.client.browser.Browser;
+import edu.washington.cs.cse403d.coauthor.client.graphviz.GraphVizManager;
 import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 
 /**
@@ -18,6 +19,7 @@ public class Services {
 	private static Browser theBrowser;
 	private static ResourceManager theResourceManager;
 	private static CoauthorDataServiceInterface theCoauthorDataServiceInterface;
+	private static GraphVizManager theGraphVizManager;
 	
 	public static ResourceManager getResourceManager() {
 		if(theResourceManager == null)
@@ -32,6 +34,9 @@ public class Services {
 	public static CoauthorDataServiceInterface getCoauthorDataServiceInterface() {
 		return theCoauthorDataServiceInterface;
 	}
+	public static GraphVizManager getGraphVizManager() {
+		return theGraphVizManager;
+	}
 	
 	public static void provideCoauthorDataServiceInterface(
 			CoauthorDataServiceInterface coauthorDataServiceInterface) {
@@ -42,5 +47,8 @@ public class Services {
 	}
 	public static void provideBrowser(Browser browser) {
 		theBrowser = browser;
+	}
+	public static void provideGraphVizManager(GraphVizManager graphVizManager) {
+		theGraphVizManager = graphVizManager;
 	}
 }
