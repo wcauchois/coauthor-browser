@@ -72,6 +72,7 @@ public class VisualCoAuthorExplorer extends VisualExplorer {
 		// Add Searched-for author to table of Nodes
 		nodes.addRow();
 		nodes.setString(0,"name",centerNode); 
+		nodes.setInt(0,"visited",1); 
 
 	  	// add all co-Authors to table
 	  	// for each co-Author, add an edge linking him/her to the first

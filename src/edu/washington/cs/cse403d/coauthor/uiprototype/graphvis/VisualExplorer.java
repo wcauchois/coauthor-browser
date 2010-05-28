@@ -8,15 +8,18 @@ import java.util.Iterator;
 import java.util.List;
 
 import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
+import prefuse.Constants;
 import prefuse.Display;
 import prefuse.Visualization;
 import prefuse.action.Action;
 import prefuse.action.ActionList;
 import prefuse.action.RepaintAction;
 import prefuse.action.assignment.ColorAction;
+import prefuse.action.assignment.DataColorAction;
 import prefuse.action.filter.GraphDistanceFilter;
 import prefuse.action.layout.CircleLayout;
 import prefuse.action.layout.CollapsedSubtreeLayout;
+import prefuse.action.layout.Layout;
 import prefuse.action.layout.RandomLayout;
 import prefuse.action.layout.graph.BalloonTreeLayout;
 import prefuse.action.layout.graph.ForceDirectedLayout;
@@ -325,10 +328,9 @@ public abstract class VisualExplorer {
  // -- set up the actions ----------------------------------------------
         
         int maxhops = 4, hops = 4;
-        ColorAction fill = new ColorAction("graph", 
-                VisualItem.FILLCOLOR, ColorLib.rgb(200,200,255));
-        fill.add("_fixed", ColorLib.rgb(255,0,255));
-        fill.add("_highlight", ColorLib.rgb(255,100,100));
+        
+        ActionList animate = setupAnimate("fdl");
+       
 
         ActionList draw = new ActionList();
         draw.add(new ColorAction("graph.nodes", VisualItem.FILLCOLOR, ColorLib.green(1)));
@@ -337,16 +339,6 @@ public abstract class VisualExplorer {
         draw.add(new ColorAction("graph.edges", VisualItem.FILLCOLOR, ColorLib.gray(200)));
         draw.add(new ColorAction("graph.edges", VisualItem.STROKECOLOR, ColorLib.gray(200)));
         draw.add(new RepaintAction());
-        
-  //      RadialTreeLayout fdl = new RadialTreeLayout("graph");
-        ForceDirectedLayout fdl = new ForceDirectedLayout("graph");
-        ForceSimulator fsim = fdl.getForceSimulator();
-  /*      fsim.getForces()[0].setParameter(0, -1.2f);*/
-        
-        ActionList animate = new ActionList(Activity.INFINITY);
-        animate.add(fdl);
-        animate.add(fill);
-        animate.add(new RepaintAction());
         
         // finally, we register our ActionList with the Visualization.
         // we can later execute our Actions by invoking a method on our
@@ -362,41 +354,46 @@ public abstract class VisualExplorer {
 	    this.colorLayoutVis = vis;
 	}
 	
-	public void switchToRadialLayout(){
-	 	int maxhops = 4, hops = 4;
-	 //	Action curLayout = this.colorLayoutVis.getAction("layout");
-	 	this.colorLayoutVis.removeAction("layout");
-        ColorAction fill = new ColorAction("graph", 
-                VisualItem.FILLCOLOR, ColorLib.rgb(200,200,255));
+	protected ActionList setupAnimate(String layout){
+		int[] palette = new int[] {
+                ColorLib.rgb(190,190,255),ColorLib.rgb(255,180,180)
+            };
+            // map nominal data values to colors using our provided palette
+        DataColorAction fill = new DataColorAction("graph.nodes", "visited",
+                Constants.NOMINAL, VisualItem.FILLCOLOR, palette);
         fill.add("_fixed", ColorLib.rgb(255,0,255));
         fill.add("_highlight", ColorLib.rgb(255,100,100));
+       
+        // default behavior returns a force-directed layout
+        Layout fdl = new ForceDirectedLayout("graph");
+        ForceSimulator fsim = ((ForceDirectedLayout) fdl).getForceSimulator();
+        fsim.getForces()[0].setParameter(0, -1.2f);
         
-        RadialTreeLayout fdl = new RadialTreeLayout("graph");
-          
-		ActionList animate = new ActionList(Activity.INFINITY);
-		animate.add(fdl);
-		animate.add(fill);
-		animate.add(new RepaintAction());
+        if(layout.equals("radial")){
+        	fdl = new RadialTreeLayout("graph");
+        }
+        
+        ActionList animate = new ActionList(Activity.INFINITY);
+        animate.add(fdl);
+        animate.add(fill);
+        animate.add(new RepaintAction());
+        
+        return animate;
+	}
+	
+	public void switchToRadialLayout(){
+	 //	Action curLayout = this.colorLayoutVis.getAction("layout");
+	 	this.colorLayoutVis.removeAction("layout");
+	 	
+	 	ActionList animate = setupAnimate("radial");
 		this.colorLayoutVis.putAction("layout", animate);
 		this.updateVis();
 	}
 	
 	public void switchToFDL(){
-	 	int maxhops = 4, hops = 4;
 	 	this.colorLayoutVis.removeAction("layout");
-        ColorAction fill = new ColorAction("graph", 
-                VisualItem.FILLCOLOR, ColorLib.rgb(200,200,255));
-        fill.add("_fixed", ColorLib.rgb(255,0,255));
-        fill.add("_highlight", ColorLib.rgb(255,100,100));
         
-        ForceDirectedLayout fdl = new ForceDirectedLayout("graph");
-        ForceSimulator fsim = fdl.getForceSimulator();
-        fsim.getForces()[0].setParameter(0, -1.2f);
-        
-		ActionList animate = new ActionList(Activity.INFINITY);
-		animate.add(fdl);
-		animate.add(fill);
-		animate.add(new RepaintAction());
+	 	ActionList animate = this.setupAnimate("fdl");
 		this.colorLayoutVis.putAction("layout", animate);
 		this.updateVis();
 	}
