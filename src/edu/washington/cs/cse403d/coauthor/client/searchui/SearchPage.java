@@ -54,6 +54,11 @@ public class SearchPage extends BrowserPage {
 			tabbedPane.setSelectedIndex(1);
 	}
 	/*
+	}
+	
+	private class ChainSearchPane extends SearchPane 
+	{
+		
 	private class VisualSearchPane extends JPanel {
 		private static final long serialVersionUID = 8486284382808952443L;
 		private JTextField field = new JTextField();

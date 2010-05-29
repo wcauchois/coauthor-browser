@@ -57,13 +57,21 @@ class AuthorCoauthorResult extends JPanel {
 	public AuthorCoauthorResult(String author) {
 		setVisible(true);
 		setLayout(new BorderLayout());
+		List<String> n = null;
 		try {
-			this.theAuthor = CDSI.getAuthors(author).get(0);
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			n = CDSI.getAuthors(author);
+		} catch (Exception e1) {
+			// TODO Go to the error page
+			JOptionPane.showMessageDialog(this,
+					"Invalid Author Name!",
+					"Error!",JOptionPane.ERROR_MESSAGE);
 		}
-		
+		if (n.size() > 0)
+			this.theAuthor = n.get(0);
+		else
+			JOptionPane.showMessageDialog(this,
+					"Invalid Author Name!",
+					"Error!",JOptionPane.ERROR_MESSAGE);		
 		singleEntryInitialize();
 	}
 	
@@ -116,18 +124,8 @@ class AuthorCoauthorResult extends JPanel {
 					"Error!",JOptionPane.ERROR_MESSAGE);
 		}			
 		buildCoauthorList();
-		add(new FilterPanel(coauthorList));
+		add(new FilterPanel(coauthorList, theAuthor));
 		add(singleEntryTop, BorderLayout.PAGE_START);
-		
-		// XXX(wcauchois): better layout for this button!!
-		JButton visualizeButton = new JButton("Visualize");
-		visualizeButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				Services.getGraphVizManager().showGraphFor(theAuthor);
-			}
-		});
-		singleEntryTop.add(visualizeButton);
 	}
 	
 	/**

@@ -42,13 +42,14 @@ public class ChainSearchResult extends BrowserPage
 	private JPanel singleEntryTop;
 	private JPanel multiEntryTop;
 	private String author2;
-	
+	private String theAuthor;
 	/**
 	 * Constructor for single author search result screen
 	 * 
 	 * @param author the author that was entered as the query
 	 */
 	public ChainSearchResult(String author1, String author2) {
+		theAuthor = author1;
 		setVisible(true);
 		setLayout(new BorderLayout());
 		boolean valid = true;
@@ -103,7 +104,7 @@ public class ChainSearchResult extends BrowserPage
 		coauthorList = new JList(listModel);
 		
 		buildCoauthorList();
-		add(new FilterPanel(coauthorList));
+		add(new FilterPanel(coauthorList, theAuthor));
 		add(singleEntryTop, BorderLayout.PAGE_START);
 	}
 	
