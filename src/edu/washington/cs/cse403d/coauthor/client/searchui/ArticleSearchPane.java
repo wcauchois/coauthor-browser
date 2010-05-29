@@ -37,4 +37,9 @@ public class ArticleSearchPane extends JPanel {
 		add(topPart);
 		add(bottomPart);
 	}
+	
+	public String getTitle()
+	{
+		return "Search";
+	}
 }

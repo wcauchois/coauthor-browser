@@ -49,7 +49,10 @@ public class ChainSearchPane extends JPanel
 		bottomPart.add(author1);
 		author2.setPreferredSize(new Dimension(200, author2.getPreferredSize().height));
 		bottomPart.add(author2);
-		bottomPart.add(submit);
+		
+		
+		JPanel searchPart = new JPanel();
+		searchPart.add(submit);
 		submit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				Services.getBrowser().go(new ChainSearchResult(author1.getText(), author2.getText()));
@@ -57,7 +60,8 @@ public class ChainSearchPane extends JPanel
 		});
 		
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		add(topPart);
-		add(bottomPart);
+		add(topPart, BorderLayout.NORTH);
+		add(bottomPart, BorderLayout.NORTH);
+		add(searchPart, BorderLayout.NORTH);
 	}
 }

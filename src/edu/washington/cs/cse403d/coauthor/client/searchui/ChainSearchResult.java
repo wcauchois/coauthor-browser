@@ -41,6 +41,7 @@ public class ChainSearchResult extends BrowserPage
 	
 	private JPanel singleEntryTop;
 	private JPanel multiEntryTop;
+	private String author2;
 	
 	/**
 	 * Constructor for single author search result screen
@@ -50,15 +51,21 @@ public class ChainSearchResult extends BrowserPage
 	public ChainSearchResult(String author1, String author2) {
 		setVisible(true);
 		setLayout(new BorderLayout());
+		boolean valid = true;
 		try {
 			chain = CDSI.getOneShortestPathBetweenAuthors(author1, author2, getAutoscrolls());
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			System.out.println("Invalid author(s)");
+			valid = false;
 		}
-		for(int i = 0; i < chain.size(); i++)
-			System.out.println(chain.get(i).toString());
-		singleEntryInitialize();
+		if (valid)
+		{
+			for(int i = 0; i < chain.size(); i++)
+				System.out.println(chain.get(i).toString());
+			singleEntryInitialize();
+		}
 	}
 	
 	/**
@@ -174,6 +181,7 @@ public class ChainSearchResult extends BrowserPage
 			listModel.add(i, chain.get(i).toString().substring(0, chain.get(i).toString().indexOf('-')));
 			i++;
 		}
+		listModel.add(i, chain.get(i-1).toString().substring(chain.get(i-1).toString().indexOf('>') + 1));
 	}
 	
 	/**
@@ -194,5 +202,10 @@ public class ChainSearchResult extends BrowserPage
 			multiEntryTop.add(Box.createVerticalStrut(3));
 			i++;
 		}
+	}
+	
+	public String getTitle()
+	{
+		return "Chain Search";
 	}
 }
