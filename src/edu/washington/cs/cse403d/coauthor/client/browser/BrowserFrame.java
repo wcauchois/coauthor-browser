@@ -92,6 +92,7 @@ public class BrowserFrame extends JFrame implements Browser {
 		backButton.update();
 		forwardButton.update();
 		validate();
+		pagePane.setSize(this.size());
 		pagePane.repaint();
 	}
 	public void go(BrowserPage page) {

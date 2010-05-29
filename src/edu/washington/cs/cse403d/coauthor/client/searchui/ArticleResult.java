@@ -71,6 +71,7 @@ public class ArticleResult extends BrowserPage {
 					"Error!",JOptionPane.ERROR_MESSAGE);
 		}
 		initialize();
+		//System.out.println(super.getContainerListeners().toString());
 	}
 	
 	/**
@@ -263,7 +264,7 @@ public class ArticleResult extends BrowserPage {
 	 * Returns the title of the page
 	 */
 	public String getTitle() {
-		return articleTitle;
+		return "Article Search Result";
 	}
 	
 	/**
