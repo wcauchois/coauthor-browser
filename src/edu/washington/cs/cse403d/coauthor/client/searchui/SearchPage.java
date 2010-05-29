@@ -47,14 +47,13 @@ public class SearchPage extends BrowserPage {
 		tabbedPane.addTab("Author Search", new AuthorSearchPane(this));
 		tabbedPane.addTab("Article Search", new ArticleSearchPane());
 		tabbedPane.addTab("Chain Search", new ChainSearchPane());
-		tabbedPane.addTab("Visual Search", new VisualSearchPane());
 		
 		if(searchType == AUTHOR_SEARCH)
 			tabbedPane.setSelectedIndex(0);
 		else if(searchType == ARTICLE_SEARCH)
 			tabbedPane.setSelectedIndex(1);
 	}
-	
+	/*
 	private class VisualSearchPane extends JPanel {
 		private static final long serialVersionUID = 8486284382808952443L;
 		private JTextField field = new JTextField();
@@ -83,7 +82,7 @@ public class SearchPage extends BrowserPage {
 				}
 			});
 		}
-	}
+	}*/
 	
 	public String getTitle() {
 		return "Search";
