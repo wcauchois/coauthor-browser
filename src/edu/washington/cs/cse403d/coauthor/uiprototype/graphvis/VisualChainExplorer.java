@@ -23,7 +23,6 @@ public class VisualChainExplorer extends VisualExplorer{
 		this.databaseInit();
 		this.authorChain= backend.getOneShortestPathBetweenAuthors(authorStart, authorEnd, false); // Jessica Miller->Stephen G. Kobourov-> Michael Stepp-> Ross Tate
 		this.constructorHelper(authorStart, authorEnd, authorChain);
-		
 	}
 	
 	/**

@@ -1,5 +1,7 @@
 package edu.washington.cs.cse403d.coauthor.uiprototype.graphvis;
 
+import java.rmi.RemoteException;
+
 import javax.swing.JFrame;
 
 import prefuse.Display;
@@ -47,6 +49,30 @@ public class PrefuseVisualization {
 //		cur = s;
 //		cur = s;
 		s = vx.curSelected;
+		d = vx.getDisplay();
+	}
+	
+	public PrefuseVisualization(String name1, String name2)
+	{
+//		String cur = "";
+		VisualChainExplorer vx = null;
+		try {
+			vx = new VisualChainExplorer(name1,name2);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	//	frame = new JFrame("prefuse example");
+		
+	//	frame.setBounds(800, 100, 1, 1);
+	//	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+	//	frame.add(vx.getDisplay());
+	//	frame.pack();           // layout components in window
+	//	frame.setVisible(true); // show the window
+		vx.updateVis();
+//		cur = s;
+//		cur = s;
 		d = vx.getDisplay();
 	}
 	
