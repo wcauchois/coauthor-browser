@@ -33,6 +33,21 @@ public class GraphVizManager {
 		theFrame.pack();
 		theFrame.setVisible(true);
 	}
+	public void showGraphFor(String startingAuthor, String s) {
+		// XXX: Right now, if the frame is already shown, just hide it. It would
+		// 		be better to navigate the current frame to the new startingAuthor
+		if(theFrame != null)
+			hideGraph();
+		theFrame = new GraphVizFrame(startingAuthor);
+		theFrame.setMinimumSize(new Dimension(500, 500));
+		
+		pv = new PrefuseVisualization(startingAuthor,s);
+		field.setPreferredSize(theFrame.getPreferredSize());
+		
+		theFrame.add(pv.getD());
+		theFrame.pack();
+		theFrame.setVisible(true);
+	}
 	public void hideGraph() {
 		theFrame.setVisible(false);
 		theFrame.dispose();
