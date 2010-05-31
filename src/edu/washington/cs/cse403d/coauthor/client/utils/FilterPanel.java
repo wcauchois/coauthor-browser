@@ -31,7 +31,7 @@ public class FilterPanel extends JPanel {
 	private JPanel filterPanel;
 	private String theAuthor;
 	private JList list;
-	
+	private String author2 = null;
 	/**
 	 * Constructor
 	 * 
@@ -43,6 +43,15 @@ public class FilterPanel extends JPanel {
 	public FilterPanel(JList list, String author) {
 		this.list = list;
 		this.theAuthor = author;
+		createFilterPanel();
+		add(filterPanel);
+	}
+	
+	public FilterPanel(JList list, String author1, String author2)
+	{
+		this.list = list;
+		this.theAuthor = author1;
+		this.author2 = author2;
 		createFilterPanel();
 		add(filterPanel);
 	}
@@ -96,7 +105,10 @@ public class FilterPanel extends JPanel {
 			setIcon(visualizeButton);
 			addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent e) {
-					Services.getGraphVizManager().showGraphFor(theAuthor);
+					if (author2 == null)
+						Services.getGraphVizManager().showGraphFor(theAuthor);
+					else
+						Services.getGraphVizManager().showGraphFor(theAuthor, author2);
 				}
 				public void mouseEntered(MouseEvent evt) {
 					setCursor(handCursor);
