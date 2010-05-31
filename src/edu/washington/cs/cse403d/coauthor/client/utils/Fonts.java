@@ -25,4 +25,11 @@ public class Fonts {
 		Font baseFont = getDialogFont();
 		return baseFont.deriveFont(baseFont.getSize2D() + 10.0f);
 	}
+	/**
+	 * The font that should be used for search fields; slightly larger and
+	 * bolder than normal.
+	 */
+	public static Font getSearchFont() {
+		return getDialogFont().deriveFont(Font.BOLD, 14);
+	}
 }

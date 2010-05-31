@@ -29,6 +29,7 @@ import javax.swing.JScrollPane;
 import edu.washington.cs.cse403d.coauthor.client.ResourceManager;
 import edu.washington.cs.cse403d.coauthor.client.Services;
 import edu.washington.cs.cse403d.coauthor.client.browser.BrowserPage;
+import edu.washington.cs.cse403d.coauthor.client.utils.Fonts;
 import edu.washington.cs.cse403d.coauthor.client.utils.HelpMarker;
 import edu.washington.cs.cse403d.coauthor.client.utils.QuerySuggestionsField;
 
@@ -57,6 +58,8 @@ public class AuthorSearchPane extends JPanel {
 		}
 		public AuthorField() {
 			super(executor);
+			setFont(Fonts.getSearchFont());
+			setPreferredSize(new Dimension(150, 24));
 			addFocusListener(new FocusAdapter() {
 				@Override public void focusGained(FocusEvent evt) {
 					if(markedInvalid) {

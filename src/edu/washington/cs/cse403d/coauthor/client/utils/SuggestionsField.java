@@ -1,7 +1,6 @@
 package edu.washington.cs.cse403d.coauthor.client.utils;
 
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.FocusAdapter;
@@ -167,8 +166,6 @@ public abstract class SuggestionsField extends JTextField {
 			}
 		});
 		
-		setFont(getFont().deriveFont(Font.BOLD, 14));
-		setPreferredSize(new Dimension(150, 24));
 		listPane.setPreferredSize(new Dimension(226, DEFAULT_POPUP_HEIGHT));
 	}
 }
