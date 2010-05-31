@@ -63,11 +63,7 @@ public class ChainSearchResult extends BrowserPage
 			valid = false;
 		}
 		if (valid)
-		{
-			for(int i = 0; i < chain.size(); i++)
-				System.out.println(chain.get(i).toString());
 			singleEntryInitialize();
-		}
 	}
 	
 	/**
@@ -103,6 +99,7 @@ public class ChainSearchResult extends BrowserPage
 		//Coauthor list
 		listModel = new DefaultListModel();
 		coauthorList = new JList(listModel);
+		coauthorList.setFont(coauthorList.getFont().deriveFont(Font.PLAIN));
 		
 		buildCoauthorList();
 		add(new FilterPanel(coauthorList, theAuthor, author2));
@@ -138,10 +135,11 @@ public class ChainSearchResult extends BrowserPage
 	private void buildListHelper() {
 		int i = 0;			
 		while (i < chain.size()){
-			listModel.add(i, chain.get(i).toString().substring(0, chain.get(i).toString().indexOf('-')));
+			listModel.add(i, i + ": " + chain.get(i).toString().substring(0, chain.get(i).toString().indexOf('-')));
 			i++;
 		}
-		listModel.add(i, chain.get(i-1).toString().substring(chain.get(i-1).toString().indexOf('>') + 1));
+		listModel.add(i, i + ": " + chain.get(i-1).toString().substring(chain.get(i-1).toString().indexOf('>') + 1));
+		author2 = chain.get(i-1).toString().substring(chain.get(i-1).toString().indexOf('>') + 1);
 		this.theAuthor = (String) listModel.get(0);
 	}
 	
@@ -167,6 +165,6 @@ public class ChainSearchResult extends BrowserPage
 	
 	public String getTitle()
 	{
-		return "Chain Search";
+		return theAuthor.trim() + " & " + author2.trim();
 	}
 }
