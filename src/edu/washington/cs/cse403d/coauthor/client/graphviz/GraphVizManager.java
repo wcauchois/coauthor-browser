@@ -33,6 +33,8 @@ public class GraphVizManager {
 		theFrame.pack();
 		theFrame.setVisible(true);
 	}
+	
+	
 	public void showGraphFor(String startingAuthor, String s) {
 		// XXX: Right now, if the frame is already shown, just hide it. It would
 		// 		be better to navigate the current frame to the new startingAuthor

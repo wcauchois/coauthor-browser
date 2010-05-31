@@ -1,5 +1,6 @@
 package edu.washington.cs.cse403d.coauthor.uiprototype.graphvis;
 
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
@@ -128,7 +129,13 @@ public abstract class VisualExplorer {
 	 */
 	protected void addCoAuthors(String authorName){
 		List<String> moreAuthors = getCoAuthorList(authorName);        
-		Node clickedOn = findAuthor(authorName);
+		Node addTo = findAuthor(authorName);
+		
+		if(addTo == null){
+			addTo = this.coAuthors.addNode();
+			addTo.setString("name", authorName);
+			addTo.setInt("visited", 1);
+		}
 		
 		// look for returned authors already in the graph; remove all authors already in
 		// the graph from the search results
@@ -136,7 +143,7 @@ public abstract class VisualExplorer {
 		while(authItr.hasNext()){
 			Node current = (Node) authItr.next();
 			if(moreAuthors.contains(current.get("name"))){ // the graph already contains a node for one of the returned coauthors 
-				this.coAuthors.addEdge(clickedOn, current);	// add an edge between the clicked-on node and the coauthor node it has in the graph
+				this.coAuthors.addEdge(addTo, current);	// add an edge between the clicked-on node and the coauthor node it has in the graph
 				moreAuthors.remove(current.get("name"));
 			}
 		}
@@ -147,7 +154,7 @@ public abstract class VisualExplorer {
 			String current = (String) coAuItr.next();
 			Node added = this.coAuthors.addNode();
 			added.set("name", current);
-			this.coAuthors.addEdge(clickedOn, added);
+			this.coAuthors.addEdge(addTo, added);
 		}
 		this.updateVis();
 	}
@@ -284,46 +291,7 @@ public abstract class VisualExplorer {
 	    vis.setRendererFactory(new DefaultRendererFactory(r));
 	      
 	    // -- 4. the processing actions ---------------------------------------
-	 
-	    
-	    /*
-	//    ColorAction fill = new ColorAction("graph.nodes",
-	 //   		 VisualItem.FILLCOLOR, ColorLib.rgb(190, 215, 206));
-	    // use black for node text
-	    ColorAction text = new ColorAction("graph.nodes",
-	            VisualItem.TEXTCOLOR, ColorLib.gray(0));
-	    // use light grey for edges
-	    ColorAction edges = new ColorAction("graph.edges",
-	            VisualItem.STROKECOLOR, ColorLib.gray(200));
-	    
-	  
-	    
-        ColorAction highlight = new ColorAction("graph.nodes",
-        		VisualItem.FILLCOLOR, ColorLib.rgb(190, 215, 206));
-        highlight.add("_fixed", ColorLib.rgb(255,0,0));
-  //      highlight.add("_highlight", ColorLib.rgb(255,0,255));
-	    
-	    // create an action list containing all color assignments
-	    ActionList draw = new ActionList();
-	//    draw.add(fill);
-	    draw.add(text);
-	    draw.add(edges);
-	    draw.add(new ColorAction("graph.edges", VisualItem.FILLCOLOR, ColorLib.gray(200)));
-        draw.add(new ColorAction("graph.edges", VisualItem.STROKECOLOR, ColorLib.gray(200)));
-	    
-	    // create an action list with an animated layout
-	    ActionList animate = new ActionList(Activity.INFINITY);
-	    animate.add(new ForceDirectedLayout("graph"));
-	    animate.add(highlight);
-	    
-	    animate.add(new RepaintAction());
-	    
-	    // add the actions to the visualization
-	    vis.putAction("draw", draw);
-	    vis.putAction("animate", animate);
-	    vis.runAfter("draw", "animate");
-	    
-	    */
+	
 	    
  // -- set up the actions ----------------------------------------------
         
@@ -347,9 +315,9 @@ public abstract class VisualExplorer {
         vis.putAction("layout", animate);
         vis.runAfter("draw", "layout");
 	    
-	    NodeItem focus = (NodeItem) vg.getNode(0);
+/*	    NodeItem focus = (NodeItem) vg.getNode(0);
     	PrefuseLib.setX(focus, null, 700);
- 	    PrefuseLib.setY(focus, null, 700);
+ 	    PrefuseLib.setY(focus, null, 700);*/
 	    
 	    this.colorLayoutVis = vis;
 	}
@@ -451,6 +419,6 @@ public abstract class VisualExplorer {
         d.addControlListener(nodeClicked);
         
         this.dispCtrls = d;
-
+        d.panTo(new Point(0,0));
 	}
 }

@@ -203,7 +203,7 @@ class AuthorCoauthorResult extends JPanel {
 	private void buildListHelper() {
 		int i = 0;			
 		while (i < theAuthorList.size()){
-			listModel.add(i, theAuthorList.get(i));
+			listModel.add(i, "• " + theAuthorList.get(i));
 			i++;
 		}
 	}
