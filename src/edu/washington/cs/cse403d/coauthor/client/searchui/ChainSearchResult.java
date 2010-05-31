@@ -50,6 +50,7 @@ public class ChainSearchResult extends BrowserPage
 	 */
 	public ChainSearchResult(String author1, String author2) {
 		theAuthor = author1;
+		this.author2 = author2;
 		setVisible(true);
 		setLayout(new BorderLayout());
 		boolean valid = true;
@@ -104,50 +105,8 @@ public class ChainSearchResult extends BrowserPage
 		coauthorList = new JList(listModel);
 		
 		buildCoauthorList();
-		add(new FilterPanel(coauthorList, theAuthor));
+		add(new FilterPanel(coauthorList, theAuthor, author2));
 		add(singleEntryTop, BorderLayout.PAGE_START);
-	}
-	
-	/**
-	 * Internal helper method for multi-entry coauthor search result
-	 */
-	private void multiEntryInitialize() {
-		multiEntryTopBuild();
-		add(multiEntryTop, BorderLayout.PAGE_START);
-	}	
-	
-	/**
-	 * Internal helper method for multiEntryInitialize()
-	 */
-	private void multiEntryTopBuild() {
-		multiEntryTop = new JPanel();
-		multiEntryTop.setLayout(new BoxLayout(multiEntryTop, BoxLayout.Y_AXIS));
-		multiEntryTop.setVisible(true);
-		
-		//The Author Name.
-		JLabel title = new JLabel("Author");
-		Font f = title.getFont();
-		float s = title.getFont().getSize2D();
-		s += 8.0f;
-		title.setFont(f.deriveFont(s));
-		multiEntryTop.add(title);
-		
-		multiEntryTop.add(new JSeparator(SwingConstants.HORIZONTAL));
-		
-		//Coauthors
-		JLabel coauthor = new JLabel("Coauthors");
-		f = coauthor.getFont();
-		s = coauthor.getFont().getSize2D();
-		s += 8.0f;
-		coauthor.setFont(f.deriveFont(s));
-		multiEntryTop.add(coauthor);
-		multiEntryTop.add(new JSeparator(SwingConstants.HORIZONTAL));
-				
-		addCoauthors();
-		JScrollPane listScroller = new JScrollPane(coauthorList);
-		listScroller.setPreferredSize(new Dimension(60, 60));
-		multiEntryTop.add(listScroller);
-		multiEntryTop.add(Box.createVerticalStrut(10));
 	}
 	
 	/**
@@ -183,6 +142,7 @@ public class ChainSearchResult extends BrowserPage
 			i++;
 		}
 		listModel.add(i, chain.get(i-1).toString().substring(chain.get(i-1).toString().indexOf('>') + 1));
+		this.theAuthor = (String) listModel.get(0);
 	}
 	
 	/**
