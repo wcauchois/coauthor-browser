@@ -74,6 +74,9 @@ public abstract class QuerySuggestionsField extends SuggestionsField {
 		return results;
 	}
 	
+	public QuerySuggestionsField(ExecutorService executor) {
+		this.executor = executor;
+	}
 	public QuerySuggestionsField() {
 		executor = Executors.newSingleThreadExecutor();
 	}
