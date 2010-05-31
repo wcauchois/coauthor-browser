@@ -56,6 +56,7 @@ public class AuthorSearchPane extends JPanel {
 			AuthorSearchPane.this.onSubmit();
 		}
 		public AuthorField() {
+			super(executor);
 			addFocusListener(new FocusAdapter() {
 				@Override public void focusGained(FocusEvent evt) {
 					if(markedInvalid) {
@@ -206,12 +207,13 @@ public class AuthorSearchPane extends JPanel {
 			rows.add(cells.clone());
 		}
 	}
-	private AuthorsPane authorsPane = new AuthorsPane();
+	private AuthorsPane authorsPane;
 	private static ExecutorService createExecutor() {
 		return Executors.newSingleThreadExecutor();
 	}
 	public AuthorSearchPane(BrowserPage parent) {
 		executor = createExecutor();
+		authorsPane = new AuthorsPane();
 		setLayout(new BorderLayout());
 		
 		JPanel headerPane = new JPanel();
