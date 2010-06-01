@@ -67,7 +67,7 @@ public class GraphVisTestClass {
 		frame.setBounds(800, 100, 1, 1);
 	    // ensure application exits when window is closed
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setContentPane(demo(vx, "name"));
+        frame.setContentPane(demo(vx));
 		frame.add(vx.getDisplay());
 		frame.pack();           // layout components in window
 		frame.setVisible(true); // show the window
@@ -75,11 +75,12 @@ public class GraphVisTestClass {
 
 	}
 	
-    public static JPanel demo(VisualExplorer vx, String label){
+    public static JPanel demo(VisualExplorer vx){
     	
     	
     	JPanel panel = new JPanel(new BorderLayout());
     	
+    	final String label = "name";
 		final JFastLabel title = new JFastLabel("       Fish          ");
 		title.setPreferredSize(new Dimension(150, 20));
 		title.setVerticalAlignment(SwingConstants.BOTTOM);
@@ -90,6 +91,17 @@ public class GraphVisTestClass {
 		oneDg.setToolTipText("Press this button to expand the co-authors of all nodes " +
 				" in the graph.");
 	//	oneDg.addActionListener((ActionListener) panel);
+		
+		vx.getDisplay().addControlListener(new ControlAdapter() {
+            public void itemEntered(VisualItem item, MouseEvent e) {
+                if ( item.canGetString(label) )
+                    title.setText(item.getString(label));
+            }
+            public void itemExited(VisualItem item, MouseEvent e) {
+                title.setText(null);
+            }
+        });
+		
 		oneDg.setActionCommand("onedg");
 		
 		JButton trim = new JButton("Trim");
