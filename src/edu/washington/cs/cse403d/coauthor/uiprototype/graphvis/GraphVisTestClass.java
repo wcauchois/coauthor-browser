@@ -89,7 +89,7 @@ public class GraphVisTestClass {
 		JButton oneDg = new JButton("Add One Degree");
 		oneDg.setToolTipText("Press this button to expand the co-authors of all nodes " +
 				" in the graph.");
-		oneDg.addActionListener((ActionListener) panel);
+	//	oneDg.addActionListener((ActionListener) panel);
 		oneDg.setActionCommand("onedg");
 		
 		JButton trim = new JButton("Trim");

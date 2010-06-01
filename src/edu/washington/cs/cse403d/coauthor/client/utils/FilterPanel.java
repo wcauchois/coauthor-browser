@@ -4,6 +4,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.rmi.RemoteException;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -108,7 +109,12 @@ public class FilterPanel extends JPanel {
 					if (author2 == null)
 						Services.getGraphVizManager().showGraphFor(theAuthor);
 					else
-						Services.getGraphVizManager().showGraphFor(theAuthor, author2);
+						try {
+							Services.getGraphVizManager().showGraphFor(theAuthor, author2);
+						} catch (RemoteException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 				}
 				public void mouseEntered(MouseEvent evt) {
 					setCursor(handCursor);
