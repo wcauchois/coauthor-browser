@@ -35,13 +35,19 @@ import edu.washington.cs.cse403d.coauthor.client.Services;
 import edu.washington.cs.cse403d.coauthor.client.browser.BrowserPage;
 import edu.washington.cs.cse403d.coauthor.client.utils.HelpMarker;
 import edu.washington.cs.cse403d.coauthor.client.utils.QuerySuggestionsField;
+import edu.washington.cs.cse403d.coauthor.client.utils.SuggestionsField;
 
 public class ChainSearchPane extends JPanel
 {
-	protected JTextField author1 = new JTextField();
-	protected JTextField author2 = new JTextField();
+	//protected JTextField author1 = new JTextField();
+	//protected JTextField author2 = new JTextField();
+	protected ChainAuthorField author1 = new ChainAuthorField();
+	protected ChainAuthorField author2 = new ChainAuthorField();
 	protected JButton submit = new JButton("Search");
-	public ChainSearchPane() {
+	protected List<ChainAuthorField> authorFields = new LinkedList<ChainAuthorField>();
+	public ChainSearchPane(BrowserPage parent) {
+		authorFields.add(author1);
+		authorFields.add(author2);
 		JPanel topPart = new JPanel();
 		topPart.add(new JLabel("Please enter your search terms below"));
 		topPart.add(new HelpMarker("Click here for more information."));
@@ -57,7 +63,15 @@ public class ChainSearchPane extends JPanel
 		searchPart.add(submit);
 		submit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				Services.getBrowser().go(new ChainSearchResult(author1.getText(), author2.getText()));
+				if (!author1.getText().equals("") && !author2.getText().equals(""))
+					Services.getBrowser().go(new ChainSearchResult(author1.getText(), author2.getText()));
+				else
+				{
+					if (author1.getText().equals(""))
+						author1.markInvalid();
+					if (author2.getText().equals(""))
+						author2.markInvalid();
+				}
 			}
 		});
 		
@@ -65,5 +79,55 @@ public class ChainSearchPane extends JPanel
 		add(topPart, BorderLayout.NORTH);
 		add(bottomPart, BorderLayout.NORTH);
 		add(searchPart, BorderLayout.NORTH);
+	}
+	
+	private class ChainAuthorField extends QuerySuggestionsField {
+		private static final long serialVersionUID = -5382087475322086605L;
+		
+		private final Color invalidMarkColor = Color.RED;
+		private boolean markedInvalid = false;
+		public void markInvalid() {
+			markedInvalid = true;
+			setBackground(invalidMarkColor);
+		}
+		@Override
+		protected void onSubmit() {
+			ChainSearchPane.this.onSubmit();
+		}
+		public ChainAuthorField() {
+			addFocusListener(new FocusAdapter() {
+				@Override public void focusGained(FocusEvent evt) {
+					if(markedInvalid) {
+						// Restore the default background color
+						setBackground(SystemColor.text);
+					}
+				}
+			});
+		}
+		@Override
+		protected List<String> issueQuery(String part) throws Exception {
+			return Services.getCoauthorDataServiceInterface().getAuthors(part);
+		}
+	}
+	
+	protected void onSubmit() {
+		List<String> authors = getAuthors();
+		if(authors != null)
+			Services.getBrowser().go(new AuthorResult(getAuthors()));
+	}
+	public List<String> getAuthors() {
+		List<String> authors = new ArrayList<String>();
+		boolean haveInvalidFields = false;
+		for(ChainAuthorField field : authorFields) {
+			if(field.getText().trim().length() == 0) {
+				field.markInvalid();
+				haveInvalidFields = true;
+			} else if(!haveInvalidFields)
+				authors.add(field.getText());
+		}
+		if(haveInvalidFields)
+			return null;
+		else
+			return authors;
 	}
 }
