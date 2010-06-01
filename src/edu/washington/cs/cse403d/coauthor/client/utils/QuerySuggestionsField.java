@@ -11,14 +11,33 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Specializes a SuggestionsField by adding the ability to populate the
+ * suggestions from a backend query that is automatically run in a separate
+ * thread (to ensure no lag from a user's perspective). To use this class:
+ * instead of overloading getSuggestions(), overload issueQuery() -- which
+ * has pretty much the same specification as getSuggestions() (i.e. it returns
+ * a list of suggestions for a given fragment), except that it is expected to
+ * take on the order of ~500 milliseconds to complete.
+ * 
+ * Issuing queries in the background is accomplished using an ExecutorService.
+ * If you don't provide an ExecutorService in the constructor,
+ * QuerySuggestionsField will by default construct a new single threaded
+ * Executor for itself. If you expect the ExecutorService to change over
+ * the lifetime of your QuerySuggestionsField instance, you should override
+ * getExecutorService() instead (the default implementation returns the
+ * internal executor service).
+ * 
+ * @author William Cauchois
+ */
 public abstract class QuerySuggestionsField extends SuggestionsField {
 	private static final long serialVersionUID = -851636475744113831L;
 	
-	private static final int MIN_QUERY_LENGTH = 4;
+	private static final int MIN_QUERY_LENGTH = 3;
 	
 	protected abstract List<String> issueQuery(String part) throws Exception;
 	
-	private ExecutorService executor;
+	private ExecutorService myExecutor = null;
 	private String query;
 	private Future<List<String>> queryResults;
 	
@@ -38,26 +57,24 @@ public abstract class QuerySuggestionsField extends SuggestionsField {
 		final String filterPart = (parts.size() > 1) ? parts.get(1) : "";
 		
 		List<String> results = new ArrayList<String>();
-		if(filterPart.length() > 0 || text.endsWith(" ")) {
-			if(!queryPart.isEmpty()
-					&& queryPart.length() >= MIN_QUERY_LENGTH) {
-				if(queryPart.equals(query)) {
-					try {
-						results.addAll(queryResults.get(0, TimeUnit.MILLISECONDS));
-					} catch(Exception e) { }
-				} else {
-					query = queryPart;
-					queryResults = executor.submit(new Callable<List<String>>() {
-						public List<String> call() throws Exception {
-							return issueQuery(queryPart);
-						}
-					});
-					executor.execute(new Runnable() {
-						public void run() {
-							updateSuggestions();
-						}
-					});
-				}
+		if(!queryPart.isEmpty()
+				&& queryPart.length() >= MIN_QUERY_LENGTH) {
+			if(queryPart.equals(query)) {
+				try {
+					results.addAll(queryResults.get(0, TimeUnit.MILLISECONDS));
+				} catch(Exception e) { }
+			} else {
+				query = queryPart;
+				queryResults = getExecutorService().submit(new Callable<List<String>>() {
+					public List<String> call() throws Exception {
+						return issueQuery(queryPart);
+					}
+				});
+				getExecutorService().execute(new Runnable() {
+					public void run() {
+						updateSuggestions();
+					}
+				});
 			}
 		}
 		
@@ -74,10 +91,13 @@ public abstract class QuerySuggestionsField extends SuggestionsField {
 		return results;
 	}
 	
-	public QuerySuggestionsField(ExecutorService executor) {
-		this.executor = executor;
+	protected ExecutorService getExecutorService() {
+		return myExecutor;
+	}
+	public QuerySuggestionsField(ExecutorService executorToUse) {
+		myExecutor = executorToUse;
 	}
 	public QuerySuggestionsField() {
-		executor = Executors.newSingleThreadExecutor();
+		myExecutor = Executors.newSingleThreadExecutor();
 	}
 }

@@ -29,6 +29,7 @@ import javax.swing.JScrollPane;
 import edu.washington.cs.cse403d.coauthor.client.ResourceManager;
 import edu.washington.cs.cse403d.coauthor.client.Services;
 import edu.washington.cs.cse403d.coauthor.client.browser.BrowserPage;
+import edu.washington.cs.cse403d.coauthor.client.utils.Fonts;
 import edu.washington.cs.cse403d.coauthor.client.utils.HelpMarker;
 import edu.washington.cs.cse403d.coauthor.client.utils.QuerySuggestionsField;
 
@@ -56,7 +57,9 @@ public class AuthorSearchPane extends JPanel {
 			AuthorSearchPane.this.onSubmit();
 		}
 		public AuthorField() {
-			super(executor);
+			super(null);
+			setFont(Fonts.getSearchFont());
+			setPreferredSize(new Dimension(150, 24));
 			addFocusListener(new FocusAdapter() {
 				@Override public void focusGained(FocusEvent evt) {
 					if(markedInvalid) {
@@ -67,13 +70,17 @@ public class AuthorSearchPane extends JPanel {
 			});
 		}
 		@Override
+		protected ExecutorService getExecutorService() {
+			return sharedExecutor;
+		}
+		@Override
 		protected List<String> issueQuery(String part) throws Exception {
 			return Services.getCoauthorDataServiceInterface().getAuthors(part);
 		}
 	}
 	private JButton submit = new JButton("Search");
 	private List<AuthorField> authorFields = new LinkedList<AuthorField>();
-	private ExecutorService executor;
+	private ExecutorService sharedExecutor;
 	private class AuthorsPane extends JPanel {
 		private static final long serialVersionUID = 5760485859149199999L;
 		private class FocusPolicy extends FocusTraversalPolicy {
@@ -212,7 +219,7 @@ public class AuthorSearchPane extends JPanel {
 		return Executors.newSingleThreadExecutor();
 	}
 	public AuthorSearchPane(BrowserPage parent) {
-		executor = createExecutor();
+		sharedExecutor = createExecutor();
 		authorsPane = new AuthorsPane();
 		setLayout(new BorderLayout());
 		
@@ -238,14 +245,15 @@ public class AuthorSearchPane extends JPanel {
 		
 		parent.addNavListener(new BrowserPage.NavListener() {
 			public void onEnter(BrowserPage previous) {
-				if(executor == null)
-					executor = createExecutor();
+				System.out.println("enterred again!!");
+				if(sharedExecutor == null)
+					sharedExecutor = createExecutor();
 			}
 			public void onExit(BrowserPage next) {
 				for(AuthorField f : authorFields)
 					f.hideSuggestions();
-				executor.shutdownNow();
-				executor = null;
+				sharedExecutor.shutdownNow();
+				sharedExecutor = null;
 			}
 		});
 	}

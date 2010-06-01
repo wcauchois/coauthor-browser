@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import edu.washington.cs.cse403d.coauthor.client.Services;
+import edu.washington.cs.cse403d.coauthor.client.utils.Fonts;
 import edu.washington.cs.cse403d.coauthor.client.utils.HelpMarker;
 
 public class ArticleSearchPane extends JPanel {
@@ -25,6 +26,8 @@ public class ArticleSearchPane extends JPanel {
 		
 		JPanel bottomPart = new JPanel();
 		query.setPreferredSize(new Dimension(100, query.getPreferredSize().height));
+		query.setFont(Fonts.getSearchFont());
+		query.setPreferredSize(new Dimension(150, 24));
 		bottomPart.add(query);
 		bottomPart.add(submit);
 		submit.addActionListener(new ActionListener() {

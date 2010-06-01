@@ -35,7 +35,7 @@ public class AuthorResult extends BrowserPage {
 	 */
 	public AuthorResult(List<String> queries) {
 		this.queries = queries;
-		initialize();				
+		initialize();
 	}
 	
 	/**
