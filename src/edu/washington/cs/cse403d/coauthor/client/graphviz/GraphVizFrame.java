@@ -83,7 +83,7 @@ public class GraphVizFrame extends JFrame implements ActionListener{
 		oneDg.setActionCommand("onedg");
 		oneDg.addActionListener(this);
 		
-		JButton trim = new JButton("Trim");
+		JButton trim = new JButton("DO NOT PRESS!!!");
         trim.setActionCommand("trim");
 		trim.addActionListener(this);
 		
