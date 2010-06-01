@@ -2,22 +2,25 @@ package edu.washington.cs.cse403d.coauthor.client.graphviz;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.rmi.RemoteException;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import edu.washington.cs.cse403d.coauthor.uiprototype.graphvis.PrefuseVisualization;
+import edu.washington.cs.cse403d.coauthor.uiprototype.graphvis.VisualChainExplorer;
+import edu.washington.cs.cse403d.coauthor.uiprototype.graphvis.VisualCoAuthorExplorer;
+import edu.washington.cs.cse403d.coauthor.uiprototype.graphvis.VisualExplorer;
 
 public class GraphVizManager {
 	private GraphVizFrame theFrame = null;
 	private static final long serialVersionUID = 8486284382808952443L;
-	private JTextField field = new JTextField();
-	private JButton search = new JButton("Search");
-	private PrefuseVisualization pv;
 	
-	public GraphVizManager() {
-	}
+	private JTextField field = new JTextField();
+	//private PrefuseVisualization pv;
+	VisualExplorer visExp;
+	
 	public void showGraphFor(String startingAuthor) {
 		// XXX: Right now, if the frame is already shown, just hide it. It would
 		// 		be better to navigate the current frame to the new startingAuthor
@@ -26,25 +29,27 @@ public class GraphVizManager {
 		theFrame = new GraphVizFrame(startingAuthor);
 		theFrame.setMinimumSize(new Dimension(500, 500));
 		
-		pv = new PrefuseVisualization(startingAuthor);
-		field.setPreferredSize(theFrame.getPreferredSize());
+	//	pv = new PrefuseVisualization(startingAuthor);
+
 		
-		theFrame.add(pv.getD());
+		field.setPreferredSize(theFrame.getPreferredSize());
+
+
 		theFrame.pack();
 		theFrame.setVisible(true);
 	}
-	public void showGraphFor(String startingAuthor, String s) {
+	
+	
+	public void showGraphFor(String startingAuthor, String endingAuthor) throws RemoteException {
 		// XXX: Right now, if the frame is already shown, just hide it. It would
 		// 		be better to navigate the current frame to the new startingAuthor
 		if(theFrame != null)
 			hideGraph();
-		theFrame = new GraphVizFrame(startingAuthor);
+		theFrame = new GraphVizFrame(startingAuthor, endingAuthor);
 		theFrame.setMinimumSize(new Dimension(500, 500));
 		
-		pv = new PrefuseVisualization(startingAuthor,s);
 		field.setPreferredSize(theFrame.getPreferredSize());
 		
-		theFrame.add(pv.getD());
 		theFrame.pack();
 		theFrame.setVisible(true);
 	}
