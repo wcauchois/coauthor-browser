@@ -12,7 +12,6 @@ import prefuse.data.Table;
  */
 public class VisualCoAuthorExplorer extends VisualExplorer {
 
-	public String curSelected;
 
 	/**
 	 * Creates a new initial visualization with the authorName node in the center
