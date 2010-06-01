@@ -13,6 +13,7 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
@@ -64,7 +65,7 @@ public class GraphVisTestClass {
 		frame.setBounds(800, 100, 1, 1);
 	    // ensure application exits when window is closed
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setContentPane(demo(vx.getVisualization(), "name"));
+        frame.setContentPane(demo(vx, "name"));
 		frame.add(vx.getDisplay());
 		frame.pack();           // layout components in window
 		frame.setVisible(true); // show the window
@@ -72,50 +73,36 @@ public class GraphVisTestClass {
 
 	}
 	
-    public static JPanel demo(Visualization vis, final String label) {        
-        // create a new radial tree view
-    //    Visualization vis = gview.getVisualization();
+    public static JPanel demo(VisualExplorer vx, String label){
+    	
+    	
+    	JPanel panel = new JPanel(new BorderLayout());
+    	
+		final JFastLabel title = new JFastLabel("       Fish          ");
+		title.setPreferredSize(new Dimension(350, 20));
+		title.setVerticalAlignment(SwingConstants.BOTTOM);
+		title.setBorder(BorderFactory.createEmptyBorder(3,0,0,0));
+		title.setFont(FontLib.getFont("Tahoma", Font.PLAIN, 16));
         
-        // create a search panel for the tree map
-/*        SearchQueryBinding sq = new SearchQueryBinding(
-             (Table)vis.getGroup("graph"), label,
-             (SearchTupleSet)vis.getGroup(Visualization.SEARCH_ITEMS));
-        JSearchPanel search = sq.createSearchPanel();
-        search.setShowResultCount(true);
-        search.setBorder(BorderFactory.createEmptyBorder(5,5,4,0));
-        search.setFont(FontLib.getFont("Tahoma", Font.PLAIN, 11));
-     */   
-        final JFastLabel title = new JFastLabel("                 ");
-        title.setPreferredSize(new Dimension(350, 20));
-        title.setVerticalAlignment(SwingConstants.BOTTOM);
-        title.setBorder(BorderFactory.createEmptyBorder(3,0,0,0));
-        title.setFont(FontLib.getFont("Tahoma", Font.PLAIN, 16));
+		JButton butt1 = new JButton("Blah");
+		
+		JButton butt2 = new JButton("poop");
         
-      /*  gview.addControlListener(new ControlAdapter() {
-            public void itemEntered(VisualItem item, MouseEvent e) {
-                if ( item.canGetString(label) )
-                    title.setText(item.getString(label));
-            }
-            public void itemExited(VisualItem item, MouseEvent e) {
-                title.setText(null);
-            }
-        });*/
-        
-        Box box = new Box(BoxLayout.X_AXIS);
-        box.add(Box.createHorizontalStrut(10));
+		Box box = new Box(BoxLayout.X_AXIS);
         box.add(title);
-        box.add(Box.createHorizontalGlue());
-    //    box.add(search);
-        box.add(Box.createHorizontalStrut(3));
+        box.add(butt1);
+        box.add(butt2);
         
-        JPanel panel = new JPanel(new BorderLayout());
-    //    panel.add(gview, BorderLayout.CENTER);
+        box.add(Box.createHorizontalStrut(10));
+        box.add(Box.createHorizontalGlue());
+        box.add(Box.createHorizontalStrut(3));
         panel.add(box, BorderLayout.SOUTH);
         
         Color BACKGROUND = Color.WHITE;
         Color FOREGROUND = Color.DARK_GRAY;
         UILib.setColor(panel, BACKGROUND, FOREGROUND);
-        
-        return panel;
+    	
+    	
+    	return panel;
     }
 }
