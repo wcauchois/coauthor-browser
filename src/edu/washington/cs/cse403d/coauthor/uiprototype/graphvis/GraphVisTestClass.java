@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
@@ -79,30 +81,47 @@ public class GraphVisTestClass {
     	JPanel panel = new JPanel(new BorderLayout());
     	
 		final JFastLabel title = new JFastLabel("       Fish          ");
-		title.setPreferredSize(new Dimension(350, 20));
+		title.setPreferredSize(new Dimension(150, 20));
 		title.setVerticalAlignment(SwingConstants.BOTTOM);
 		title.setBorder(BorderFactory.createEmptyBorder(3,0,0,0));
 		title.setFont(FontLib.getFont("Tahoma", Font.PLAIN, 16));
         
-		JButton butt1 = new JButton("Blah");
+		JButton oneDg = new JButton("Add One Degree");
+		oneDg.setToolTipText("Press this button to expand the co-authors of all nodes " +
+				" in the graph.");
+		oneDg.addActionListener((ActionListener) panel);
+		oneDg.setActionCommand("onedg");
 		
-		JButton butt2 = new JButton("poop");
+		JButton trim = new JButton("Trim");
         
+		JButton radial = new JButton("Radial View");
+        
+		JButton force = new JButton("Dynamic View");
+		
+		
 		Box box = new Box(BoxLayout.X_AXIS);
         box.add(title);
-        box.add(butt1);
-        box.add(butt2);
+        box.add(oneDg);
+        box.add(trim);
+        box.add(radial);
+        box.add(force);
         
         box.add(Box.createHorizontalStrut(10));
         box.add(Box.createHorizontalGlue());
         box.add(Box.createHorizontalStrut(3));
         panel.add(box, BorderLayout.SOUTH);
         
-        Color BACKGROUND = Color.WHITE;
-        Color FOREGROUND = Color.DARK_GRAY;
+        Color BACKGROUND = Color.LIGHT_GRAY;
+        Color FOREGROUND = Color.BLACK;
         UILib.setColor(panel, BACKGROUND, FOREGROUND);
     	
     	
     	return panel;
+    }
+    
+    public void actionPerformed(ActionEvent e){
+    	if("onedg".equals(e.getActionCommand())){
+    		System.out.println("HAHAA I am master of buttons");
+    	}
     }
 }
