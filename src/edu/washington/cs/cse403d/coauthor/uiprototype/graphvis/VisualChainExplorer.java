@@ -91,10 +91,11 @@ public class VisualChainExplorer extends VisualExplorer{
 		nodes.addRow();
 		edges.addRow();
 		nodes.setString(k, "name", authorChain.get(k-1).getAuthorBName());
-  		edges.setInt(k-1, "source", k-1);
+		nodes.setInt(k, "visited", 1);
+		edges.setInt(k-1, "source", k-1);
   		edges.setInt(k-1, "target", k);
 
-	
+  		
 		this.coAuthors = new Graph(nodes,edges,false);
 		
 	
