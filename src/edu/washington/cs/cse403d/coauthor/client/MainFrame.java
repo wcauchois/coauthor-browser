@@ -5,7 +5,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.rmi.Naming;
+import java.util.Iterator;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -14,6 +18,7 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import edu.washington.cs.cse403d.coauthor.client.browser.BrowserFrame;
+import edu.washington.cs.cse403d.coauthor.client.browser.BrowserPage;
 import edu.washington.cs.cse403d.coauthor.client.graphviz.GraphVizManager;
 import edu.washington.cs.cse403d.coauthor.client.searchui.SearchPage;
 import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
@@ -106,11 +111,32 @@ public class MainFrame extends BrowserFrame {
 	// Disable prototype cached CDSI
 	private static final boolean USE_CACHE = false;
 
+	private class ReturnToSearchAction extends AbstractAction {
+		public ReturnToSearchAction() {
+			putValue(Action.NAME, "Return to Search");
+		}
+		@Override
+		public void actionPerformed(ActionEvent evt) {
+			Iterator<BrowserPage> iter = history.backwardsIterator();
+			SearchPage searchPage = null;
+			while(iter.hasNext()) {
+				BrowserPage currentPage = iter.next();
+				if(currentPage instanceof SearchPage) {
+					searchPage = (SearchPage)currentPage;
+					break;
+				}
+			}
+			if(searchPage == null)
+				searchPage = new SearchPage();
+			MainFrame.this.go(searchPage);
+		}
+	}
 	public MainFrame() {
 		super(new SearchPage());
 		setTitle("Author Network");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setJMenuBar(createMenuBar());
+		getNavPane().add(new JButton(new ReturnToSearchAction()));
 	}
 
 	public static void main(String[] args) {

@@ -193,9 +193,9 @@ class AuthorCoauthorResult extends JPanel {
 			public void mouseClicked(MouseEvent evt) {
 				int selected = coauthorList.getSelectedIndex();
 				
-				String searchFor = ("     Search for this author");
-				String coauthorSearchFor = "     Perform coauthor search on this author";
-				String closeMenu = "     Close this submenu";
+				String searchFor = ("<html><i>→Search for this author</i></html>");
+				String coauthorSearchFor = ("<html><i>→Perform coauthor search on this author</i></html>");
+				String closeMenu = ("<html><i>→Close this submenu</i></html>");
 				if(!coauthorList.getSelectedValue().equals(closeMenu) &&
 						!coauthorList.getSelectedValue().equals(coauthorSearchFor) &&
 						!coauthorList.getSelectedValue().equals(searchFor)){
@@ -239,17 +239,10 @@ class AuthorCoauthorResult extends JPanel {
 				}
 				
 				if(evt.getClickCount() == 2) {
-//					int subMenuSelection = coauthorList.getSelectedIndex();
-//					String selectedItem = (String) listModel.getElementAt(subMenuSelection); 
-//					if (selectedItem.equals(searchFor)) {
-//						String coauthor = (String) listModel.getElementAt(subMenuSelection - 1);
-//						Services.getBrowser().go(new AuthorResult(coauthor));
-//					} else if (selectedItem.equals(coauthorSearchFor)) {
-//						List<String> selectedList = new ArrayList<String>(2);
-//						selectedList.add(theAuthor);
-//						selectedList.add((String) listModel.getElementAt(subMenuSelection - 2));
-//						Services.getBrowser().go(new AuthorResult(selectedList));
-//					} else {					
+					//String selection = (String) coauthorList.getSelectedValue();
+					//if(!selection.equals(searchFor) && 
+					//		!selection.equals(coauthorSearchFor) &&
+					//		!selection.equals(closeMenu)) {
 						String coauthor = (String)coauthorList.getSelectedValue();
 						Services.getBrowser().go(new AuthorResult(coauthor));
 					//}
