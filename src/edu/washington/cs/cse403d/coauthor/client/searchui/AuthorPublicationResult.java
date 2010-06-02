@@ -187,9 +187,10 @@ class AuthorPublicationResult extends JPanel {
 			}
 		});
 		pubList.setLayoutOrientation(JList.VERTICAL);
-		pubList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);			
+		pubList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		pubList.setVisibleRowCount(6);
 		JScrollPane listScroller = new JScrollPane(pubList);
-		listScroller.setPreferredSize(new Dimension(400, 120));
+		listScroller.setPreferredSize(new Dimension(400, 140));
 		add(listScroller, BorderLayout.CENTER);			
 	}
 }

@@ -158,7 +158,10 @@ public class MainFrame extends BrowserFrame {
 		MainFrame mainFrame = new MainFrame();
 
 		// restrict resizing
-		mainFrame.setMinimumSize(new Dimension(480, 600));
+		mainFrame.setMinimumSize(new Dimension(480, 620));
+		mainFrame.setSize(new Dimension(480, 620));
+		mainFrame.setMaximumSize(new Dimension(480, 620));
 		mainFrame.setVisible(true);
+		mainFrame.setResizable(false);
 	}
 }
