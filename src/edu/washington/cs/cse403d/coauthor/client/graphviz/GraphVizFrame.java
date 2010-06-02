@@ -46,6 +46,7 @@ public class GraphVizFrame extends JFrame implements ActionListener{
 		getContentPane().add(new JLabel("Co-Author chain from " + startingAuthor + "to " + endingAuthor));
 		this.visExp = new VisualChainExplorer(startingAuthor,endingAuthor);
 		
+		this.setContentPane(this.setupButtons(visExp));
 		this.visExp.updateVis();
 		
 		this.add(visExp.getDisplay());
