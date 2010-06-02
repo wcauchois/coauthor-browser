@@ -124,7 +124,7 @@ public class GraphVizFrame extends JFrame implements ActionListener{
 		}else if("rad".equals(e.getActionCommand())){
 			visExp.switchToRadialLayout();
 		}else if("trim".equals(e.getActionCommand())){
-			visExp.trimOneDegree();
+			visExp.updateVis();
 		}else if("force".equals(e.getActionCommand())){
 			visExp.switchToFDL();
 		}
