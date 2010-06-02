@@ -3,6 +3,8 @@ package edu.washington.cs.cse403d.coauthor.client.searchui;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -26,6 +28,13 @@ public class ArticleSearchPane extends JPanel {
 		
 		JPanel bottomPart = new JPanel();
 		query.setPreferredSize(new Dimension(100, query.getPreferredSize().height));
+		query.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent evt) {
+				if(evt.getKeyCode() == KeyEvent.VK_ENTER)
+					submit.doClick();
+			}
+		});
 		query.setFont(Fonts.getSearchFont());
 		query.setPreferredSize(new Dimension(150, 24));
 		bottomPart.add(query);
