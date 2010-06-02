@@ -66,9 +66,4 @@ public class AuthorResult extends BrowserPage {
 			return StringUtils.elide(StringUtils.join(", ", queries), 20);
 		}
 	}
-
-	@SuppressWarnings("unchecked")
-	public Class[] getCrumbs() {
-		return new Class[] { SearchPage.class };
-	}
 }
