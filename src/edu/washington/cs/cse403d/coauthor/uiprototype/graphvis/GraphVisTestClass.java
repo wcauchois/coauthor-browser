@@ -74,7 +74,7 @@ public class GraphVisTestClass {
 		frame.setVisible(true); // show the window
 		vx.updateVis();*/
 
-		GraphVizFrame fr = new GraphVizFrame("Marty Stepp"); 
+		GraphVizFrame fr = new GraphVizFrame("David Notkin"); 
 		fr.pack();
 		fr.setVisible(true);
 	}

@@ -135,26 +135,28 @@ public abstract class VisualExplorer {
 		System.out.println("VISITED STATUS: " + addTo.getInt("visited"));
 		//addTo.setInt("visited", 1);
 		
-			// look for returned authors already in the graph; remove all authors already in
-			// the graph from the search results
-			Iterator authItr = this.coAuthors.nodes();
-			while(authItr.hasNext()){
-				Node current = (Node) authItr.next();
-				if(moreAuthors.contains(current.get("name"))){ // the graph already contains a node for one of the returned coauthors 
+		// look for returned authors already in the graph; remove all authors already in
+		// the graph from the search results
+		Iterator authItr = this.coAuthors.nodes();
+		while(authItr.hasNext()){
+			Node current = (Node) authItr.next();
+			if(moreAuthors.contains(current.get("name"))){ // the graph already contains a node for one of the returned coauthors 
+				if(this.coAuthors.getEdge(addTo, current) ==  null) {
 					this.coAuthors.addEdge(addTo, current);	// add an edge between the clicked-on node and the coauthor node it has in the graph
 					moreAuthors.remove(current.get("name"));
 				}
 			}
-			
-			// add nodes for all query-returned co-authors that were not originally in the graph
-			Iterator coAuItr = moreAuthors.iterator();
+		}
+		
+		// add nodes for all query-returned co-authors that were not originally in the graph
+/*			Iterator coAuItr = moreAuthors.iterator();
 			while(coAuItr.hasNext()){
 				String current = (String) coAuItr.next();
 				Node added = this.coAuthors.addNode();
 				added.set("name", current);
 				this.coAuthors.addEdge(addTo, added);
-			}
-			this.updateVis();
+			}*/
+		this.updateVis();
 	}
 	
 	/**
