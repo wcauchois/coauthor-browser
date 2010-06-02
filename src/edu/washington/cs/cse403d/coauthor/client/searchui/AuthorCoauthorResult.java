@@ -1,4 +1,4 @@
-package edu.washington.cs.cse403d.coauthor.client.searchui;
+ï»¿package edu.washington.cs.cse403d.coauthor.client.searchui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -154,7 +154,7 @@ class AuthorCoauthorResult extends JPanel {
 		
 		multiEntryTop.add(new JSeparator(SwingConstants.HORIZONTAL));
 		
-		final HyperLinkButton author = new HyperLinkButton(theAuthor);		
+		HyperLinkButton author = new HyperLinkButton(theAuthor);
 		multiEntryTop.add(author);		
 		multiEntryTop.add(Box.createVerticalStrut(10));
 		
@@ -203,7 +203,7 @@ class AuthorCoauthorResult extends JPanel {
 	private void buildListHelper() {
 		int i = 0;			
 		while (i < theAuthorList.size()){
-			listModel.add(i, "• " + theAuthorList.get(i));
+			listModel.add(i, "?" + theAuthorList.get(i));
 			i++;
 		}
 	}
