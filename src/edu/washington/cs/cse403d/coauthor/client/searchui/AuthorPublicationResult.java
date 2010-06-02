@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.DefaultListModel;
@@ -82,7 +83,7 @@ class AuthorPublicationResult extends JPanel {
 					"Um, this isn't really supposed to happen",
 					"Error!",JOptionPane.ERROR_MESSAGE);
 		}
-		buildPubList();
+		buildPubList(listModel);
 		
 		//Add the filter panel
 		add(new FilterPanel(pubList, null), BorderLayout.PAGE_END);
@@ -124,7 +125,7 @@ class AuthorPublicationResult extends JPanel {
 			add(new JLabel("There is no collaboration among these individuals")
 			, BorderLayout.PAGE_END);
 		} else {
-			buildPubList();
+			buildPubList(listModel);
 			add(new FilterPanel(pubList, null), BorderLayout.PAGE_END);
 		}
 	}	
@@ -132,7 +133,7 @@ class AuthorPublicationResult extends JPanel {
 	/**
 	 * Internal helper method that builds a scrollable list of publication 
 	 */
-	private void buildPubList() {
+	private void buildPubList(final DefaultListModel listModel) {
 		int i = 0;			
 		while (i < publications.size()){
 			listModel.add(i, publications.get(i).getTitle());
@@ -142,6 +143,43 @@ class AuthorPublicationResult extends JPanel {
 		pubList.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent evt) {
+				int selected = pubList.getSelectedIndex();
+				
+				String searchFor = ("<html><i>°ÊSearch for this article</i></html>");
+				String closeMenu = ("<html><i>°ÊClose this submenu</i></html>");
+				if(!pubList.getSelectedValue().equals(closeMenu) &&
+						!pubList.getSelectedValue().equals(searchFor)){
+					if( selected + 1 == listModel.size() ||
+							listModel.getElementAt(selected + 1) != searchFor) {
+						selected = pubList.getSelectedIndex();
+						listModel.insertElementAt(searchFor, selected + 1);
+						listModel.insertElementAt(closeMenu, selected + 2);
+						pubList.setModel(listModel);
+						pubList.setSelectedIndex(selected);
+					}
+				}
+				
+				if(pubList.getSelectedValue().equals(closeMenu)){
+					listModel.remove(selected);
+					pubList.setSelectedIndex(selected -1);
+					listModel.remove(pubList.getSelectedIndex());
+					pubList.setModel(listModel);
+				}
+				
+				int subMenuSelection;
+				
+				if(!pubList.isSelectionEmpty())
+					subMenuSelection = pubList.getSelectedIndex();
+				else
+					subMenuSelection = selected - 2;
+				
+				String selectedItem = (String) listModel.getElementAt(subMenuSelection);
+				
+				if (selectedItem.equals(searchFor)) {
+					String articleTitle = (String) listModel.getElementAt(subMenuSelection - 1);
+					Services.getBrowser().go(new ArticleResult(articleTitle));
+				}				
+				
 				if(evt.getClickCount() == 2) {
 					String article = (String)pubList.getSelectedValue();
 					Services.getBrowser().go(new ArticleResult(article));

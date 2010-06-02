@@ -86,10 +86,10 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 				+ "(SELECT a.name " + "FROM [Authors] as a, [CoauthorRelations] as c "
 				+ "WHERE c.aid2 = ? AND c.aid1 = a.id)", sqlConnection);
 		psp_getPublication = new PreparedStatementPool("SELECT * FROM [Publications] WHERE title = ?", sqlConnection);
-		psp_getPublications = new PreparedStatementPool("SELECT * FROM [Publications] WHERE CONTAINS(title, ?)",
-				sqlConnection);
+		psp_getPublications = new PreparedStatementPool(
+				"SELECT * FROM [Publications] WHERE CONTAINS(title, ?) ORDER BY [title] ASC", sqlConnection);
 		psp_getPublicationAuthors = new PreparedStatementPool(
-				"SELECT a.name FROM Authors AS a, PublicationAuthors AS pa WHERE pa.pid = ? AND pa.aid = a.id",
+				"SELECT a.name FROM Authors AS a, PublicationAuthors AS pa WHERE pa.pid = ? AND pa.aid = a.id ORDER BY a.name ASC",
 				sqlConnection);
 	}
 
@@ -360,6 +360,7 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 			}
 			preparedQuery.append("pa" + i + ".aid = ? AND pa" + i + ".pid = p.id");
 		}
+		preparedQuery.append(" ORDER BY p.[title] ASC");
 
 		try {
 			PreparedStatement preparedStatement = sqlConnection.prepareStatement(preparedQuery.toString());
@@ -409,7 +410,8 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 		List<Publication> result = new ArrayList<Publication>();
 
 		String query = "SELECT DISTINCT p.* " + "FROM [Publications] AS p, [PublicationAuthors] AS pa "
-				+ "WHERE pa.aid IN (" + paramString.substring(1, paramString.length() - 1) + ") AND pa.pid = p.id";
+				+ "WHERE pa.aid IN (" + paramString.substring(1, paramString.length() - 1)
+				+ ") AND pa.pid = p.id ORDER BY p.[title] ASC";
 
 		try {
 			ResultSet results = sqlConnection.createStatement().executeQuery(query);
