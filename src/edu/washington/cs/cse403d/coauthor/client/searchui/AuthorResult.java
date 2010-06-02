@@ -5,9 +5,6 @@ import java.awt.GridBagLayout;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.swing.JLabel;
-
-import edu.washington.cs.cse403d.coauthor.client.Services;
 import edu.washington.cs.cse403d.coauthor.client.browser.BrowserPage;
 import edu.washington.cs.cse403d.coauthor.client.utils.StringUtils;
 
@@ -38,22 +35,12 @@ public class AuthorResult extends BrowserPage {
 	 */
 	public AuthorResult(List<String> queries) {
 		this.queries = queries;
-		this.setVisible(true);
-		setLayout(new GridBagLayout());
-
-		setIsLoading(true);
-
-		new Thread() {
-			public void run() {
-				initialize();
-			};
-		}.start();
 	}
 
-	/**
-	 * Internal helper method
-	 */
-	private void initialize() {
+	@Override
+	protected void load() {
+		this.setVisible(true);
+		setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
@@ -70,11 +57,6 @@ public class AuthorResult extends BrowserPage {
 			add(new AuthorPublicationResult(queries.get(0)), c);
 		else
 			add(new AuthorPublicationResult(queries), c);
-
-		setIsLoading(false);
-
-		// Repaint the container
-		Services.getBrowser().go(this);
 	}
 
 	public String getTitle() {
