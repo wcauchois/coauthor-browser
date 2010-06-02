@@ -155,7 +155,13 @@ class AuthorCoauthorResult extends JPanel {
 		multiEntryTop.add(new JSeparator(SwingConstants.HORIZONTAL));
 		
 		HyperLinkButton author = new HyperLinkButton(theAuthor);
-		multiEntryTop.add(author);		
+		author.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				Services.getBrowser().go(new AuthorResult(theAuthor));				
+			}
+		});
+		multiEntryTop.add(author);
 		multiEntryTop.add(Box.createVerticalStrut(10));
 		
 		//Coauthors
