@@ -128,6 +128,7 @@ public class ArticleResult extends BrowserPage {
 		float s = title.getFont().getSize2D();
 		s += 8.0f;
 		title.setFont(f.deriveFont(s));
+		title.setToolTipText(publication.getTitle());
 	}
 
 	/**
@@ -159,6 +160,7 @@ public class ArticleResult extends BrowserPage {
 			source = publication.getYear().toString();
 		JLabel articleSource = new JLabel(source);
 		articleInfo.add(articleSource);
+		articleSource.setToolTipText(source);
 		articleInfo.add(Box.createVerticalStrut(10));
 
 		// ISBN

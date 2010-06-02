@@ -7,6 +7,8 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.FocusTraversalPolicy;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -52,11 +54,25 @@ public class ChainSearchPane extends JPanel
 		topPart.add(new JLabel("Please enter your search terms below"));
 		topPart.add(new HelpMarker("Click here for more information."));
 		
-		JPanel bottomPart = new JPanel();
+		JPanel bottomPart = new JPanel(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridx = 0;
+		c.gridy = 0;
+		bottomPart.add(new JLabel("Author 1: "), c);
+		
+		c.gridx = 1;
+		c.gridy = 0;
 		author1.setPreferredSize(new Dimension(200, author1.getPreferredSize().height));
-		bottomPart.add(author1);
+		bottomPart.add(author1, c);
+		
+		c.gridx = 0;
+		c.gridy = 1;
+		bottomPart.add(new JLabel("Author 2: "), c);
+		
+		c.gridx = 1;
+		c.gridy = 1;
 		author2.setPreferredSize(new Dimension(200, author2.getPreferredSize().height));
-		bottomPart.add(author2);
+		bottomPart.add(author2, c);
 		
 		
 		JPanel searchPart = new JPanel();
