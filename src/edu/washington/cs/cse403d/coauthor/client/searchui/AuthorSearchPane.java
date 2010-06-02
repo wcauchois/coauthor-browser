@@ -245,7 +245,6 @@ public class AuthorSearchPane extends JPanel {
 		
 		parent.addNavListener(new BrowserPage.NavListener() {
 			public void onEnter(BrowserPage previous) {
-				System.out.println("enterred again!!");
 				if(sharedExecutor == null)
 					sharedExecutor = createExecutor();
 			}
