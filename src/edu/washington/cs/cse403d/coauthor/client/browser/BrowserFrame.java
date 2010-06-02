@@ -26,10 +26,9 @@ import edu.washington.cs.cse403d.coauthor.client.Services;
 public class BrowserFrame extends JFrame implements Browser {
 	private static final long serialVersionUID = 2084399509406597681L;
 	
-	private BrowserHistory history;
+	protected BrowserHistory history;
 	private JPanel pagePane = new JPanel();
 	private JPanel navPane = new JPanel();
-	private CrumbBar crumbBar = new CrumbBar();
 	private abstract class NavButton extends JButton implements ActionListener {
 		private static final long serialVersionUID = 8896732421593552612L;
 
@@ -76,7 +75,6 @@ public class BrowserFrame extends JFrame implements Browser {
 		navPane.setLayout(new FlowLayout(FlowLayout.LEFT));
 		navPane.add(backButton);
 		navPane.add(forwardButton);
-		navPane.add(crumbBar);
 		navPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(navPane, BorderLayout.NORTH);
@@ -85,10 +83,12 @@ public class BrowserFrame extends JFrame implements Browser {
 		Services.provideBrowser(this);
 		initialPage.onEnter(null);
 	}
+	protected JPanel getNavPane() {
+		return navPane;
+	}
 	private void update() {
 		pagePane.removeAll();
 		pagePane.add(history.getCurrent());
-		crumbBar.update(history);
 		backButton.update();
 		forwardButton.update();
 		validate();
