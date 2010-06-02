@@ -14,9 +14,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.border.Border;
 
-import edu.washington.cs.cse403d.coauthor.client.Services;
-import edu.washington.cs.cse403d.coauthor.client.searchui.AuthorResult;
-
 
 /**
  * A widget that looks like a hyper-link.
@@ -31,7 +28,7 @@ public class HyperLinkButton extends JLabel {
 	 * 
 	 * @param text the text to be displayed
 	 */
-	public HyperLinkButton(final String text) {
+	public HyperLinkButton(String text) {
 		super(text);
 		final Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
 		final Cursor defaultCursor = new Cursor(Cursor.DEFAULT_CURSOR);
@@ -52,10 +49,9 @@ public class HyperLinkButton extends JLabel {
 			}
 			@Override
 			public void mouseClicked(MouseEvent evt) {
-				Services.getBrowser().go(new AuthorResult(text));
-				//ActionEvent actionEvt = new ActionEvent(this, 0, getText());
-				//for(ActionListener l : listeners)
-				//	l.actionPerformed(actionEvt);
+				ActionEvent actionEvt = new ActionEvent(this, 0, getText());
+				for(ActionListener l : listeners)
+					l.actionPerformed(actionEvt);
 			}
 		});
 	}
