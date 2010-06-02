@@ -86,7 +86,7 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 				+ "(SELECT a.name " + "FROM [Authors] as a, [CoauthorRelations] as c "
 				+ "WHERE c.aid2 = ? AND c.aid1 = a.id)", sqlConnection);
 		psp_getPublication = new PreparedStatementPool("SELECT * FROM [Publications] WHERE title = ?", sqlConnection);
-		psp_getPublications = new PreparedStatementPool("SELECT * FROM [Publications] WHERE CONTAINS(title, ?)",
+		psp_getPublications = new PreparedStatementPool("SELECT * FROM [Publications] WHERE CONTAINS(title, ?) ORDER BY [title] ASC",
 				sqlConnection);
 		psp_getPublicationAuthors = new PreparedStatementPool(
 				"SELECT a.name FROM Authors AS a, PublicationAuthors AS pa WHERE pa.pid = ? AND pa.aid = a.id",
