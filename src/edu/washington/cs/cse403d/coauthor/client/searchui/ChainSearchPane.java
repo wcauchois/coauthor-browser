@@ -111,9 +111,15 @@ public class ChainSearchPane extends JPanel
 	}
 	
 	protected void onSubmit() {
-		List<String> authors = getAuthors();
-		if(authors != null)
-			Services.getBrowser().go(new AuthorResult(getAuthors()));
+		if (!author1.getText().equals("") && !author2.getText().equals(""))
+			Services.getBrowser().go(new ChainSearchResult(author1.getText(), author2.getText()));
+		else
+		{
+			if (author1.getText().equals(""))
+				author1.markInvalid();
+			if (author2.getText().equals(""))
+				author2.markInvalid();
+		}
 	}
 	public List<String> getAuthors() {
 		List<String> authors = new ArrayList<String>();
