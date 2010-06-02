@@ -51,27 +51,6 @@ public abstract class BrowserPage extends JPanel {
 		return "Untitled";
 	}
 
-	/**
-	 * Return a list of classes which should be upwards in the hierarchy
-	 * relative to this page, from most recent to least recent.
-	 * 
-	 * For example, if users usually go from Foo to Bar to Baz (where each of
-	 * these classes is derived from BrowserPage). The implicit order here is
-	 * Foo -> Bar -> Baz. If we are at Baz, then, the CrumbBar should display
-	 * links to Bar and Foo for easy access. Therefore Baz would return the
-	 * array { Bar.class, Foo.class }, and the CrumbBar would find instances of
-	 * those classes in history and create links to them.
-	 * 
-	 * Note that order is important!
-	 * 
-	 * @see CrumbBar
-	 * @return an array of classes derived from BrowserPage
-	 */
-	@SuppressWarnings("unchecked")
-	public Class[] getCrumbs() {
-		return null;
-	}
-
 	public interface NavListener {
 		void onEnter(BrowserPage previous);
 

@@ -268,12 +268,4 @@ public class ArticleResult extends BrowserPage {
 	public String getTitle() {
 		return "Article Search Result";
 	}
-
-	/**
-	 * Crumb Bar
-	 */
-	@SuppressWarnings("unchecked")
-	public Class[] getCrumbs() {
-		return new Class[] { SearchPage.class };
-	}
 }
