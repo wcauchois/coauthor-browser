@@ -25,6 +25,8 @@ public abstract class BrowserPage extends JPanel {
 
 	public BrowserPage() {
 		super();
+		
+		isLoaded = false;
 
 		loadingPanel = new JPanel();
 		loadingPanel.setLayout(new BoxLayout(loadingPanel, BoxLayout.Y_AXIS));
@@ -78,6 +80,8 @@ public abstract class BrowserPage extends JPanel {
 
 	private List<NavListener> listeners = new ArrayList<NavListener>();
 
+	private boolean isLoaded;
+
 	/**
 	 * @see #onEnter(BrowserPage)
 	 * @see #onExit(BrowserPage)
@@ -113,17 +117,35 @@ public abstract class BrowserPage extends JPanel {
 		for (NavListener l : listeners)
 			l.onExit(next);
 	}
+	
+	/**
+	 * @return True if the page has been loaded once.
+	 */
+	public boolean isLoaded() {
+		return isLoaded;
+	}
+	
+	public void setIsLoaded(boolean isLoaded) {
+		this.isLoaded = isLoaded;
+	}
 
+	/**
+	 * Populate the page with data. A loading spinner is displayed while the
+	 * load method is executing.
+	 */
+	abstract protected void load();
+
+	/**
+	 * Put the loading icon and text in this BrowserPage
+	 */
 	public void setIsLoading(boolean isLoading) {
 		if (isLoading && !this.isLoading) {
 			// Pop out a new loading popup
-			System.out.println("Loading");
 			this.isLoading = true;
 
 			add(loadingPanel);
 		} else if (!isLoading && this.isLoading) {
 			// Remove the existing popup
-			System.out.println("Finished Loading");
 			this.isLoading = false;
 
 			remove(loadingPanel);

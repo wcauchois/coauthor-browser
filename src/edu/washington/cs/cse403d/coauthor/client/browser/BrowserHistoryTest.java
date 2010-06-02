@@ -18,6 +18,10 @@ public class BrowserHistoryTest {
 		public String toString() {
 			return "" + id;
 		}
+		
+		@Override
+		protected void load() {
+		}
 	}
 	private int idOf(BrowserPage page) {
 		return ((TestPage)page).id;

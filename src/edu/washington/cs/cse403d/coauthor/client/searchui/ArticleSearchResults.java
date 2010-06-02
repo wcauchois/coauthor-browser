@@ -31,7 +31,10 @@ import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
 
 public class ArticleSearchResults extends BrowserPage {
+	private static final long serialVersionUID = -5261731609522734709L;
+
 	private String search;
+
 	private static final int RESULTS_WIDTH = 450, RESULTS_HEIGHT = 450;
 	private class PubRenderer extends JPanel implements ListCellRenderer {
 		private Font titleFont, authorsFont;
@@ -75,6 +78,7 @@ public class ArticleSearchResults extends BrowserPage {
 	public ArticleSearchResults(String theQuery) {
 		search = theQuery;
 
+
 		List<Publication> pubs = null;
 		CoauthorDataServiceInterface c = Services.getCoauthorDataServiceInterface();
 		try {
@@ -92,9 +96,13 @@ public class ArticleSearchResults extends BrowserPage {
 		scroller.setPreferredSize(new Dimension(RESULTS_WIDTH, RESULTS_HEIGHT));
 		add(scroller, BorderLayout.CENTER);
 	}
-	
-	public String getTitle()
-	{
+
+	public String getTitle() {
 		return search.trim();
+	}
+
+	@Override
+	protected void load() {
+		add(new JLabel("Search results for " + search));
 	}
 }
