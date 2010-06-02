@@ -15,7 +15,6 @@ import java.util.List;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -24,8 +23,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import edu.washington.cs.cse403d.coauthor.client.Services;
 import edu.washington.cs.cse403d.coauthor.client.utils.FilterPanel;
@@ -251,7 +248,7 @@ class AuthorCoauthorResult extends JPanel {
 		});
 		coauthorList.setLayoutOrientation(JList.VERTICAL);
 		coauthorList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		coauthorList.setVisibleRowCount(5);
+		coauthorList.setVisibleRowCount(7);
 		JScrollPane listScroller = new JScrollPane(coauthorList);
 		listScroller.setAlignmentX(Component.LEFT_ALIGNMENT);
 		singleEntryTop.add(listScroller);
