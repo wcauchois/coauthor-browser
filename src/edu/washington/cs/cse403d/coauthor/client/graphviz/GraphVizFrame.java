@@ -39,7 +39,7 @@ public class GraphVizFrame extends JFrame implements ActionListener{
 		this.setContentPane(this.setupButtons(visExp));
 		this.visExp.updateVis();
 		this.add(visExp.getDisplay());
-		
+		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 	
 	public GraphVizFrame(String startingAuthor, String endingAuthor) throws RemoteException{
@@ -48,10 +48,8 @@ public class GraphVizFrame extends JFrame implements ActionListener{
 		
 		this.setContentPane(this.setupButtons(visExp));
 		this.visExp.updateVis();
-		
 		this.add(visExp.getDisplay());
-		
-		
+		this.setDefaultCloseOperation(EXIT_ON_CLOSE);		
 	}
 	
     public JPanel setupButtons(VisualExplorer vx){
@@ -126,7 +124,7 @@ public class GraphVizFrame extends JFrame implements ActionListener{
 		}else if("rad".equals(e.getActionCommand())){
 			visExp.switchToRadialLayout();
 		}else if("trim".equals(e.getActionCommand())){
-			visExp.trimOneDegree();
+			visExp.updateVis();
 		}else if("force".equals(e.getActionCommand())){
 			visExp.switchToFDL();
 		}
