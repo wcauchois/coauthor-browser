@@ -1,5 +1,6 @@
 ﻿package edu.washington.cs.cse403d.coauthor.client.searchui;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,8 +23,8 @@ public class ArticleSearchPane extends JPanel {
 	
 	protected JLabel title = new JLabel("Title: ");
 	protected JTextField query = new JTextField();
-	protected JTextField startYear = new JTextField(10);
-	protected JTextField endYear = new JTextField(10);
+	protected JTextField startYear = new JTextField(5);
+	protected JTextField endYear = new JTextField(5);
 	protected JButton submit = new JButton("Search");
 	public ArticleSearchPane() {
 		JPanel topPart = new JPanel();
@@ -94,7 +95,9 @@ public class ArticleSearchPane extends JPanel {
 		});
 		
 		JPanel yearFilter = new JPanel();
+		yearFilter.add(new JLabel("Filter by year: From "));
 		yearFilter.add(startYear);
+		yearFilter.add(new JLabel(" To "));
 		yearFilter.add(endYear);
 		
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
