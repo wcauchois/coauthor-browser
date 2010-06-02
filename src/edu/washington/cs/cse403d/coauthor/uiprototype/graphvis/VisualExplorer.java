@@ -244,12 +244,15 @@ public abstract class VisualExplorer {
 			if (currentNode.getDegree() == 1){
 				System.out.println("Degree of node is: " + currentNode.getDegree());
 				System.out.println("The name at this node is " + this.coAuthors.getNode(currentNode.getRow()).getString("name"));
+				System.out.println("The row of current node is " + currentNode.getRow());
 				toBeDeleted.add(currentNode.getRow());
 			}	
 		}
 		
 		for(int i =0; i<toBeDeleted.size();i++){
-			this.coAuthors.removeNode(toBeDeleted.get(i));
+			Node deleted = this.coAuthors.getNode(toBeDeleted.get(i));
+			System.out.println("@@@The name at node " + toBeDeleted.get(i) + " is " + deleted.getString("name"));
+			this.coAuthors.removeNode(deleted);
 		}
 		
 	}
