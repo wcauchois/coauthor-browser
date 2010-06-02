@@ -5,7 +5,10 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -28,6 +31,8 @@ public class ArticleSearchResults extends BrowserPage {
 	private static final long serialVersionUID = -5261731609522734709L;
 
 	private String search;
+	private int startYear;
+	private int endYear;
 
 	private static final int RESULTS_WIDTH = 450, RESULTS_HEIGHT = 450;
 
@@ -76,8 +81,10 @@ public class ArticleSearchResults extends BrowserPage {
 
 	private JList results = new JList();
 
-	public ArticleSearchResults(String theQuery) {
+	public ArticleSearchResults(String theQuery, int startYear, int endYear) {
 		search = theQuery;
+		this.startYear = startYear;
+		this.endYear = endYear;
 	}
 
 	public String getTitle() {
@@ -87,16 +94,55 @@ public class ArticleSearchResults extends BrowserPage {
 	@Override
 	protected void load() {
 		List<Publication> pubs = null;
+		List<Publication> filteredPubs = new ArrayList<Publication>();;
 		CoauthorDataServiceInterface c = Services.getCoauthorDataServiceInterface();
 		try {
 			pubs = c.getPublications(search);
 		} catch (RemoteException r) {
 			// XXX
 		}
-
+		//filter the pubs
+		if (startYear != 0 || endYear != 0) {
+			for (int i = 0; i < pubs.size(); i++) {
+				Publication item = pubs.get(i);
+				if(item.hasYear()) {
+					int year = item.getYear();
+					if (startYear != 0) {
+						if (year >= startYear) {
+							if(endYear == 0) {    //endYear was not submitted
+								filteredPubs.add(item);
+							} else {
+								if(year <= endYear) {
+									filteredPubs.add(item);
+								}
+							}							
+						}
+					} else if (startYear == 0 && endYear != 0) {
+						if(year <= endYear) {
+							filteredPubs.add(item);
+						}
+					}
+				}				
+			}	
+		} else
+			filteredPubs = pubs;      //use original list
+		
+		
 		setLayout(new BorderLayout());
 		results.setCellRenderer(new PubRenderer());
-		results.setListData(pubs.toArray());
+		results.setListData(filteredPubs.toArray());
+		
+		//Navigation
+		results.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				if(e.getClickCount() == 2) {
+					String article = results.getSelectedValue().toString();
+					Services.getBrowser().go(new ArticleResult(article));
+				}
+			}
+		});
+		
+		
 		JScrollPane scroller = new JScrollPane(results, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scroller.setPreferredSize(new Dimension(RESULTS_WIDTH, RESULTS_HEIGHT));
