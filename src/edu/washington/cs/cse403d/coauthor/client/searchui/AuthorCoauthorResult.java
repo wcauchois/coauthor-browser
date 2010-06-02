@@ -24,6 +24,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import edu.washington.cs.cse403d.coauthor.client.Services;
 import edu.washington.cs.cse403d.coauthor.client.utils.FilterPanel;
@@ -123,7 +125,7 @@ class AuthorCoauthorResult extends JPanel {
 					"Um, this isn't really supposed to happen",
 					"Error!",JOptionPane.ERROR_MESSAGE);
 		}			
-		buildCoauthorList();
+		buildCoauthorList(listModel);
 		add(new FilterPanel(coauthorList, theAuthor));
 		add(singleEntryTop, BorderLayout.PAGE_START);
 	}
@@ -180,18 +182,77 @@ class AuthorCoauthorResult extends JPanel {
 	/**
 	 * Builds the co-author list for single author search result
 	 */
-	private void buildCoauthorList() {
+	private void buildCoauthorList(final DefaultListModel listModel) {
 		if (theAuthor != null)
 			buildListHelper();
 		else
 			buildListHelper2();
-		//coauthorList.addListSelectionListener(this);
 		coauthorList.addMouseListener(new MouseAdapter() {
-			@Override
+			
+			
 			public void mouseClicked(MouseEvent evt) {
-				if(evt.getClickCount() == 2) {
-					String coauthor = (String)coauthorList.getSelectedValue();
+				int selected = coauthorList.getSelectedIndex();
+				
+				String searchFor = ("     Search for this author");
+				String coauthorSearchFor = "     Perform coauthor search on this author";
+				String closeMenu = "     Close this submenu";
+				if(!coauthorList.getSelectedValue().equals(closeMenu) &&
+						!coauthorList.getSelectedValue().equals(coauthorSearchFor) &&
+						!coauthorList.getSelectedValue().equals(searchFor)){
+					if( selected + 1 == listModel.size() ||
+							listModel.getElementAt(selected + 1) != searchFor) {
+						selected = coauthorList.getSelectedIndex();
+						listModel.insertElementAt(searchFor, selected + 1);
+						listModel.insertElementAt(coauthorSearchFor, selected + 2);
+						listModel.insertElementAt(closeMenu, selected + 3);
+						coauthorList.setModel(listModel);
+						coauthorList.setSelectedIndex(selected);
+					}
+				}
+				
+				if(coauthorList.getSelectedValue().equals(closeMenu)){
+					listModel.remove(selected);
+					coauthorList.setSelectedIndex(selected -1);
+					listModel.remove(coauthorList.getSelectedIndex());
+					coauthorList.setSelectedIndex(selected -2);
+					listModel.remove(coauthorList.getSelectedIndex());
+					coauthorList.setModel(listModel);
+				}
+				
+				int subMenuSelection;
+				
+				if(!coauthorList.isSelectionEmpty())
+					subMenuSelection = coauthorList.getSelectedIndex();
+				else
+					subMenuSelection = selected - 3;
+				
+				String selectedItem = (String) listModel.getElementAt(subMenuSelection);
+				
+				if (selectedItem.equals(searchFor)) {
+					String coauthor = (String) listModel.getElementAt(subMenuSelection - 1);
 					Services.getBrowser().go(new AuthorResult(coauthor));
+				} else if (selectedItem.equals(coauthorSearchFor)) {
+					List<String> selectedList = new ArrayList<String>(2);
+					selectedList.add(theAuthor);
+					selectedList.add((String) listModel.getElementAt(subMenuSelection - 2));
+					Services.getBrowser().go(new AuthorResult(selectedList));
+				}
+				
+				if(evt.getClickCount() == 2) {
+//					int subMenuSelection = coauthorList.getSelectedIndex();
+//					String selectedItem = (String) listModel.getElementAt(subMenuSelection); 
+//					if (selectedItem.equals(searchFor)) {
+//						String coauthor = (String) listModel.getElementAt(subMenuSelection - 1);
+//						Services.getBrowser().go(new AuthorResult(coauthor));
+//					} else if (selectedItem.equals(coauthorSearchFor)) {
+//						List<String> selectedList = new ArrayList<String>(2);
+//						selectedList.add(theAuthor);
+//						selectedList.add((String) listModel.getElementAt(subMenuSelection - 2));
+//						Services.getBrowser().go(new AuthorResult(selectedList));
+//					} else {					
+						String coauthor = (String)coauthorList.getSelectedValue();
+						Services.getBrowser().go(new AuthorResult(coauthor));
+					//}
 				}
 			}
 		});
@@ -209,7 +270,7 @@ class AuthorCoauthorResult extends JPanel {
 	private void buildListHelper() {
 		int i = 0;			
 		while (i < theAuthorList.size()){
-			listModel.add(i, "?" + theAuthorList.get(i));
+			listModel.add(i, theAuthorList.get(i));
 			i++;
 		}
 	}
