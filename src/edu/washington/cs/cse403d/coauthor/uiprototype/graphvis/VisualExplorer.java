@@ -63,6 +63,8 @@ public abstract class VisualExplorer {
 	protected Visualization colorLayoutVis;
 	protected Display dispCtrls;
 	protected CoauthorDataServiceInterface backend;
+	protected ActionList radialAnimateActions;
+	protected ActionList fdlAnimateActions;
 	
 	/**
 	 * @return the underlying graph data structure
@@ -130,33 +132,29 @@ public abstract class VisualExplorer {
 	protected void addCoAuthors(String authorName){
 		List<String> moreAuthors = getCoAuthorList(authorName);        
 		Node addTo = findAuthor(authorName);
+		System.out.println("VISITED STATUS: " + addTo.getInt("visited"));
+		//addTo.setInt("visited", 1);
 		
-		if(addTo == null){
-			addTo = this.coAuthors.addNode();
-			addTo.setString("name", authorName);
-			addTo.setInt("visited", 1);
-		}
-		
-		// look for returned authors already in the graph; remove all authors already in
-		// the graph from the search results
-		Iterator authItr = this.coAuthors.nodes();
-		while(authItr.hasNext()){
-			Node current = (Node) authItr.next();
-			if(moreAuthors.contains(current.get("name"))){ // the graph already contains a node for one of the returned coauthors 
-				this.coAuthors.addEdge(addTo, current);	// add an edge between the clicked-on node and the coauthor node it has in the graph
-				moreAuthors.remove(current.get("name"));
+			// look for returned authors already in the graph; remove all authors already in
+			// the graph from the search results
+			Iterator authItr = this.coAuthors.nodes();
+			while(authItr.hasNext()){
+				Node current = (Node) authItr.next();
+				if(moreAuthors.contains(current.get("name"))){ // the graph already contains a node for one of the returned coauthors 
+					this.coAuthors.addEdge(addTo, current);	// add an edge between the clicked-on node and the coauthor node it has in the graph
+					moreAuthors.remove(current.get("name"));
+				}
 			}
-		}
-		
-		// add nodes for all query-returned co-authors that were not originally in the graph
-		Iterator coAuItr = moreAuthors.iterator();
-		while(coAuItr.hasNext()){
-			String current = (String) coAuItr.next();
-			Node added = this.coAuthors.addNode();
-			added.set("name", current);
-			this.coAuthors.addEdge(addTo, added);
-		}
-		this.updateVis();
+			
+			// add nodes for all query-returned co-authors that were not originally in the graph
+			Iterator coAuItr = moreAuthors.iterator();
+			while(coAuItr.hasNext()){
+				String current = (String) coAuItr.next();
+				Node added = this.coAuthors.addNode();
+				added.set("name", current);
+				this.coAuthors.addEdge(addTo, added);
+			}
+			this.updateVis();
 	}
 	
 	/**
@@ -300,8 +298,8 @@ public abstract class VisualExplorer {
         
         int maxhops = 4, hops = 4;
         
-        ActionList animate = setupAnimate("fdl");
-       
+        this.fdlAnimateActions = setupAnimate("fdl");
+        this.radialAnimateActions = setupAnimate("radial");
 
         ActionList draw = new ActionList();
         draw.add(new ColorAction("graph.nodes", VisualItem.FILLCOLOR, ColorLib.green(1)));
@@ -315,7 +313,7 @@ public abstract class VisualExplorer {
         // we can later execute our Actions by invoking a method on our
         // Visualization, using the name we've chosen below.
         vis.putAction("draw", draw);
-        vis.putAction("layout", animate);
+        vis.putAction("layout", this.fdlAnimateActions);
         vis.runAfter("draw", "layout");
 	    
 /*	    NodeItem focus = (NodeItem) vg.getNode(0);
@@ -356,16 +354,16 @@ public abstract class VisualExplorer {
 	 //	Action curLayout = this.colorLayoutVis.getAction("layout");
 	 	this.colorLayoutVis.removeAction("layout");
 	 	
-	 	ActionList animate = setupAnimate("radial");
-		this.colorLayoutVis.putAction("layout", animate);
+	// 	ActionList animate = setupAnimate("radial");
+		this.colorLayoutVis.putAction("layout", this.radialAnimateActions);
 		this.updateVis();
 	}
 	
 	public void switchToFDL(){
 	 	this.colorLayoutVis.removeAction("layout");
         
-	 	ActionList animate = this.setupAnimate("fdl");
-		this.colorLayoutVis.putAction("layout", animate);
+//	 	ActionList animate = this.setupAnimate("fdl");
+		this.colorLayoutVis.putAction("layout", this.fdlAnimateActions);
 		this.updateVis();
 	}
 	
@@ -386,8 +384,7 @@ public abstract class VisualExplorer {
         	public void itemClicked(VisualItem item, MouseEvent e ){
         		String clickedOn = item.getString("name");
         		Node ckOn = coAuthors.getNode(item.getRow());
-        		ckOn.set("visited", 1);
-        		System.out.println(clickedOn + " visited status is: " + ckOn.getInt("visited"));
+        		ckOn.setInt("visited", 1);
         		addCoAuthors(item.getString("name"));
       
            	}
