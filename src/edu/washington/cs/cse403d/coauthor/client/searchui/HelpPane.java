@@ -14,16 +14,14 @@ public class HelpPane extends JPanel
     {
         JPanel panel1 = new JPanel();
         panel1.add(new HelpMarker("This would be the additional information."));
-        panel1.add(new JLabel("Hover your mouse over this icon for additional information."));
+        panel1.add(new JLabel("Hover your mouse over this icon for additional information.          "));
         JPanel panel2 = new JPanel();
         panel2.add(new JLabel(Services.getResourceManager().loadImageIcon("HistoryBack.png")));
-        panel2.add(new JLabel("Click on this icon to return to the previous page."));
-        JPanel panel3 = new JPanel();
-        panel3.add(new JLabel(Services.getResourceManager().loadImageIcon("HistoryForward.png")));
-        panel3.add(new JLabel("Click on this icon to return to the next page."));
+        panel2.add(new JLabel(Services.getResourceManager().loadImageIcon("HistoryForward.png")));
+        panel2.add(new JLabel("Click these icons to go to the previous/next page.                   "));
         JPanel panel4 = new JPanel();
         panel4.add(new JLabel(Services.getResourceManager().loadImageIcon("VisualizeButton.png")));
-        panel4.add(new JLabel("Click on this icon to see a visual graph of your search."));
+        panel4.add(new JLabel("Click on this icon to see a visual graph of your search.                 "));
         JPanel panel5 = new JPanel();
         panel5.add(new JLabel(Services.getResourceManager().loadImageIcon("plus.png")));
         panel5.add(new JLabel(Services.getResourceManager().loadImageIcon("minus.png")));
@@ -31,7 +29,6 @@ public class HelpPane extends JPanel
        
         add(panel1);
         add(panel2);
-        add(panel3);
         add(panel4);
         add(panel5);
     }
