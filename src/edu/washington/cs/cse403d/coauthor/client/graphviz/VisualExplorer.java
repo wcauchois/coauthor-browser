@@ -308,7 +308,13 @@ public abstract class VisualExplorer {
 	 * underlying data structures, i.e. adding nodes to the table
 	 */
 	public void updateVis(){
-		colorLayoutVis.run("layout");
+		if (this.colorLayoutVis.getAction("ForceLayout") != null){
+			this.colorLayoutVis.run("arrangement");
+			this.colorLayoutVis.run("spacing");
+		}else{
+			this.colorLayoutVis.run("ForcedLayout");
+		}
+			
 		colorLayoutVis.run("draw");
 	}
 	
