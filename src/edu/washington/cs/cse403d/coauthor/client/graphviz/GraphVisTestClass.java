@@ -53,8 +53,8 @@ public class GraphVisTestClass {
 		List<PathLink> chain= backend.getOneShortestPathBetweenAuthors("Jessica Miller", "Ross Tate", true); // Jessica Miller->Stephen G. Kobourov-> Michael Stepp-> Ross Tate
 		System.out.println(chain);
 	//	String s = "Jessica Miller";
-//		VisualCoAuthorExplorer vx = new VisualCoAuthorExplorer("David Notkin");
-		VisualChainExplorer vx = new VisualChainExplorer("Jessica Miller", "David Notkin");
+		VisualCoAuthorExplorer vx = new VisualCoAuthorExplorer("David Notkin");
+		//VisualChainExplorer vx = new VisualChainExplorer("Jessica Miller", "David Notkin");
 		
 /*		List<String> authors = new ArrayList<String>();
 		authors.add("Marty Stepp");
