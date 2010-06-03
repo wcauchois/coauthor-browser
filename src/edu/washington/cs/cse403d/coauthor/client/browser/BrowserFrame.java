@@ -58,7 +58,7 @@ public class BrowserFrame extends JFrame implements Browser {
 			goBack();
 		}
 
-		public void update() {
+		public void enableIfAvailable() {
 			setEnabled(canGoBack());
 		}
 	}
@@ -76,7 +76,7 @@ public class BrowserFrame extends JFrame implements Browser {
 			goForward();
 		}
 
-		public void update() {
+		public void enableIfAvailable() {
 			setEnabled(canGoForward());
 		}
 	}
@@ -110,16 +110,20 @@ public class BrowserFrame extends JFrame implements Browser {
 	}
 	
 	private void renderPage() {
+		backButton.enableIfAvailable();
+		forwardButton.enableIfAvailable();
+		
 		pagePane.removeAll();
 		pagePane.add(history.getCurrent());
-		backButton.update();
-		forwardButton.update();
 		validate();
 		pagePane.setSize(this.getSize());
 		pagePane.repaint();
 	}
 	
 	private void renderLoadingScreen() {
+		backButton.setEnabled(false);
+		forwardButton.setEnabled(false);
+		
 		pagePane.removeAll();
 		pagePane.add(loadingPanel);
 		pagePane.repaint();
