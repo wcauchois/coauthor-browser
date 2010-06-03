@@ -73,6 +73,8 @@ public class ChainSearchResult extends BrowserPage {
 		}
 		if (valid)
 			singleEntryInitialize();
+		
+		setLoaded();
 	}
 
 	/**

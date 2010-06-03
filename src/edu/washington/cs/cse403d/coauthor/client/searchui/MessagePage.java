@@ -36,15 +36,12 @@ import edu.washington.cs.cse403d.coauthor.client.utils.Fonts;
  */
 public class MessagePage extends BrowserPage {
 	private String title;
-	private int type;
-	private String details;
-	private int buttons;
 
 	@Override
 	public String getTitle() {
 		return title;
 	}
-
+	
 	// This just sets several properties of JTextArea to make it suitable for
 	// our
 	// needs (as a read-only word-wrapping text container).
@@ -113,13 +110,7 @@ public class MessagePage extends BrowserPage {
 	 */
 	public MessagePage(int type, String title, String details, int buttons) {
 		this.title = title;
-		this.type = type;
-		this.details = details;
-		this.buttons = buttons;
-	}
-
-	@Override
-	protected void load() {
+		
 		ImageIcon icon = null;
 		ResourceManager resMan = Services.getResourceManager();
 		if (type == ERROR)
@@ -162,6 +153,8 @@ public class MessagePage extends BrowserPage {
 		}
 		if (buttonList.size() > 0)
 			messagePane.add(buttonsPanel);
+		
+		setLoaded();
 	}
 
 	private class DispatcherListener implements ActionListener {

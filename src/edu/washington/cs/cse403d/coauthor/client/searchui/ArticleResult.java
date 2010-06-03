@@ -76,6 +76,7 @@ public class ArticleResult extends BrowserPage {
 		}
 		initialize();
 		// System.out.println(super.getContainerListeners().toString());
+		setLoaded();
 	}
 
 	/**

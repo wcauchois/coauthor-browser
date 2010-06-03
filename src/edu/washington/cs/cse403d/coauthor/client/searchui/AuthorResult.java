@@ -57,6 +57,8 @@ public class AuthorResult extends BrowserPage {
 			add(new AuthorPublicationResult(queries.get(0)), c);
 		else
 			add(new AuthorPublicationResult(queries), c);
+		
+		setLoaded();
 	}
 
 	public String getTitle() {

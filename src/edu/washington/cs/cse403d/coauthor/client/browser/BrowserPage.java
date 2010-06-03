@@ -1,14 +1,9 @@
 package edu.washington.cs.cse403d.coauthor.client.browser;
 
-import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-
-import edu.washington.cs.cse403d.coauthor.client.Services;
 
 /**
  * Base class for a "page" in a browser type system. Derived types should
@@ -20,24 +15,9 @@ import edu.washington.cs.cse403d.coauthor.client.Services;
 public abstract class BrowserPage extends JPanel {
 	private static final long serialVersionUID = -3276055792444479236L;
 
-	private final JPanel loadingPanel;
-	private boolean isLoading;
-
 	public BrowserPage() {
 		super();
-		
 		isLoaded = false;
-
-		loadingPanel = new JPanel();
-		loadingPanel.setLayout(new BoxLayout(loadingPanel, BoxLayout.Y_AXIS));
-
-		JLabel icon = new JLabel(Services.getResourceManager().loadImageIcon("Loading.gif"));
-		icon.setAlignmentX(Component.CENTER_ALIGNMENT);
-		JLabel text = new JLabel("Loading...");
-		text.setAlignmentX(Component.CENTER_ALIGNMENT);
-
-		loadingPanel.add(icon);
-		loadingPanel.add(text);
 	}
 
 	/**
@@ -104,30 +84,21 @@ public abstract class BrowserPage extends JPanel {
 		return isLoaded;
 	}
 	
-	public void setIsLoaded(boolean isLoaded) {
-		this.isLoaded = isLoaded;
+	/**
+	 * Derived classes should call this at the end of their load() method to
+	 * ensure that load() is not called multiple times.
+	 */
+	protected void setLoaded() {
+		isLoaded = true;
 	}
 
 	/**
 	 * Populate the page with data. A loading spinner is displayed while the
-	 * load method is executing.
+	 * load method is executing. Derived classes should call setLoaded() at the
+	 * end of their load() method to ensure that load() is not called multiple
+	 * times.
 	 */
-	abstract protected void load();
-
-	/**
-	 * Put the loading icon and text in this BrowserPage
-	 */
-	public void setIsLoading(boolean isLoading) {
-		if (isLoading && !this.isLoading) {
-			// Pop out a new loading popup
-			this.isLoading = true;
-
-			add(loadingPanel);
-		} else if (!isLoading && this.isLoading) {
-			// Remove the existing popup
-			this.isLoading = false;
-
-			remove(loadingPanel);
-		}
+	protected void load() throws PageLoadError {
+		setLoaded();
 	}
 }

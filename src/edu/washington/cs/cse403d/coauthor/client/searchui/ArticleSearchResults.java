@@ -21,6 +21,7 @@ import javax.swing.ListCellRenderer;
 
 import edu.washington.cs.cse403d.coauthor.client.Services;
 import edu.washington.cs.cse403d.coauthor.client.browser.BrowserPage;
+import edu.washington.cs.cse403d.coauthor.client.browser.PageLoadError;
 import edu.washington.cs.cse403d.coauthor.client.utils.Fonts;
 import edu.washington.cs.cse403d.coauthor.client.utils.LineWrappedLabel;
 import edu.washington.cs.cse403d.coauthor.client.utils.StringUtils;
@@ -92,7 +93,7 @@ public class ArticleSearchResults extends BrowserPage {
 	}
 
 	@Override
-	protected void load() {
+	protected void load() throws PageLoadError {
 		List<Publication> pubs = null;
 		List<Publication> filteredPubs = new ArrayList<Publication>();;
 		CoauthorDataServiceInterface c = Services.getCoauthorDataServiceInterface();
@@ -127,7 +128,6 @@ public class ArticleSearchResults extends BrowserPage {
 		} else
 			filteredPubs = pubs;      //use original list
 		
-		
 		setLayout(new BorderLayout());
 		results.setCellRenderer(new PubRenderer());
 		results.setListData(filteredPubs.toArray());
@@ -147,5 +147,7 @@ public class ArticleSearchResults extends BrowserPage {
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scroller.setPreferredSize(new Dimension(RESULTS_WIDTH, RESULTS_HEIGHT));
 		add(scroller, BorderLayout.CENTER);
+		
+		setLoaded();
 	}
 }

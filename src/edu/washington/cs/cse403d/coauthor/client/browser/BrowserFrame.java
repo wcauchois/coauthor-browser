@@ -2,14 +2,17 @@ package edu.washington.cs.cse403d.coauthor.client.browser;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import edu.washington.cs.cse403d.coauthor.client.Services;
@@ -30,6 +33,7 @@ public class BrowserFrame extends JFrame implements Browser {
 	protected BrowserHistory history;
 	private JPanel pagePane = new JPanel();
 	private JPanel navPane = new JPanel();
+	private JPanel loadingPanel;
 
 	private abstract class NavButton extends JButton implements ActionListener {
 		private static final long serialVersionUID = 8896732421593552612L;
@@ -90,11 +94,22 @@ public class BrowserFrame extends JFrame implements Browser {
 		getContentPane().add(navPane, BorderLayout.NORTH);
 		getContentPane().add(pagePane, BorderLayout.CENTER);
 		Services.provideBrowser(this);
+		
+		loadingPanel = new JPanel();
+		loadingPanel.setLayout(new BoxLayout(loadingPanel, BoxLayout.Y_AXIS));
+
+		JLabel icon = new JLabel(Services.getResourceManager().loadImageIcon("Loading.gif"));
+		icon.setAlignmentX(Component.CENTER_ALIGNMENT);
+		JLabel text = new JLabel("Loading...");
+		text.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+		loadingPanel.add(icon);
+		loadingPanel.add(text);
+		
 		go(initialPage);
 	}
-
-	@SuppressWarnings("deprecation")
-	private void update() {
+	
+	private void renderPage() {
 		pagePane.removeAll();
 		pagePane.add(history.getCurrent());
 		backButton.update();
@@ -104,34 +119,37 @@ public class BrowserFrame extends JFrame implements Browser {
 		pagePane.repaint();
 	}
 	
+	private void renderLoadingScreen() {
+		pagePane.removeAll();
+		pagePane.add(loadingPanel);
+		pagePane.repaint();
+	}
+	
 	protected JPanel getNavPane() {
 		return navPane;
 	}
 
 	public void go(final BrowserPage page) {
 		history.getCurrent().onExit(page);
-		page.onEnter(history.push(page));
-
-		if (!page.isLoaded()) {
-			// This is the first time this page has been navigated to. Call load
-			// once (and only once).
-			page.setIsLoaded(true);
-
-			// Display the loading information in the page.
-			page.setIsLoading(true);
-
-			// Run load in another thread.
+		if(!page.isLoaded()) {
+			renderLoadingScreen();
 			new Thread() {
 				public void run() {
-					page.load();
-
-					// Remove the loading icon/text when load has completed
-					page.setIsLoading(false);
-					update();
-				};
+					try {
+						page.load();
+						page.onEnter(history.push(page));
+					} catch(PageLoadError e) {
+						if(!e.getRedirect().isLoaded())
+							throw new RuntimeException("invalid redirect page");
+						e.getRedirect().onEnter(history.push(e.getRedirect()));
+					}
+					renderPage();
+				}
 			}.start();
+		} else {
+			page.onEnter(history.push(page));
+			renderPage();
 		}
-		update();
 	}
 
 	public boolean canGoForward() {
@@ -146,13 +164,13 @@ public class BrowserFrame extends JFrame implements Browser {
 		BrowserPage old = history.getCurrent();
 		old.onExit(history.forward());
 		history.getCurrent().onEnter(old);
-		update();
+		renderPage();
 	}
 
 	public void goBack() {
 		BrowserPage old = history.getCurrent();
 		old.onExit(history.back());
 		history.getCurrent().onEnter(old);
-		update();
+		renderPage();
 	}
 }

@@ -55,6 +55,8 @@ public class SearchPage extends BrowserPage {
 			tabbedPane.setSelectedIndex(0);
 		else if (searchType == ARTICLE_SEARCH)
 			tabbedPane.setSelectedIndex(1);
+		
+		setLoaded();
 	}
 
 	/*
