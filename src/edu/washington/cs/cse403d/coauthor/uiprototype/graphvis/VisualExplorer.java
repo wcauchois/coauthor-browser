@@ -130,6 +130,7 @@ public abstract class VisualExplorer {
 	 * @param authorName
 	 */
 	protected void addCoAuthors(String authorName){
+	synchronized (this.colorLayoutVis){
 		List<String> moreAuthors = getCoAuthorList(authorName);        
 		Node addTo = findAuthor(authorName);
 		System.out.println("VISITED STATUS: " + addTo.getInt("visited"));
@@ -149,15 +150,15 @@ public abstract class VisualExplorer {
 		}
 		
 		// add nodes for all query-returned co-authors that were not originally in the graph
-/*			Iterator coAuItr = moreAuthors.iterator();
+			Iterator coAuItr = moreAuthors.iterator();
 			while(coAuItr.hasNext()){
 				String current = (String) coAuItr.next();
 				Node added = this.coAuthors.addNode();
 				added.set("name", current);
 				this.coAuthors.addEdge(addTo, added);
-			}*/
+			}
 		this.updateVis();
-	}
+	}}
 	
 	/**
 	 * used to find the Node in the prefuse graph that has authorName in it's name
@@ -180,7 +181,7 @@ public abstract class VisualExplorer {
 	/**
 	 * adds coauthor nodes to all nodes currently in the graph
 	 */
-	public void addCoAuthorsToAllNodes(){
+	public boolean addCoAuthorsToAllNodes(){
 		System.out.println("Adding coauthors to all nodes in graph");
 		Iterator graphItr = this.coAuthors.nodes();
 		
@@ -191,8 +192,9 @@ public abstract class VisualExplorer {
 				this.addCoAuthors((String) current.get("name"));
 			}
 			this.updateVis();
+			return true;
 		}else {
-			System.out.println("Too many nodes in graph to add co-authors to all!");
+			return false;
 		}
 	}
 	
@@ -201,11 +203,12 @@ public abstract class VisualExplorer {
 	 * @param toBeRemoved
 	 */
 	protected void removeNode(int toBeRemoved){
+		synchronized(this.colorLayoutVis){
 		if(this.coAuthors.getNode(toBeRemoved).getChildCount() == 0){
 			this.coAuthors.removeNode(toBeRemoved);
 		}else{
 			System.out.println("This node has children; it cannot be removed!");
-		}
+		}}
 		this.updateVis();
 	}
 	
@@ -215,7 +218,7 @@ public abstract class VisualExplorer {
 	 * @param authorName
 	 */
 	public void removeCoAuthors(String authorName){
-		
+		synchronized(this.colorLayoutVis){
 		Node removeCoAuthorsFrom = findAuthor(authorName);
 	
 		Iterator childItr = removeCoAuthorsFrom.children();
@@ -229,12 +232,13 @@ public abstract class VisualExplorer {
 		}
 		System.out.println("You are now removing the co-authors of " + authorName);
 
-	}
+	}}
 
 	/**
 	 * removes all nodes that have degree 0 from the graph
 	 */
 	public void trimOneDegree(){
+	synchronized (this.colorLayoutVis){
 		
 		Iterator nodeItr = this.coAuthors.nodes();
 		List<Integer> toBeDeleted = new ArrayList<Integer>();
@@ -255,6 +259,7 @@ public abstract class VisualExplorer {
 			this.coAuthors.removeNode(deleted);
 		}
 		
+	}
 	}
 	
 	/**
@@ -353,7 +358,8 @@ public abstract class VisualExplorer {
 	}
 	
 	public void switchToRadialLayout(){
-	 //	Action curLayout = this.colorLayoutVis.getAction("layout");
+	 
+	//	Action curLayout = this.colorLayoutVis.getAction("layout");
 	 	this.colorLayoutVis.removeAction("layout");
 	 	
 	// 	ActionList animate = setupAnimate("radial");
