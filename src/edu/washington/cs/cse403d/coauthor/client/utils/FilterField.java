@@ -38,7 +38,6 @@ import edu.washington.cs.cse403d.coauthor.client.searchui.AuthorResult;
 public class FilterField extends JTextField {
 	private static final long serialVersionUID = 3250394717406844585L;
 	
-	private String author;    //flag for coauthor list
 	private JList theList;
 	private DefaultListModel model;
 	private Font italicFont, defaultFont;
@@ -64,7 +63,6 @@ public class FilterField extends JTextField {
 	 * @param list the list whose contents will be filtered.
 	 */
 	public FilterField(JList list, String author) {
-		this.author = author;
 		theList = list;
 		model = (DefaultListModel) theList.getModel();
 		unfilteredData = new ArrayList<Object>(model.getSize());
@@ -116,10 +114,6 @@ public class FilterField extends JTextField {
 					setCursor(defaultCursor);
 			}
 		});
-		if(author != null)
-			buildListNavigator1(model);
-		else
-			buildListNavigator2(model);
 	}
 	private Rectangle getCancelFilterRect() {
 		int width = getWidth(), height = getHeight();
@@ -135,10 +129,6 @@ public class FilterField extends JTextField {
 	private void updateResults(String filter) {
 		if(filter.length() == 0) {
 			addToModel(model, unfilteredData);
-			if(author != null)
-				buildListNavigator1(model);
-			else
-				buildListNavigator2(model);
 			return;
 		}
 		filter = filter.toLowerCase();
@@ -148,139 +138,12 @@ public class FilterField extends JTextField {
 				filteredData.add(o);
 		}
 		addToModel(model, filteredData);
-		if(author != null)
-			buildListNavigator1(model);
-		else
-			buildListNavigator2(model);
 	}
 	public List<Object> getUnfilteredData() {
 		return unfilteredData;
 	}
 	public JList getList() {
 		return theList;
-	}
-	//for author list
-	private void buildListNavigator1(final DefaultListModel listModel) {
-		theList.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent evt) {
-				int selected = theList.getSelectedIndex();
-
-				String searchFor = ("<html><i>°ÊSearch for this author</i></html>");
-				String coauthorSearchFor = ("<html><i>°ÊPerform coauthor search on this author</i></html>");
-				String closeMenu = ("<html><i>°ÊClose this submenu</i></html>");
-				if(!theList.isSelectionEmpty() && !theList.getSelectedValue().equals(closeMenu) &&
-						(!theList.getSelectedValue().equals(searchFor))){
-					if( selected + 1 == listModel.getSize() ||
-							listModel.getElementAt(selected + 1) != searchFor) {
-						
-						selected = theList.getSelectedIndex();
-						listModel.insertElementAt(searchFor, selected + 1);
-						listModel.insertElementAt(coauthorSearchFor, selected + 2);
-						listModel.insertElementAt(closeMenu, selected + 3);
-						
-						theList.setModel(listModel);
-						theList.setSelectedIndex(selected);
-					}
-				}
-				
-				if(!theList.isSelectionEmpty() && theList.getSelectedValue().equals(closeMenu)){
-					listModel.remove(selected);
-					theList.setSelectedIndex(selected -1);
-					listModel.remove(theList.getSelectedIndex());
-					theList.setSelectedIndex(selected -2);
-					listModel.remove(theList.getSelectedIndex());
-					theList.setModel(listModel);
-				}
-				
-				int subMenuSelection;
-				String selectedItem;
-				if(!theList.isSelectionEmpty()) {
-					subMenuSelection = theList.getSelectedIndex();
-					selectedItem = (String) listModel.getElementAt(subMenuSelection);
-				} else {
-					subMenuSelection = selected - 2;
-					selectedItem = "";
-				}				
-				
-				if (selectedItem.equals(searchFor)) {				
-					String author = (String) listModel.getElementAt(subMenuSelection - 1);
-					Services.getBrowser().go(new AuthorResult(author));
-				} else if (selectedItem.equals(coauthorSearchFor)) {
-					List<String> selectedList = new ArrayList<String>(2);
-					selectedList.add(author);
-					selectedList.add((String) listModel.getElementAt(subMenuSelection - 2));
-					Services.getBrowser().go(new AuthorResult(selectedList));
-				}				
-				
-				if(evt.getClickCount() == 2) {
-					String selection = (String) theList.getSelectedValue();
-					if(!selection.equals(searchFor) && 
-							!selection.equals(coauthorSearchFor) &&
-							!selection.equals(closeMenu)) {
-						String author = (String)theList.getSelectedValue();
-						Services.getBrowser().go(new AuthorResult(author));
-					}					
-				}
-			}
-		});
-	}
-	
-	//for article list
-	private void buildListNavigator2(final DefaultListModel listModel) {
-		theList.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent evt) {
-				int selected = theList.getSelectedIndex();
-				
-				String searchFor = ("<html><i>°ÊSearch for this article</i></html>");
-				String closeMenu = ("<html><i>°ÊClose this submenu</i></html>");
-				if(!theList.isSelectionEmpty() && !theList.getSelectedValue().equals(closeMenu) &&
-						(!theList.getSelectedValue().equals(searchFor))){
-					if( selected + 1 == listModel.getSize() ||
-							listModel.getElementAt(selected + 1) != searchFor) {
-						
-						selected = theList.getSelectedIndex();
-						listModel.insertElementAt(searchFor, selected + 1);
-						listModel.insertElementAt(closeMenu, selected + 2);
-						
-						theList.setModel(listModel);
-						theList.setSelectedIndex(selected);
-					}
-				}
-				
-				if(!theList.isSelectionEmpty() && theList.getSelectedValue().equals(closeMenu)){
-					listModel.remove(selected);
-					theList.setSelectedIndex(selected -1);
-					listModel.remove(theList.getSelectedIndex());
-					theList.setModel(listModel);
-				}
-				
-				int subMenuSelection;
-				String selectedItem;
-				if(!theList.isSelectionEmpty()) {
-					subMenuSelection = theList.getSelectedIndex();
-					selectedItem = (String) listModel.getElementAt(subMenuSelection);
-				} else {
-					subMenuSelection = selected - 2;
-					selectedItem = "";
-				}
-				 
-				
-				if (selectedItem.equals(searchFor)) {				
-					String articleTitle = (String) listModel.getElementAt(subMenuSelection - 1);
-					Services.getBrowser().go(new ArticleResult(articleTitle));
-				}
-				if(evt.getClickCount() == 2) {
-					String selection = (String) theList.getSelectedValue();
-					if(!selection.equals(searchFor) && 
-							!selection.equals(closeMenu)) {
-						String author = (String)theList.getSelectedValue();
-						Services.getBrowser().go(new AuthorResult(author));
-					}					
-				}
-			}
-		});
 	}
 	
 	//manually add to listModel
