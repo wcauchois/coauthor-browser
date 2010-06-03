@@ -34,7 +34,6 @@ public class GraphVizManager {
 		
 		field.setPreferredSize(theFrame.getPreferredSize());
 
-
 		theFrame.pack();
 		theFrame.setVisible(true);
 	}
