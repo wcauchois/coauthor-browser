@@ -8,10 +8,6 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import edu.washington.cs.cse403d.coauthor.uiprototype.graphvis.PrefuseVisualization;
-import edu.washington.cs.cse403d.coauthor.uiprototype.graphvis.VisualChainExplorer;
-import edu.washington.cs.cse403d.coauthor.uiprototype.graphvis.VisualCoAuthorExplorer;
-import edu.washington.cs.cse403d.coauthor.uiprototype.graphvis.VisualExplorer;
 
 public class GraphVizManager {
 	private GraphVizFrame theFrame = null;

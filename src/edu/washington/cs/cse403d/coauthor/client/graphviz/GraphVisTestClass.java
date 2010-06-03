@@ -1,4 +1,4 @@
-package edu.washington.cs.cse403d.coauthor.uiprototype.graphvis;
+package edu.washington.cs.cse403d.coauthor.client.graphviz;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -33,7 +33,6 @@ import prefuse.util.ui.JSearchPanel;
 import prefuse.util.ui.UILib;
 import prefuse.visual.VisualItem;
 
-import edu.washington.cs.cse403d.coauthor.client.graphviz.GraphVizFrame;
 import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 import edu.washington.cs.cse403d.coauthor.shared.model.PathLink;
 

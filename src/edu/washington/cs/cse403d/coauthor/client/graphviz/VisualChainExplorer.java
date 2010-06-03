@@ -1,4 +1,4 @@
-package edu.washington.cs.cse403d.coauthor.uiprototype.graphvis;
+package edu.washington.cs.cse403d.coauthor.client.graphviz;
 
 import java.rmi.RemoteException;
 import java.util.List;
