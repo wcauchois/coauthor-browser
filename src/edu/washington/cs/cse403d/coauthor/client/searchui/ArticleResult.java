@@ -229,6 +229,43 @@ public class ArticleResult extends BrowserPage {
 		authorList.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent evt) {
+				int selected = authorList.getSelectedIndex();
+				
+				String searchFor = ("<html><i>°ÊSearch for this author</i></html>");
+				String closeMenu = ("<html><i>°ÊClose this submenu</i></html>");
+				if(!authorList.getSelectedValue().equals(closeMenu) &&
+						!authorList.getSelectedValue().equals(searchFor)){
+					if( selected + 1 == listModel.size() ||
+							listModel.getElementAt(selected + 1) != searchFor) {
+						selected = authorList.getSelectedIndex();
+						listModel.insertElementAt(searchFor, selected + 1);
+						listModel.insertElementAt(closeMenu, selected + 2);
+						authorList.setModel(listModel);
+						authorList.setSelectedIndex(selected);
+					}
+				}
+				
+				if(authorList.getSelectedValue().equals(closeMenu)){
+					listModel.remove(selected);
+					authorList.setSelectedIndex(selected -1);
+					listModel.remove(authorList.getSelectedIndex());
+					authorList.setModel(listModel);
+				}
+				
+				int subMenuSelection;
+				
+				if(!authorList.isSelectionEmpty())
+					subMenuSelection = authorList.getSelectedIndex();
+				else
+					subMenuSelection = selected - 2;
+				
+				String selectedItem = (String) listModel.getElementAt(subMenuSelection);
+				
+				if (selectedItem.equals(searchFor)) {
+					String articleTitle = (String) listModel.getElementAt(subMenuSelection - 1);
+					Services.getBrowser().go(new AuthorResult(articleTitle));
+				}				
+			
 				if (evt.getClickCount() == 2) {
 					String author = (String) authorList.getSelectedValue();
 					Services.getBrowser().go(new AuthorResult(author));
