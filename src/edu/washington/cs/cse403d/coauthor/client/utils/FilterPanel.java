@@ -65,7 +65,7 @@ public class FilterPanel extends JPanel {
 		filterPanel = new JPanel();
 		filterPanel.setLayout(new BoxLayout(filterPanel, BoxLayout.X_AXIS));
 				
-		filterField = new FilterField(list);
+		filterField = new FilterField(list, theAuthor);
 		if(theAuthor != null)
 			filterField.setPreferredSize(new Dimension(300, 0));
 		else
