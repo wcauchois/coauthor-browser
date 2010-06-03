@@ -23,6 +23,7 @@ import javax.swing.ListCellRenderer;
 
 import edu.washington.cs.cse403d.coauthor.client.Services;
 import edu.washington.cs.cse403d.coauthor.client.browser.BrowserPage;
+import edu.washington.cs.cse403d.coauthor.client.browser.MessagePage;
 import edu.washington.cs.cse403d.coauthor.client.browser.PageLoadError;
 import edu.washington.cs.cse403d.coauthor.client.utils.Fonts;
 import edu.washington.cs.cse403d.coauthor.client.utils.LineWrappedLabel;
