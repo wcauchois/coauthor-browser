@@ -114,8 +114,18 @@ public class ChainSearchResult extends BrowserPage {
 		coauthorList.setFont(coauthorList.getFont().deriveFont(Font.PLAIN));
 
 		buildCoauthorList();
+		
+		JPanel number = new JPanel();
+		JLabel numberText = new JLabel("The number of authors in this chain is: ");
+		JLabel numberVal = new JLabel("" + listModel.size());
+		numberText.setFont(f.deriveFont(s));
+		numberVal.setFont(f.deriveFont(s));
+		number.add(numberText);
+		number.add(numberVal);
+		
 		add(new FilterPanel(coauthorList, author1, author2));
 		add(singleEntryTop, BorderLayout.PAGE_START);
+		add(number, BorderLayout.PAGE_END);
 	}
 
 	/**
