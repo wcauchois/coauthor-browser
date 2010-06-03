@@ -1,4 +1,4 @@
-package edu.washington.cs.cse403d.coauthor.client.searchui;
+package edu.washington.cs.cse403d.coauthor.client.browser;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -22,7 +22,6 @@ import javax.swing.SwingConstants;
 
 import edu.washington.cs.cse403d.coauthor.client.ResourceManager;
 import edu.washington.cs.cse403d.coauthor.client.Services;
-import edu.washington.cs.cse403d.coauthor.client.browser.BrowserPage;
 import edu.washington.cs.cse403d.coauthor.client.utils.Fonts;
 
 /**

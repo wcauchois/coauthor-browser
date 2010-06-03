@@ -5,6 +5,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.rmi.RemoteException;
@@ -21,6 +23,7 @@ import javax.swing.ListCellRenderer;
 
 import edu.washington.cs.cse403d.coauthor.client.Services;
 import edu.washington.cs.cse403d.coauthor.client.browser.BrowserPage;
+import edu.washington.cs.cse403d.coauthor.client.browser.MessagePage;
 import edu.washington.cs.cse403d.coauthor.client.browser.PageLoadError;
 import edu.washington.cs.cse403d.coauthor.client.utils.Fonts;
 import edu.washington.cs.cse403d.coauthor.client.utils.LineWrappedLabel;
@@ -127,6 +130,20 @@ public class ArticleSearchResults extends BrowserPage {
 			}	
 		} else
 			filteredPubs = pubs;      //use original list
+		
+		if(filteredPubs.size() == 0) {
+			MessagePage message = new MessagePage(
+					MessagePage.INFO,
+					"No results",
+					"There were no results for your search",
+					MessagePage.GO_BACK);
+			message.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
+					Services.getBrowser().goBack();
+				}
+			});
+			throw new PageLoadError(message);
+		}
 		
 		setLayout(new BorderLayout());
 		results.setCellRenderer(new PubRenderer());
