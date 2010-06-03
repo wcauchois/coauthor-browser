@@ -21,6 +21,7 @@ import javax.swing.SwingConstants;
 
 import prefuse.controls.ControlAdapter;
 import prefuse.util.FontLib;
+import prefuse.util.force.ForceConfigAction;
 import prefuse.util.ui.JFastLabel;
 import prefuse.util.ui.UILib;
 import prefuse.visual.VisualItem;
@@ -59,7 +60,7 @@ public class GraphVizFrame extends JFrame implements ActionListener{
     	JPanel panel = new JPanel(new BorderLayout());
     	
     	final String label = "name";
-		final JFastLabel title = new JFastLabel("       Fish          ");
+		final JFastLabel title = new JFastLabel("Author Name");
 		title.setPreferredSize(new Dimension(150, 20));
 		title.setVerticalAlignment(SwingConstants.BOTTOM);
 		title.setBorder(BorderFactory.createEmptyBorder(3,0,0,0));
@@ -83,7 +84,7 @@ public class GraphVizFrame extends JFrame implements ActionListener{
 		oneDg.setActionCommand("onedg");
 		oneDg.addActionListener(this);
 		
-		JButton trim = new JButton("Trim 1 Degree");
+		JButton trim = new JButton("Trim by One Degree");
         trim.setActionCommand("trim");
         trim.setToolTipText("Remove all authors that have only " +
         		"one edge connecting them to the graph.");
