@@ -165,11 +165,11 @@ public class FilterField extends JTextField {
 			@Override
 			public void mouseClicked(MouseEvent evt) {
 				int selected = theList.getSelectedIndex();
-				
+
 				String searchFor = ("<html><i>°ÊSearch for this author</i></html>");
 				String coauthorSearchFor = ("<html><i>°ÊPerform coauthor search on this author</i></html>");
 				String closeMenu = ("<html><i>°ÊClose this submenu</i></html>");
-				if(!theList.getSelectedValue().equals(closeMenu) &&
+				if(!theList.isSelectionEmpty() && !theList.getSelectedValue().equals(closeMenu) &&
 						(!theList.getSelectedValue().equals(searchFor))){
 					if( selected + 1 == listModel.getSize() ||
 							listModel.getElementAt(selected + 1) != searchFor) {
@@ -184,7 +184,7 @@ public class FilterField extends JTextField {
 					}
 				}
 				
-				if(theList.getSelectedValue().equals(closeMenu)){
+				if(!theList.isSelectionEmpty() && theList.getSelectedValue().equals(closeMenu)){
 					listModel.remove(selected);
 					theList.setSelectedIndex(selected -1);
 					listModel.remove(theList.getSelectedIndex());
@@ -194,13 +194,14 @@ public class FilterField extends JTextField {
 				}
 				
 				int subMenuSelection;
-				
-				if(!theList.isSelectionEmpty())
+				String selectedItem;
+				if(!theList.isSelectionEmpty()) {
 					subMenuSelection = theList.getSelectedIndex();
-				else
+					selectedItem = (String) listModel.getElementAt(subMenuSelection);
+				} else {
 					subMenuSelection = selected - 2;
-				
-				String selectedItem = (String) listModel.getElementAt(subMenuSelection);
+					selectedItem = "";
+				}				
 				
 				if (selectedItem.equals(searchFor)) {				
 					String author = (String) listModel.getElementAt(subMenuSelection - 1);
@@ -234,7 +235,7 @@ public class FilterField extends JTextField {
 				
 				String searchFor = ("<html><i>°ÊSearch for this article</i></html>");
 				String closeMenu = ("<html><i>°ÊClose this submenu</i></html>");
-				if(!theList.getSelectedValue().equals(closeMenu) &&
+				if(!theList.isSelectionEmpty() && !theList.getSelectedValue().equals(closeMenu) &&
 						(!theList.getSelectedValue().equals(searchFor))){
 					if( selected + 1 == listModel.getSize() ||
 							listModel.getElementAt(selected + 1) != searchFor) {
@@ -248,7 +249,7 @@ public class FilterField extends JTextField {
 					}
 				}
 				
-				if(theList.getSelectedValue().equals(closeMenu)){
+				if(!theList.isSelectionEmpty() && theList.getSelectedValue().equals(closeMenu)){
 					listModel.remove(selected);
 					theList.setSelectedIndex(selected -1);
 					listModel.remove(theList.getSelectedIndex());
@@ -256,13 +257,15 @@ public class FilterField extends JTextField {
 				}
 				
 				int subMenuSelection;
-				
-				if(!theList.isSelectionEmpty())
+				String selectedItem;
+				if(!theList.isSelectionEmpty()) {
 					subMenuSelection = theList.getSelectedIndex();
-				else
+					selectedItem = (String) listModel.getElementAt(subMenuSelection);
+				} else {
 					subMenuSelection = selected - 2;
-				
-				String selectedItem = (String) listModel.getElementAt(subMenuSelection);
+					selectedItem = "";
+				}
+				 
 				
 				if (selectedItem.equals(searchFor)) {				
 					String articleTitle = (String) listModel.getElementAt(subMenuSelection - 1);
