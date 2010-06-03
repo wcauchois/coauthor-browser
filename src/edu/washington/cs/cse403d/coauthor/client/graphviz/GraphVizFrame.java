@@ -26,9 +26,6 @@ import prefuse.util.ui.JFastLabel;
 import prefuse.util.ui.UILib;
 import prefuse.visual.VisualItem;
 
-import edu.washington.cs.cse403d.coauthor.uiprototype.graphvis.VisualChainExplorer;
-import edu.washington.cs.cse403d.coauthor.uiprototype.graphvis.VisualCoAuthorExplorer;
-import edu.washington.cs.cse403d.coauthor.uiprototype.graphvis.VisualExplorer;
 
 public class GraphVizFrame extends JFrame implements ActionListener{
 	VisualExplorer visExp;

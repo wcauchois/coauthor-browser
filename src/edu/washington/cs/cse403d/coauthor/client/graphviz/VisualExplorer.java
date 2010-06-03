@@ -1,4 +1,4 @@
-package edu.washington.cs.cse403d.coauthor.uiprototype.graphvis;
+package edu.washington.cs.cse403d.coauthor.client.graphviz;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -393,10 +393,10 @@ public abstract class VisualExplorer {
  
         Layout radialLayout = new RadialTreeLayout("graph");
        
-        ActionList arrangement = new ActionList(100);
+        ActionList arrangement = new ActionList(1000);
         arrangement.add(radialLayout);
         
-        ActionList spacing = new ActionList(500);
+        ActionList spacing = new ActionList(300);
         spacing.add(this.arrangementLayout);
         
         this.radialAnimateActionsArrangement = arrangement;
