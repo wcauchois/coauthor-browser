@@ -97,8 +97,8 @@ class AuthorPublicationResult extends JPanel {
                         public void mouseClicked(MouseEvent evt) {
                                 int selected = theList.getSelectedIndex();
 
-                                String searchFor = ("<html><i>¢Æ©°Search for this article</i></html>");
-                                String closeMenu = ("<html><i>¢Æ©°Close this submenu</i></html>");
+                                String searchFor = ("<html><i>°ÊSearch for this article</i></html>");
+                                String closeMenu = ("<html><i>°ÊClose this submenu</i></html>");
                                 if(!theList.isSelectionEmpty() && !theList.getSelectedValue().equals(closeMenu) &&
                                                 !theList.getSelectedValue().equals(searchFor)){
                                         if( selected + 1 == listModel.getSize() ||

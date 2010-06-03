@@ -137,8 +137,8 @@ public class ChainSearchResult extends BrowserPage {
                         public void mouseClicked(MouseEvent evt) {
                                 int selected = theList.getSelectedIndex();
 
-                                String searchFor = ("<html><i>¢Æ©°Search for this author</i></html>");
-                                String closeMenu = ("<html><i>¢Æ©°Close this submenu</i></html>");
+                                String searchFor = ("<html><i>°ÊSearch for this author</i></html>");
+                                String closeMenu = ("<html><i>°ÊClose this submenu</i></html>");
                                 if(!theList.isSelectionEmpty() && !theList.getSelectedValue().equals(closeMenu) &&
                                                 !theList.getSelectedValue().equals(searchFor)){
                                         if( selected + 1 == listModel.getSize() ||
