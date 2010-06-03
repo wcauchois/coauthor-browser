@@ -15,6 +15,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
@@ -39,7 +40,7 @@ public class GraphVizFrame extends JFrame implements ActionListener{
 		this.setContentPane(this.setupButtons(visExp));
 		this.visExp.updateVis();
 		this.add(visExp.getDisplay());
-		
+		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 	
 	public GraphVizFrame(String startingAuthor, String endingAuthor) throws RemoteException{
@@ -48,10 +49,8 @@ public class GraphVizFrame extends JFrame implements ActionListener{
 		
 		this.setContentPane(this.setupButtons(visExp));
 		this.visExp.updateVis();
-		
 		this.add(visExp.getDisplay());
-		
-		
+		this.setDefaultCloseOperation(EXIT_ON_CLOSE);		
 	}
 	
     public JPanel setupButtons(VisualExplorer vx){
@@ -78,19 +77,23 @@ public class GraphVizFrame extends JFrame implements ActionListener{
         });
 		
 		
-		JButton oneDg = new JButton("Add One Degree");
-		oneDg.setToolTipText("Press this button to expand the co-authors of all nodes " +
+		JButton oneDg = new JButton("Add One Degree to All");
+		oneDg.setToolTipText("Displays the co-authors of all nodes " +
 				" in the graph.");
 		oneDg.setActionCommand("onedg");
 		oneDg.addActionListener(this);
 		
-		JButton trim = new JButton("DO NOT PRESS!!!");
+		JButton trim = new JButton("Trim 1 Degree");
         trim.setActionCommand("trim");
+        trim.setToolTipText("Remove all authors that have only " +
+        		"one edge connecting them to the graph.");
+        
 		trim.addActionListener(this);
 		
 		JButton radial = new JButton("Radial View");
 		radial.setActionCommand("rad");
 		radial.addActionListener(this);
+		radial.setToolTipText("Switch to a radial view of the co-author graph.");
 		
 		
 		JButton force = new JButton("Dynamic View");
@@ -122,7 +125,11 @@ public class GraphVizFrame extends JFrame implements ActionListener{
 
 	public void actionPerformed(ActionEvent e) {
 		if("onedg".equals(e.getActionCommand())){
-			visExp.addCoAuthorsToAllNodes();
+			boolean canAdd = visExp.addCoAuthorsToAllNodes();
+			if(!canAdd){
+				JOptionPane.showMessageDialog(this, "There are too many nodes in " +
+						"the graph to add coauthors to all.","Warning!",JOptionPane.WARNING_MESSAGE);
+			}
 		}else if("rad".equals(e.getActionCommand())){
 			visExp.switchToRadialLayout();
 		}else if("trim".equals(e.getActionCommand())){
