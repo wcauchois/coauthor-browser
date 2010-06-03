@@ -36,121 +36,121 @@ import edu.washington.cs.cse403d.coauthor.client.searchui.AuthorResult;
 // TODO(wcauchois): replace FilterPanel with this?
 
 public class FilterField extends JTextField {
-	private static final long serialVersionUID = 3250394717406844585L;
-	
-	private JList theList;
-	private DefaultListModel model;
-	private Font italicFont, defaultFont;
-	private boolean isPristine;
-	private ImageIcon cancelFilterIcon;
-	private List<Object> unfilteredData;
-	private void clearText() {
-		setFont(defaultFont);
-		setForeground(Color.BLACK);
-		setText("");
-		updateResults("");
-		isPristine = false;
-	}
-	private void setTextToFilter() {
-		setFont(italicFont);
-		setForeground(Color.GRAY);
-		setText("Type your query here to filter the result");
-		updateResults("");
-		isPristine = true;
-	}
-	/**
-	 * Construct a FilterField attached to the specified list.
-	 * @param list the list whose contents will be filtered.
-	 */
-	public FilterField(JList list, String author) {
-		theList = list;
-		model = (DefaultListModel) theList.getModel();
-		unfilteredData = new ArrayList<Object>(model.getSize());
-		for(int i = 0; i < model.getSize(); i++)
-			unfilteredData.add(model.getElementAt(i));
-		
-		cancelFilterIcon = Services.getResourceManager().loadImageIcon("CancelFilter.gif");
-		defaultFont = getFont();
-		italicFont = defaultFont.deriveFont(Font.ITALIC);
-		setTextToFilter();
-		addFocusListener(new FocusAdapter() {
-			public void focusGained(FocusEvent evt) {
-				if(isPristine)
-					clearText();
-			}
-			public void focusLost(FocusEvent evt) {
-				if(getText().equals(""))
-					setTextToFilter();
-			}
-		});
-		getDocument().addDocumentListener(new DocumentListener() {
-			@Override
-			public void removeUpdate(DocumentEvent evt) {
-				if(!isPristine) updateResults(getText());
-			}
-			@Override
-			public void insertUpdate(DocumentEvent evt) {
-				if(!isPristine) updateResults(getText());
-			}
-			@Override
-			public void changedUpdate(DocumentEvent evt) {
-				if(!isPristine) updateResults(getText());
-			}
-		});
-		addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent evt) {
-				if(getCancelFilterRect().contains(evt.getPoint()))
-					clearText();
-			}
-		});
-		final Cursor defaultCursor = getCursor();
-		addMouseMotionListener(new MouseMotionAdapter() {
-			@Override
-			public void mouseMoved(MouseEvent evt) {
-				if(getCancelFilterRect().contains(evt.getPoint()))
-					setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-				else
-					setCursor(defaultCursor);
-			}
-		});
-	}
-	private Rectangle getCancelFilterRect() {
-		int width = getWidth(), height = getHeight();
-		return new Rectangle(width - height, 2, height - 4, height - 4);
-	}
-	@Override
-	public void paint(Graphics g) {
-		super.paint(g);
-		Rectangle rect = getCancelFilterRect();
-		g.drawImage(cancelFilterIcon.getImage(),
-				rect.x, rect.y, rect.width, rect.height, null);
-	}
-	private void updateResults(String filter) {
-		if(filter.length() == 0) {
-			addToModel(model, unfilteredData);
-			return;
-		}
-		filter = filter.toLowerCase();
-		List<Object> filteredData = new ArrayList<Object>();
-		for(Object o : unfilteredData) {
-			if(o.toString().toLowerCase().contains(filter))
-				filteredData.add(o);
-		}
-		addToModel(model, filteredData);
-	}
-	public List<Object> getUnfilteredData() {
-		return unfilteredData;
-	}
-	public JList getList() {
-		return theList;
-	}
-	
-	//manually add to listModel
-	private void addToModel(DefaultListModel listModel, List<Object> list) {
-		listModel.clear();
-		for (int i = 0; i < list.size(); i++) {
-			listModel.add(i, list.get(i));
-		}
-	}
+        private static final long serialVersionUID = 3250394717406844585L;
+       
+        private JList theList;
+        private DefaultListModel model;
+        private Font italicFont, defaultFont;
+        private boolean isPristine;
+        private ImageIcon cancelFilterIcon;
+        private List<Object> unfilteredData;
+        private void clearText() {
+                setFont(defaultFont);
+                setForeground(Color.BLACK);
+                setText("");
+                updateResults("");
+                isPristine = false;
+        }
+        private void setTextToFilter() {
+                setFont(italicFont);
+                setForeground(Color.GRAY);
+                setText("Type your query here to filter the result");
+                updateResults("");
+                isPristine = true;
+        }
+        /**
+         * Construct a FilterField attached to the specified list.
+         * @param list the list whose contents will be filtered.
+         */
+        public FilterField(JList list, String author) {
+                theList = list;
+                model = (DefaultListModel) theList.getModel();
+                unfilteredData = new ArrayList<Object>(model.getSize());
+                for(int i = 0; i < model.getSize(); i++)
+                        unfilteredData.add(model.getElementAt(i));
+               
+                cancelFilterIcon = Services.getResourceManager().loadImageIcon("CancelFilter.gif");
+                defaultFont = getFont();
+                italicFont = defaultFont.deriveFont(Font.ITALIC);
+                setTextToFilter();
+                addFocusListener(new FocusAdapter() {
+                        public void focusGained(FocusEvent evt) {
+                                if(isPristine)
+                                        clearText();
+                        }
+                        public void focusLost(FocusEvent evt) {
+                                if(getText().equals(""))
+                                        setTextToFilter();
+                        }
+                });
+                getDocument().addDocumentListener(new DocumentListener() {
+                        @Override
+                        public void removeUpdate(DocumentEvent evt) {
+                                if(!isPristine) updateResults(getText());
+                        }
+                        @Override
+                        public void insertUpdate(DocumentEvent evt) {
+                                if(!isPristine) updateResults(getText());
+                        }
+                        @Override
+                        public void changedUpdate(DocumentEvent evt) {
+                                if(!isPristine) updateResults(getText());
+                        }
+                });
+                addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mouseClicked(MouseEvent evt) {
+                                if(getCancelFilterRect().contains(evt.getPoint()))
+                                        clearText();
+                        }
+                });
+                final Cursor defaultCursor = getCursor();
+                addMouseMotionListener(new MouseMotionAdapter() {
+                        @Override
+                        public void mouseMoved(MouseEvent evt) {
+                                if(getCancelFilterRect().contains(evt.getPoint()))
+                                        setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                                else
+                                        setCursor(defaultCursor);
+                        }
+                });
+        }
+        private Rectangle getCancelFilterRect() {
+                int width = getWidth(), height = getHeight();
+                return new Rectangle(width - height, 2, height - 4, height - 4);
+        }
+        @Override
+        public void paint(Graphics g) {
+                super.paint(g);
+                Rectangle rect = getCancelFilterRect();
+                g.drawImage(cancelFilterIcon.getImage(),
+                                rect.x, rect.y, rect.width, rect.height, null);
+        }
+        private void updateResults(String filter) {
+                if(filter.length() == 0) {
+                        addToModel(model, unfilteredData);
+                        return;
+                }
+                filter = filter.toLowerCase();
+                List<Object> filteredData = new ArrayList<Object>();
+                for(Object o : unfilteredData) {
+                        if(o.toString().toLowerCase().contains(filter))
+                                filteredData.add(o);
+                }
+                addToModel(model, filteredData);
+        }
+        public List<Object> getUnfilteredData() {
+                return unfilteredData;
+        }
+        public JList getList() {
+                return theList;
+        }
+       
+        //manually add to listModel
+        private void addToModel(DefaultListModel listModel, List<Object> list) {
+                listModel.clear();
+                for (int i = 0; i < list.size(); i++) {
+                        listModel.add(i, list.get(i));
+                }
+        }
 }
