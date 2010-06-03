@@ -29,6 +29,7 @@ import edu.washington.cs.cse403d.coauthor.client.ResourceManager;
  */
 public class FilterPanel extends JPanel {
 	private static final long serialVersionUID = -9090832682261141465L;
+	private FilterField filterField;
 	private JPanel filterPanel;
 	private String theAuthor;
 	private JList list;
@@ -64,7 +65,7 @@ public class FilterPanel extends JPanel {
 		filterPanel = new JPanel();
 		filterPanel.setLayout(new BoxLayout(filterPanel, BoxLayout.X_AXIS));
 				
-		FilterField filterField = new FilterField(list);
+		filterField = new FilterField(list);
 		if(theAuthor != null)
 			filterField.setPreferredSize(new Dimension(300, 0));
 		else
@@ -128,6 +129,10 @@ public class FilterPanel extends JPanel {
 				
 			});
 		}		
+	}
+	
+	public JList getList() {
+		return filterField.getList();
 	}
 }
 
