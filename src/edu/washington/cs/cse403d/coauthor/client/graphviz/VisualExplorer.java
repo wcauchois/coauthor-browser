@@ -54,6 +54,7 @@ import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Node;
 import prefuse.render.DefaultRendererFactory;
+import prefuse.render.EdgeRenderer;
 import prefuse.render.LabelRenderer;
 import prefuse.util.ColorLib;
 import prefuse.util.PrefuseLib;
@@ -64,6 +65,7 @@ import prefuse.util.ui.JValueSlider;
 import prefuse.visual.NodeItem;
 import prefuse.visual.VisualGraph;
 import prefuse.visual.VisualItem;
+import prefuse.visual.expression.InGroupPredicate;
 
 /**
  * @author Sergey
@@ -82,9 +84,11 @@ public abstract class VisualExplorer {
 	protected ActionList radialAnimateActionsArrangement;
 	protected ActionList radialAnimateActionsSpacing;
 	protected ForceDirectedLayout arrangementLayout;
+	private boolean isInFDL;
 	
 	protected ActionList fdlAnimateActions;
 	
+	private String draw = "draw";
 	
 	private final int ADD_COAUTHORS_CAP = 100;
 	private final int MAX_CONCURRENT_THREADS = 20;
@@ -231,7 +235,11 @@ public abstract class VisualExplorer {
 					}
 				});
 			}
-			this.updateVis();
+			if(this.isInFDL){
+				this.switchToFDL();
+			}else{
+				this.switchToRadialLayout();
+			}
 			return true;
 		}else {
 			return false;
@@ -304,22 +312,6 @@ public abstract class VisualExplorer {
 	}
 	
 	/**
-	 * use this to update the graph display when there are any changes to the 
-	 * underlying data structures, i.e. adding nodes to the table
-	 */
-	public void updateVis(){
-		if (this.colorLayoutVis.getAction("ForceLayout") != null){
-			this.colorLayoutVis.run("arrangement");
-			this.colorLayoutVis.run("spacing");
-		}else{
-			this.colorLayoutVis.run("ForcedLayout");
-		}
-			
-		colorLayoutVis.run("draw");
-	}
-	
-
-	/**
 	 * initializes the visualization parameters
 	 * 
 	 * only used in constructor
@@ -332,15 +324,19 @@ public abstract class VisualExplorer {
 		
 		this.colorLayoutVis = new Visualization();
 	    VisualGraph vg  = (VisualGraph) this.colorLayoutVis.add("graph", this.coAuthors);
-	    this.colorLayoutVis.setInteractive("graph.edges", null, true);
+	    this.colorLayoutVis.setInteractive("graph.edges", null, false);
 	    
 	    // -- 3. the renderers and renderer factory ---------------------------
 	    
 	    // draw the "name" label for NodeItems
-	    LabelRenderer r = new LabelRenderer("name");
-	    r.setRoundedCorner(8, 8); // round the corners
-	   
-	    this.colorLayoutVis.setRendererFactory(new DefaultRendererFactory(r));
+	    LabelRenderer labels = new LabelRenderer("name");
+	    labels.setRoundedCorner(8, 8); // round the corners
+	    EdgeRenderer edges = new EdgeRenderer();
+	    
+	    DefaultRendererFactory initialRf = new DefaultRendererFactory(labels);
+	    initialRf.add(new InGroupPredicate("graph.edges"), edges);
+	    
+	    this.colorLayoutVis.setRendererFactory(initialRf);
 
         initFdlAnimation();
         initRadialAnimation();
@@ -371,7 +367,7 @@ public abstract class VisualExplorer {
         // Visualization, using the name we've chosen below.
         this.colorLayoutVis.putAction("draw", draw);
         this.colorLayoutVis.putAction("highlight", highlightControl);
-        this.colorLayoutVis.runAfter("draw","highlight");
+        this.colorLayoutVis.runAfter(this.draw,"highlight");
         this.switchToFDL();
 
 	}
@@ -402,12 +398,30 @@ public abstract class VisualExplorer {
         ActionList arrangement = new ActionList(1000);
         arrangement.add(radialLayout);
         
-        ActionList spacing = new ActionList(300);
+        ActionList spacing = new ActionList(3000);
         spacing.add(this.arrangementLayout);
         
         this.radialAnimateActionsArrangement = arrangement;
         this.radialAnimateActionsSpacing = spacing;
 	}
+
+	
+	/**
+	 * use this to update the graph display when there are any changes to the 
+	 * underlying data structures, i.e. adding nodes to the table
+	 */
+	public void updateVis(){
+		if (!this.isInFDL){
+			this.colorLayoutVis.run("arrangement");
+			this.colorLayoutVis.run("spacing");
+		}else{
+			this.colorLayoutVis.run("ForcedLayout");
+		}
+			
+		colorLayoutVis.run(draw);
+		colorLayoutVis.setInteractive("graph.edges", null, false);
+	}
+	
 	
 	public void switchToRadialLayout(){
 	 
@@ -418,8 +432,9 @@ public abstract class VisualExplorer {
 	 	this.colorLayoutVis.putAction("arrange", this.radialAnimateActionsArrangement);
 		this.colorLayoutVis.putAction("spacing", this.radialAnimateActionsSpacing);
 	 	this.colorLayoutVis.runAfter("arrange","spacing");
-        this.colorLayoutVis.runAfter("draw", "arrange");
+        this.colorLayoutVis.runAfter(draw, "arrange");
 	 	this.updateVis();
+	 	this.isInFDL = false;
 	}
 	
 	public void switchToFDL(){
@@ -428,8 +443,9 @@ public abstract class VisualExplorer {
         
 //	 	ActionList animate = this.setupAnimate("fdl");
 		this.colorLayoutVis.putAction("ForceLayout", this.fdlAnimateActions);
-        this.colorLayoutVis.runAfter("draw", "ForceLayout");
+        this.colorLayoutVis.runAfter(draw, "ForceLayout");
 		this.updateVis();
+		this.isInFDL = true;
 	}
 	
 	/**
