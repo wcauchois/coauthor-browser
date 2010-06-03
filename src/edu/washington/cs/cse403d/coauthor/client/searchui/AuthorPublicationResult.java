@@ -83,7 +83,7 @@ class AuthorPublicationResult extends JPanel {
 					"Um, this isn't really supposed to happen",
 					"Error!",JOptionPane.ERROR_MESSAGE);
 		}
-		buildPubList(listModel);
+		buildPubList();
 		
 		//Add the filter panel
 		add(new FilterPanel(pubList, null), BorderLayout.PAGE_END);
@@ -125,21 +125,31 @@ class AuthorPublicationResult extends JPanel {
 			add(new JLabel("There is no collaboration among these individuals")
 			, BorderLayout.PAGE_END);
 		} else {
-			buildPubList(listModel);
-			add(new FilterPanel(pubList, null), BorderLayout.PAGE_END);
+			buildPubList();
+			FilterPanel filterPanel = new FilterPanel(pubList, null);
+			//buildListNavigator((DefaultListModel) filterPanel.getList().getModel());
+			add(filterPanel, BorderLayout.PAGE_END);
 		}
 	}	
 	
 	/**
 	 * Internal helper method that builds a scrollable list of publication 
 	 */
-	private void buildPubList(final DefaultListModel listModel) {
+	private void buildPubList() {
 		int i = 0;			
 		while (i < publications.size()){
 			listModel.add(i, publications.get(i).getTitle());
 				i++;
 		}
-		
+		pubList.setLayoutOrientation(JList.VERTICAL);
+		pubList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		pubList.setVisibleRowCount(6);
+		JScrollPane listScroller = new JScrollPane(pubList);
+		listScroller.setPreferredSize(new Dimension(400, 140));
+		add(listScroller, BorderLayout.CENTER);			
+	}
+	
+	private void buildListNavigator(final DefaultListModel listModel) {
 		pubList.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent evt) {
@@ -186,11 +196,5 @@ class AuthorPublicationResult extends JPanel {
 				}
 			}
 		});
-		pubList.setLayoutOrientation(JList.VERTICAL);
-		pubList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		pubList.setVisibleRowCount(6);
-		JScrollPane listScroller = new JScrollPane(pubList);
-		listScroller.setPreferredSize(new Dimension(400, 140));
-		add(listScroller, BorderLayout.CENTER);			
 	}
 }
