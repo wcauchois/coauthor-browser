@@ -13,6 +13,7 @@ import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JList;
 import javax.swing.JTextField;
@@ -21,6 +22,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import edu.washington.cs.cse403d.coauthor.client.Services;
+import edu.washington.cs.cse403d.coauthor.client.searchui.ArticleResult;
 
 /**
  * A text field, attached to a JList, that will filter the JList according to
@@ -36,6 +38,7 @@ public class FilterField extends JTextField {
 	private static final long serialVersionUID = 3250394717406844585L;
 	
 	private JList theList;
+	private DefaultListModel model;
 	private Font italicFont, defaultFont;
 	private boolean isPristine;
 	private ImageIcon cancelFilterIcon;
@@ -60,7 +63,7 @@ public class FilterField extends JTextField {
 	 */
 	public FilterField(JList list) {
 		theList = list;
-		ListModel model = theList.getModel();
+		model = (DefaultListModel) theList.getModel();
 		unfilteredData = new ArrayList<Object>(model.getSize());
 		for(int i = 0; i < model.getSize(); i++)
 			unfilteredData.add(model.getElementAt(i));
@@ -110,6 +113,7 @@ public class FilterField extends JTextField {
 					setCursor(defaultCursor);
 			}
 		});
+		buildListNavigator(model);
 	}
 	private Rectangle getCancelFilterRect() {
 		int width = getWidth(), height = getHeight();
@@ -124,7 +128,10 @@ public class FilterField extends JTextField {
 	}
 	private void updateResults(String filter) {
 		if(filter.length() == 0) {
-			theList.setListData(unfilteredData.toArray());
+			addToModel(model, unfilteredData);
+			//theList.setListData(unfilteredData.toArray());
+			//model = (DefaultListModel) theList.getModel();
+			buildListNavigator(model);
 			return;
 		}
 		filter = filter.toLowerCase();
@@ -133,12 +140,70 @@ public class FilterField extends JTextField {
 			if(o.toString().toLowerCase().contains(filter))
 				filteredData.add(o);
 		}
-		theList.setListData(filteredData.toArray());
+		addToModel(model, filteredData);
+		//theList.setListData(filteredData.toArray());
+		buildListNavigator(model);
 	}
 	public List<Object> getUnfilteredData() {
 		return unfilteredData;
 	}
 	public JList getList() {
 		return theList;
+	}
+	
+	private void buildListNavigator(final DefaultListModel listModel) {
+		theList.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent evt) {
+				int selected = theList.getSelectedIndex();
+				
+				String searchFor = ("<html><i>°ÊSearch for this article</i></html>");
+				String closeMenu = ("<html><i>°ÊClose this submenu</i></html>");
+				if(!theList.getSelectedValue().equals(closeMenu) &&
+						!theList.getSelectedValue().equals(searchFor)){
+					if( selected + 1 == listModel.getSize() ||
+							listModel.getElementAt(selected + 1) != searchFor) {
+						selected = theList.getSelectedIndex();
+						listModel.insertElementAt(searchFor, selected + 1);
+						listModel.insertElementAt(closeMenu, selected + 2);
+						theList.setModel(listModel);
+						theList.setSelectedIndex(selected);
+					}
+				}
+				
+				if(theList.getSelectedValue().equals(closeMenu)){
+					listModel.remove(selected);
+					theList.setSelectedIndex(selected -1);
+					listModel.remove(theList.getSelectedIndex());
+					theList.setSelectedIndex(selected -2);
+					theList.setModel(listModel);
+				}
+				
+				int subMenuSelection;
+				
+				if(!theList.isSelectionEmpty())
+					subMenuSelection = theList.getSelectedIndex();
+				else
+					subMenuSelection = selected - 2;
+				
+				String selectedItem = (String) listModel.getElementAt(subMenuSelection);
+				
+				if (selectedItem.equals(searchFor)) {
+					String articleTitle = (String) listModel.getElementAt(subMenuSelection - 1);
+					Services.getBrowser().go(new ArticleResult(articleTitle));
+				}				
+				
+				if(evt.getClickCount() == 2) {
+					String article = (String)theList.getSelectedValue();
+					Services.getBrowser().go(new ArticleResult(article));
+				}
+			}
+		});
+	}
+	private void addToModel(DefaultListModel listModel, List<Object> list) {
+		listModel.clear();
+		for (int i = 0; i < list.size(); i++) {
+			listModel.add(i, list.get(i));
+		}
 	}
 }

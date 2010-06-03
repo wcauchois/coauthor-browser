@@ -76,7 +76,6 @@ public class ArticleSearchPane extends JPanel {
 					JOptionPane.showMessageDialog(bottomPart, "Start year must be smaller than end year.",
 								"Error!",JOptionPane.ERROR_MESSAGE);					
 				} else {
-					System.out.println("All exceptions passed");
 					int start;
 					int end;
 					if (startYear.getText().length() == 0)
@@ -87,7 +86,6 @@ public class ArticleSearchPane extends JPanel {
 						end = 0;
 					else
 						end = Integer.parseInt(endYear.getText());
-					System.out.println("Moved to search");
 					Services.getBrowser().go(new ArticleSearchResults
 							(query.getText(), start, end));
 				}
