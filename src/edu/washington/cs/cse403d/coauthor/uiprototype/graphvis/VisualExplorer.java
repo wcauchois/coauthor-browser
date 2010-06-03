@@ -7,6 +7,8 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 import prefuse.Constants;
@@ -130,8 +132,9 @@ public abstract class VisualExplorer {
 	 * @param authorName
 	 */
 	protected void addCoAuthors(String authorName){
-	synchronized (this.colorLayoutVis){
+	
 		List<String> moreAuthors = getCoAuthorList(authorName);        
+		synchronized (this.colorLayoutVis){
 		Node addTo = findAuthor(authorName);
 		System.out.println("VISITED STATUS: " + addTo.getInt("visited"));
 		//addTo.setInt("visited", 1);
@@ -181,7 +184,7 @@ public abstract class VisualExplorer {
 	/**
 	 * adds coauthor nodes to all nodes currently in the graph
 	 */
-	public boolean addCoAuthorsToAllNodes(){
+/*	public boolean addCoAuthorsToAllNodes(){
 		System.out.println("Adding coauthors to all nodes in graph");
 		Iterator graphItr = this.coAuthors.nodes();
 		
@@ -196,8 +199,40 @@ public abstract class VisualExplorer {
 		}else {
 			return false;
 		}
-	}
+	}*/
 	
+	
+	/**
+    * adds coauthor nodes to all nodes currently in the graph
+    */
+	/**
+	* adds coauthor nodes to all nodes currently in the graph
+	*/
+	public boolean addCoAuthorsToAllNodes(){
+		System.out.println("Adding coauthors to all nodes in graph");
+		Iterator graphItr = this.coAuthors.nodes();
+	
+		int nodeCt = this.coAuthors.getNodeCount();
+	
+		ExecutorService pool = Executors.newFixedThreadPool(100);
+	
+		if(nodeCt < 100){
+			for (int i = 0; i < nodeCt; i++){
+				Node current = (Node) graphItr.next();
+				final String nodeName = (String) current.get("name");
+				pool.execute(new Runnable() {
+					@Override
+					public void run() {
+						addCoAuthors(nodeName);
+					}
+				});
+			}
+			this.updateVis();
+			return true;
+		}else {
+			return false;
+		}
+	}
 	/**
 	 * removes the passed parameter node from the current graph
 	 * @param toBeRemoved
@@ -208,8 +243,9 @@ public abstract class VisualExplorer {
 			this.coAuthors.removeNode(toBeRemoved);
 		}else{
 			System.out.println("This node has children; it cannot be removed!");
-		}}
+		}
 		this.updateVis();
+	}
 	}
 	
 	/**
