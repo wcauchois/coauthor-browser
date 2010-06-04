@@ -27,9 +27,14 @@ import prefuse.Display;
 import prefuse.Visualization;
 import prefuse.action.Action;
 import prefuse.action.ActionList;
+import prefuse.action.ItemAction;
 import prefuse.action.RepaintAction;
+import prefuse.action.animate.ColorAnimator;
+import prefuse.action.animate.PolarLocationAnimator;
+import prefuse.action.animate.VisibilityAnimator;
 import prefuse.action.assignment.ColorAction;
 import prefuse.action.assignment.DataColorAction;
+import prefuse.action.assignment.FontAction;
 import prefuse.action.filter.GraphDistanceFilter;
 import prefuse.action.layout.CircleLayout;
 import prefuse.action.layout.CollapsedSubtreeLayout;
@@ -41,6 +46,7 @@ import prefuse.action.layout.graph.NodeLinkTreeLayout;
 import prefuse.action.layout.graph.RadialTreeLayout;
 import prefuse.action.layout.graph.SquarifiedTreeMapLayout;
 import prefuse.activity.Activity;
+import prefuse.activity.SlowInSlowOutPacer;
 import prefuse.controls.Control;
 import prefuse.controls.ControlAdapter;
 import prefuse.controls.DragControl;
@@ -53,9 +59,16 @@ import prefuse.controls.ZoomToFitControl;
 import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Node;
+import prefuse.data.Tuple;
+import prefuse.data.event.TupleSetListener;
+import prefuse.data.search.PrefixSearchTupleSet;
+import prefuse.data.search.SearchTupleSet;
+import prefuse.data.tuple.TupleSet;
 import prefuse.render.DefaultRendererFactory;
+import prefuse.render.EdgeRenderer;
 import prefuse.render.LabelRenderer;
 import prefuse.util.ColorLib;
+import prefuse.util.FontLib;
 import prefuse.util.PrefuseLib;
 import prefuse.util.force.Force;
 import prefuse.util.force.ForceSimulator;
@@ -64,6 +77,7 @@ import prefuse.util.ui.JValueSlider;
 import prefuse.visual.NodeItem;
 import prefuse.visual.VisualGraph;
 import prefuse.visual.VisualItem;
+import prefuse.visual.expression.InGroupPredicate;
 
 /**
  * @author Sergey
@@ -81,10 +95,13 @@ public abstract class VisualExplorer {
 	protected CoauthorDataServiceInterface backend;
 	protected ActionList radialAnimateActionsArrangement;
 	protected ActionList radialAnimateActionsSpacing;
-	protected ForceDirectedLayout arrangementLayout;
+	protected ForceDirectedLayout fdlLayout;
+	protected ForceDirectedLayout spacingLayout;
+	private boolean isInFDL;
 	
 	protected ActionList fdlAnimateActions;
 	
+	private String draw = "draw";
 	
 	private final int ADD_COAUTHORS_CAP = 100;
 	private final int MAX_CONCURRENT_THREADS = 20;
@@ -231,7 +248,11 @@ public abstract class VisualExplorer {
 					}
 				});
 			}
-			this.updateVis();
+			if(this.isInFDL){
+				this.switchToFDL();
+			}else{
+				this.switchToRadialLayout();
+			}
 			return true;
 		}else {
 			return false;
@@ -304,16 +325,6 @@ public abstract class VisualExplorer {
 	}
 	
 	/**
-	 * use this to update the graph display when there are any changes to the 
-	 * underlying data structures, i.e. adding nodes to the table
-	 */
-	public void updateVis(){
-		colorLayoutVis.run("layout");
-		colorLayoutVis.run("draw");
-	}
-	
-
-	/**
 	 * initializes the visualization parameters
 	 * 
 	 * only used in constructor
@@ -326,15 +337,19 @@ public abstract class VisualExplorer {
 		
 		this.colorLayoutVis = new Visualization();
 	    VisualGraph vg  = (VisualGraph) this.colorLayoutVis.add("graph", this.coAuthors);
-	    this.colorLayoutVis.setInteractive("graph.edges", null, true);
+	    this.colorLayoutVis.setInteractive("graph.edges", null, false);
 	    
 	    // -- 3. the renderers and renderer factory ---------------------------
 	    
 	    // draw the "name" label for NodeItems
-	    LabelRenderer r = new LabelRenderer("name");
-	    r.setRoundedCorner(8, 8); // round the corners
-	   
-	    this.colorLayoutVis.setRendererFactory(new DefaultRendererFactory(r));
+	    LabelRenderer labels = new LabelRenderer("name");
+	    labels.setRoundedCorner(8, 8); // round the corners
+	    EdgeRenderer edges = new EdgeRenderer();
+	    
+	    DefaultRendererFactory initialRf = new DefaultRendererFactory(labels);
+	    initialRf.add(new InGroupPredicate("graph.edges"), edges);
+	    
+	    this.colorLayoutVis.setRendererFactory(initialRf);
 
         initFdlAnimation();
         initRadialAnimation();
@@ -356,25 +371,76 @@ public abstract class VisualExplorer {
         fill.add("_fixed", ColorLib.rgb(255,0,255));
         fill.add("_highlight", ColorLib.rgb(255,100,100));
         
+    
         ActionList highlightControl = new ActionList(Activity.INFINITY);
         highlightControl.add(new RepaintAction());
         highlightControl.add(fill);
 
-        // finally, we register our ActionList with the Visualization.
-        // we can later execute our Actions by invoking a method on our
-        // Visualization, using the name we've chosen below.
+       
+    /*    ActionList animatePaint = new ActionList(400);
+        animatePaint.add(new ColorAnimator("graph.nodes"));
+        animatePaint.add(new RepaintAction());
+        this.colorLayoutVis.putAction("animatePaint", animatePaint); 
+        
+        ItemAction nodeColor = new NodeColorAction("graph.nodes");
+        ItemAction textColor = new TextColorAction("graph.nodes");
+        this.colorLayoutVis.putAction("textColor", textColor);
+        
+        ItemAction edgeColor = new ColorAction("graph.edges",
+                VisualItem.STROKECOLOR, ColorLib.rgb(200,200,200));
+        
+        FontAction fonts = new FontAction("graph.nodes", 
+                FontLib.getFont("Tahoma", 10));
+        fonts.add("ingroup('_focus_')", FontLib.getFont("Tahoma", 11));
+        
+        // recolor
+        ActionList recolor = new ActionList();
+        recolor.add(nodeColor);
+       // recolor.add(textColor);
+        this.colorLayoutVis.putAction("recolor", recolor);
+        */
+        SearchTupleSet search = new PrefixSearchTupleSet();
+        this.colorLayoutVis.addFocusGroup(Visualization.SEARCH_ITEMS, search);
+        search.addTupleSetListener(new TupleSetListener(){
+        	@Override
+			public void tupleSetChanged(TupleSet arg0, Tuple[] arg1,
+					Tuple[] arg2) {
+				System.out.println("Tupule Set has changed!");
+				colorLayoutVis.cancel("animatePaint");
+				colorLayoutVis.cancel("draw");
+				colorLayoutVis.run("recolor");
+				colorLayoutVis.run("animatePaint");
+			}
+        });
+        
         this.colorLayoutVis.putAction("draw", draw);
         this.colorLayoutVis.putAction("highlight", highlightControl);
-        this.colorLayoutVis.runAfter("draw","highlight");
+        this.colorLayoutVis.runAfter(this.draw,"highlight");
         this.switchToFDL();
 
 	}
 	
+	   public static class NodeColorAction extends ColorAction {
+	        public NodeColorAction(String group) {
+	            super(group, VisualItem.FILLCOLOR, ColorLib.rgba(255,255,255,0));
+	            add("_hover", ColorLib.gray(220,230));
+	            add("ingroup('_search_')", ColorLib.rgb(255,190,190));
+	            add("ingroup('_focus_')", ColorLib.rgb(198,229,229));
+	        }
+	                
+	    }
+	   
+	   public static class TextColorAction extends ColorAction {
+	        public TextColorAction(String group) {
+	            super(group, VisualItem.TEXTCOLOR, ColorLib.gray(0));
+	            add("_hover", ColorLib.rgb(255,0,0));
+	        }
+	    }
 	protected void initFdlAnimation(){
 
         // default behavior returns a force-directed layout
-        arrangementLayout = new ForceDirectedLayout("graph");
-        ForceSimulator fsim = ((ForceDirectedLayout) arrangementLayout).getForceSimulator();
+        fdlLayout = new ForceDirectedLayout("graph");
+        ForceSimulator fsim = ((ForceDirectedLayout) fdlLayout).getForceSimulator();
         fsim.getForces()[0].setParameter(0, -8f);
         fsim.getForces()[0].setParameter(1, 200);
         
@@ -383,8 +449,8 @@ public abstract class VisualExplorer {
         
         Force[] forces = fsim.getForces();
                      
-        ActionList fdlAnimate = new ActionList(10000);
-        fdlAnimate.add(arrangementLayout);
+        ActionList fdlAnimate = new ActionList(5000);
+        fdlAnimate.add(fdlLayout);
 
         this.fdlAnimateActions = fdlAnimate;
 	}
@@ -393,15 +459,50 @@ public abstract class VisualExplorer {
  
         Layout radialLayout = new RadialTreeLayout("graph");
        
-        ActionList arrangement = new ActionList(1000);
+        ActionList arrangement = new ActionList(100);
         arrangement.add(radialLayout);
         
-        ActionList spacing = new ActionList(300);
-        spacing.add(this.arrangementLayout);
+        
+        /*spacingLayout = new ForceDirectedLayout("graph");
+        ForceSimulator fsim = ((ForceDirectedLayout) spacingLayout).getForceSimulator();
+        fsim.getForces()[0].setParameter(0, -.1f);
+        fsim.getForces()[0].setParameter(1, 20);
+        
+        fsim.getForces()[1].setParameter(0, .001f);
+        fsim.getForces()[2].setParameter(0, 0.0000000001f);
+        fsim.getForces()[2].setParameter(1, 5);
+        
+        Force[] forces = fsim.getForces();
+        spacingLayout.setPacingFunction((new SlowInSlowOutPacer()));
+        */
+        ActionList spacing = new ActionList(500);
+        spacing.add(this.spacingLayout);
         
         this.radialAnimateActionsArrangement = arrangement;
-        this.radialAnimateActionsSpacing = spacing;
+       // this.radialAnimateActionsSpacing = spacing;
+        
 	}
+
+	
+	/**
+	 * use this to update the graph display when there are any changes to the 
+	 * underlying data structures, i.e. adding nodes to the table
+	 */
+	public void updateVis(){
+		
+			
+		colorLayoutVis.run(draw);
+		if (!this.isInFDL){
+			this.colorLayoutVis.run("arrange");
+		//	this.colorLayoutVis.run("spacing");
+		}else{
+			this.colorLayoutVis.run("ForceLayout");
+		}
+		
+		colorLayoutVis.setInteractive("graph.edges", null, false);
+		
+	}
+	
 	
 	public void switchToRadialLayout(){
 	 
@@ -410,10 +511,11 @@ public abstract class VisualExplorer {
 	
 		
 	 	this.colorLayoutVis.putAction("arrange", this.radialAnimateActionsArrangement);
-		this.colorLayoutVis.putAction("spacing", this.radialAnimateActionsSpacing);
-	 	this.colorLayoutVis.runAfter("arrange","spacing");
-        this.colorLayoutVis.runAfter("draw", "arrange");
+//		this.colorLayoutVis.putAction("spacing", this.radialAnimateActionsSpacing);
+//	 	this.colorLayoutVis.alwaysRunAfter("arrange","spacing");
+        this.colorLayoutVis.runAfter(draw, "arrange");
 	 	this.updateVis();
+	 	this.isInFDL = false;
 	}
 	
 	public void switchToFDL(){
@@ -422,8 +524,9 @@ public abstract class VisualExplorer {
         
 //	 	ActionList animate = this.setupAnimate("fdl");
 		this.colorLayoutVis.putAction("ForceLayout", this.fdlAnimateActions);
-        this.colorLayoutVis.runAfter("draw", "ForceLayout");
+        this.colorLayoutVis.runAfter(draw, "ForceLayout");
 		this.updateVis();
+		this.isInFDL = true;
 	}
 	
 	/**

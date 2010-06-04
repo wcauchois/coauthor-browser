@@ -53,8 +53,8 @@ public class GraphVisTestClass {
 		List<PathLink> chain= backend.getOneShortestPathBetweenAuthors("Jessica Miller", "Ross Tate", true); // Jessica Miller->Stephen G. Kobourov-> Michael Stepp-> Ross Tate
 		System.out.println(chain);
 	//	String s = "Jessica Miller";
-//		VisualCoAuthorExplorer vx = new VisualCoAuthorExplorer("David Notkin");
-		VisualChainExplorer vx = new VisualChainExplorer("Jessica Miller", "David Notkin");
+		VisualCoAuthorExplorer vx = new VisualCoAuthorExplorer("David Notkin");
+		//VisualChainExplorer vx = new VisualChainExplorer("Jessica Miller", "David Notkin");
 		
 /*		List<String> authors = new ArrayList<String>();
 		authors.add("Marty Stepp");
@@ -63,7 +63,7 @@ public class GraphVisTestClass {
 		//authors.add()
 		//VisualMultipleAuthorExplorer vx = new VisualMultipleAuthorExplorer(authors);
 		
-		JFrame frame = new JFrame("prefuse example");
+/*		JFrame frame = new JFrame("prefuse example");
 		frame.setBounds(800, 100, 1, 1);
 	    // ensure application exits when window is closed
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -72,10 +72,10 @@ public class GraphVisTestClass {
 		frame.pack();           // layout components in window
 		frame.setVisible(true); // show the window
 		vx.updateVis();
-
-		/*GraphVizFrame fr = new GraphVizFrame("David Notkin"); 
+*/
+		GraphVizFrame fr = new GraphVizFrame("David Notkin"); 
 		fr.pack();
-		fr.setVisible(true);*/
+		fr.setVisible(true);
 	}
 	
     public static JPanel demo(VisualExplorer vx){
