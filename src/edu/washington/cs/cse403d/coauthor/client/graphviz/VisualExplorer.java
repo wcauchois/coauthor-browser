@@ -27,11 +27,14 @@ import prefuse.Display;
 import prefuse.Visualization;
 import prefuse.action.Action;
 import prefuse.action.ActionList;
+import prefuse.action.ItemAction;
 import prefuse.action.RepaintAction;
+import prefuse.action.animate.ColorAnimator;
 import prefuse.action.animate.PolarLocationAnimator;
 import prefuse.action.animate.VisibilityAnimator;
 import prefuse.action.assignment.ColorAction;
 import prefuse.action.assignment.DataColorAction;
+import prefuse.action.assignment.FontAction;
 import prefuse.action.filter.GraphDistanceFilter;
 import prefuse.action.layout.CircleLayout;
 import prefuse.action.layout.CollapsedSubtreeLayout;
@@ -56,10 +59,16 @@ import prefuse.controls.ZoomToFitControl;
 import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Node;
+import prefuse.data.Tuple;
+import prefuse.data.event.TupleSetListener;
+import prefuse.data.search.PrefixSearchTupleSet;
+import prefuse.data.search.SearchTupleSet;
+import prefuse.data.tuple.TupleSet;
 import prefuse.render.DefaultRendererFactory;
 import prefuse.render.EdgeRenderer;
 import prefuse.render.LabelRenderer;
 import prefuse.util.ColorLib;
+import prefuse.util.FontLib;
 import prefuse.util.PrefuseLib;
 import prefuse.util.force.Force;
 import prefuse.util.force.ForceSimulator;
@@ -362,13 +371,48 @@ public abstract class VisualExplorer {
         fill.add("_fixed", ColorLib.rgb(255,0,255));
         fill.add("_highlight", ColorLib.rgb(255,100,100));
         
+    
         ActionList highlightControl = new ActionList(Activity.INFINITY);
         highlightControl.add(new RepaintAction());
         highlightControl.add(fill);
 
-        // finally, we register our ActionList with the Visualization.
-        // we can later execute our Actions by invoking a method on our
-        // Visualization, using the name we've chosen below.
+       
+    /*    ActionList animatePaint = new ActionList(400);
+        animatePaint.add(new ColorAnimator("graph.nodes"));
+        animatePaint.add(new RepaintAction());
+        this.colorLayoutVis.putAction("animatePaint", animatePaint); 
+        
+        ItemAction nodeColor = new NodeColorAction("graph.nodes");
+        ItemAction textColor = new TextColorAction("graph.nodes");
+        this.colorLayoutVis.putAction("textColor", textColor);
+        
+        ItemAction edgeColor = new ColorAction("graph.edges",
+                VisualItem.STROKECOLOR, ColorLib.rgb(200,200,200));
+        
+        FontAction fonts = new FontAction("graph.nodes", 
+                FontLib.getFont("Tahoma", 10));
+        fonts.add("ingroup('_focus_')", FontLib.getFont("Tahoma", 11));
+        
+        // recolor
+        ActionList recolor = new ActionList();
+        recolor.add(nodeColor);
+       // recolor.add(textColor);
+        this.colorLayoutVis.putAction("recolor", recolor);
+        */
+        SearchTupleSet search = new PrefixSearchTupleSet();
+        this.colorLayoutVis.addFocusGroup(Visualization.SEARCH_ITEMS, search);
+        search.addTupleSetListener(new TupleSetListener(){
+        	@Override
+			public void tupleSetChanged(TupleSet arg0, Tuple[] arg1,
+					Tuple[] arg2) {
+				System.out.println("Tupule Set has changed!");
+				colorLayoutVis.cancel("animatePaint");
+				colorLayoutVis.cancel("draw");
+				colorLayoutVis.run("recolor");
+				colorLayoutVis.run("animatePaint");
+			}
+        });
+        
         this.colorLayoutVis.putAction("draw", draw);
         this.colorLayoutVis.putAction("highlight", highlightControl);
         this.colorLayoutVis.runAfter(this.draw,"highlight");
@@ -376,6 +420,22 @@ public abstract class VisualExplorer {
 
 	}
 	
+	   public static class NodeColorAction extends ColorAction {
+	        public NodeColorAction(String group) {
+	            super(group, VisualItem.FILLCOLOR, ColorLib.rgba(255,255,255,0));
+	            add("_hover", ColorLib.gray(220,230));
+	            add("ingroup('_search_')", ColorLib.rgb(255,190,190));
+	            add("ingroup('_focus_')", ColorLib.rgb(198,229,229));
+	        }
+	                
+	    }
+	   
+	   public static class TextColorAction extends ColorAction {
+	        public TextColorAction(String group) {
+	            super(group, VisualItem.TEXTCOLOR, ColorLib.gray(0));
+	            add("_hover", ColorLib.rgb(255,0,0));
+	        }
+	    }
 	protected void initFdlAnimation(){
 
         // default behavior returns a force-directed layout
