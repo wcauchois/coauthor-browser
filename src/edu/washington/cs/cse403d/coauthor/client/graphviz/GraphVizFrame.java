@@ -19,10 +19,15 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import prefuse.Visualization;
 import prefuse.controls.ControlAdapter;
+import prefuse.data.Table;
+import prefuse.data.query.SearchQueryBinding;
+import prefuse.data.search.SearchTupleSet;
 import prefuse.util.FontLib;
 import prefuse.util.force.ForceConfigAction;
 import prefuse.util.ui.JFastLabel;
+import prefuse.util.ui.JSearchPanel;
 import prefuse.util.ui.UILib;
 import prefuse.visual.VisualItem;
 
@@ -61,6 +66,13 @@ public class GraphVizFrame extends JFrame implements ActionListener{
 		title.setBorder(BorderFactory.createEmptyBorder(3,0,0,0));
 		title.setFont(FontLib.getFont("Tahoma", Font.PLAIN, 16));
         
+		SearchQueryBinding sq = new SearchQueryBinding(
+	             (Table)this.visExp.colorLayoutVis.getGroup("graph.nodes"), label,
+	             (SearchTupleSet)this.visExp.colorLayoutVis.getGroup(Visualization.SEARCH_ITEMS));
+        JSearchPanel search = sq.createSearchPanel();
+        search.setShowResultCount(true);
+        search.setBorder(BorderFactory.createEmptyBorder(5,5,4,0));
+        search.setFont(FontLib.getFont("Tahoma", Font.PLAIN, 11));
 		
 		vx.getDisplay().addControlListener(new ControlAdapter() {
             public void itemEntered(VisualItem item, MouseEvent e) {
@@ -104,6 +116,7 @@ public class GraphVizFrame extends JFrame implements ActionListener{
         box.add(trim);
         box.add(radial);
         box.add(force);
+        box.add(search);
         
         box.add(Box.createHorizontalStrut(10));
         box.add(Box.createHorizontalGlue());
