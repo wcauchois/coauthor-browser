@@ -12,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,6 +33,8 @@ import edu.washington.cs.cse403d.coauthor.client.browser.BrowserPage;
 import edu.washington.cs.cse403d.coauthor.client.utils.Fonts;
 import edu.washington.cs.cse403d.coauthor.client.utils.HelpMarker;
 import edu.washington.cs.cse403d.coauthor.client.utils.QuerySuggestionsField;
+import edu.washington.cs.cse403d.coauthor.shared.model.PathLink;
+import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
 
 /**
  * This panel permits the user to enter one or more author names, as for a
@@ -43,7 +46,9 @@ import edu.washington.cs.cse403d.coauthor.client.utils.QuerySuggestionsField;
  */
 public class AuthorSearchPane extends JPanel {
 	private static final long serialVersionUID = 8238457344764714088L;
-
+	private List<Publication> collaboration;
+    private edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface CDSI = Services
+    .getCoauthorDataServiceInterface();
 	private class AuthorField extends QuerySuggestionsField {
 		private static final long serialVersionUID = -5382087475322086605L;
 
@@ -295,8 +300,28 @@ public class AuthorSearchPane extends JPanel {
 
 	protected void onSubmit() {
 		List<String> authors = getAuthors();
-		if (authors != null)
-			Services.getBrowser().go(new AuthorResult(getAuthors()));
+		String[] authorArray = new String[2];
+		if (authors != null) {
+			if(authors.size() == 2) {
+				authorArray[0] = authors.get(0);
+				authorArray[1] = authors.get(1);
+				try {
+					collaboration = 
+						CDSI.getPublicationsForAllAuthors(authorArray);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if (collaboration.isEmpty())
+					Services.getBrowser().go(new ChainSearchResult(authors.get(0), authors.get(1)));
+				else
+					Services.getBrowser().go(new AuthorResult(getAuthors()));
+			}
+			else
+				Services.getBrowser().go(new AuthorResult(getAuthors()));
+		}
+			
+			
 	}
 
 	public List<String> getAuthors() {
