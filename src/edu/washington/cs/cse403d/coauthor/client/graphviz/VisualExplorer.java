@@ -28,6 +28,8 @@ import prefuse.Visualization;
 import prefuse.action.Action;
 import prefuse.action.ActionList;
 import prefuse.action.RepaintAction;
+import prefuse.action.animate.PolarLocationAnimator;
+import prefuse.action.animate.VisibilityAnimator;
 import prefuse.action.assignment.ColorAction;
 import prefuse.action.assignment.DataColorAction;
 import prefuse.action.filter.GraphDistanceFilter;
@@ -41,6 +43,7 @@ import prefuse.action.layout.graph.NodeLinkTreeLayout;
 import prefuse.action.layout.graph.RadialTreeLayout;
 import prefuse.action.layout.graph.SquarifiedTreeMapLayout;
 import prefuse.activity.Activity;
+import prefuse.activity.SlowInSlowOutPacer;
 import prefuse.controls.Control;
 import prefuse.controls.ControlAdapter;
 import prefuse.controls.DragControl;
@@ -83,7 +86,8 @@ public abstract class VisualExplorer {
 	protected CoauthorDataServiceInterface backend;
 	protected ActionList radialAnimateActionsArrangement;
 	protected ActionList radialAnimateActionsSpacing;
-	protected ForceDirectedLayout arrangementLayout;
+	protected ForceDirectedLayout fdlLayout;
+	protected ForceDirectedLayout spacingLayout;
 	private boolean isInFDL;
 	
 	protected ActionList fdlAnimateActions;
@@ -375,8 +379,8 @@ public abstract class VisualExplorer {
 	protected void initFdlAnimation(){
 
         // default behavior returns a force-directed layout
-        arrangementLayout = new ForceDirectedLayout("graph");
-        ForceSimulator fsim = ((ForceDirectedLayout) arrangementLayout).getForceSimulator();
+        fdlLayout = new ForceDirectedLayout("graph");
+        ForceSimulator fsim = ((ForceDirectedLayout) fdlLayout).getForceSimulator();
         fsim.getForces()[0].setParameter(0, -8f);
         fsim.getForces()[0].setParameter(1, 200);
         
@@ -385,8 +389,8 @@ public abstract class VisualExplorer {
         
         Force[] forces = fsim.getForces();
                      
-        ActionList fdlAnimate = new ActionList(10000);
-        fdlAnimate.add(arrangementLayout);
+        ActionList fdlAnimate = new ActionList(5000);
+        fdlAnimate.add(fdlLayout);
 
         this.fdlAnimateActions = fdlAnimate;
 	}
@@ -395,14 +399,28 @@ public abstract class VisualExplorer {
  
         Layout radialLayout = new RadialTreeLayout("graph");
        
-        ActionList arrangement = new ActionList(1000);
+        ActionList arrangement = new ActionList(100);
         arrangement.add(radialLayout);
         
-        ActionList spacing = new ActionList(3000);
-        spacing.add(this.arrangementLayout);
+        
+        /*spacingLayout = new ForceDirectedLayout("graph");
+        ForceSimulator fsim = ((ForceDirectedLayout) spacingLayout).getForceSimulator();
+        fsim.getForces()[0].setParameter(0, -.1f);
+        fsim.getForces()[0].setParameter(1, 20);
+        
+        fsim.getForces()[1].setParameter(0, .001f);
+        fsim.getForces()[2].setParameter(0, 0.0000000001f);
+        fsim.getForces()[2].setParameter(1, 5);
+        
+        Force[] forces = fsim.getForces();
+        spacingLayout.setPacingFunction((new SlowInSlowOutPacer()));
+        */
+        ActionList spacing = new ActionList(500);
+        spacing.add(this.spacingLayout);
         
         this.radialAnimateActionsArrangement = arrangement;
-        this.radialAnimateActionsSpacing = spacing;
+       // this.radialAnimateActionsSpacing = spacing;
+        
 	}
 
 	
@@ -411,15 +429,18 @@ public abstract class VisualExplorer {
 	 * underlying data structures, i.e. adding nodes to the table
 	 */
 	public void updateVis(){
-		if (!this.isInFDL){
-			this.colorLayoutVis.run("arrangement");
-			this.colorLayoutVis.run("spacing");
-		}else{
-			this.colorLayoutVis.run("ForcedLayout");
-		}
+		
 			
 		colorLayoutVis.run(draw);
+		if (!this.isInFDL){
+			this.colorLayoutVis.run("arrange");
+		//	this.colorLayoutVis.run("spacing");
+		}else{
+			this.colorLayoutVis.run("ForceLayout");
+		}
+		
 		colorLayoutVis.setInteractive("graph.edges", null, false);
+		
 	}
 	
 	
@@ -430,8 +451,8 @@ public abstract class VisualExplorer {
 	
 		
 	 	this.colorLayoutVis.putAction("arrange", this.radialAnimateActionsArrangement);
-		this.colorLayoutVis.putAction("spacing", this.radialAnimateActionsSpacing);
-	 	this.colorLayoutVis.runAfter("arrange","spacing");
+//		this.colorLayoutVis.putAction("spacing", this.radialAnimateActionsSpacing);
+//	 	this.colorLayoutVis.alwaysRunAfter("arrange","spacing");
         this.colorLayoutVis.runAfter(draw, "arrange");
 	 	this.updateVis();
 	 	this.isInFDL = false;
