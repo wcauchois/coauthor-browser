@@ -1,3 +1,11 @@
+body {
+	border: 1px dashed gray;
+	margin: auto;
+	margin-top: 1em;
+	padding: 1em;
+	width: 32em;
+}
+
 h1, h2, h3, h4, h5 {
 	font-family: sans-serif;
 	margin-bottom: 0;
