@@ -6,6 +6,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import edu.washington.cs.cse403d.coauthor.client.browser.BrowserPage;
+import edu.washington.cs.cse403d.coauthor.client.browser.MessagePage;
+import edu.washington.cs.cse403d.coauthor.client.browser.PageLoadError;
+import edu.washington.cs.cse403d.coauthor.client.utils.GoBackActionListener;
 import edu.washington.cs.cse403d.coauthor.client.utils.StringUtils;
 
 /**
@@ -38,7 +41,7 @@ public class AuthorResult extends BrowserPage {
 	}
 
 	@Override
-	protected void load() {
+	protected void load() throws PageLoadError {
 		this.setVisible(true);
 		setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
@@ -46,17 +49,28 @@ public class AuthorResult extends BrowserPage {
 		c.gridx = 0;
 		c.gridy = 0;
 
-		if (queries.size() == 1) {
-			add(new AuthorCoauthorResult(queries.get(0)), c);
-		} else
-			add(new AuthorCoauthorResult(queries), c);
-
-		c.gridx = 0;
-		c.gridy = 1;
-		if (queries.size() == 1)
-			add(new AuthorPublicationResult(queries.get(0)), c);
-		else
-			add(new AuthorPublicationResult(queries), c);
+		try {
+			if (queries.size() == 1) {
+				add(new AuthorCoauthorResult(queries.get(0)), c);
+			} else
+				add(new AuthorCoauthorResult(queries), c);
+	
+			c.gridx = 0;
+			c.gridy = 1;
+			if (queries.size() == 1)
+				add(new AuthorPublicationResult(queries.get(0)), c);
+			else
+				add(new AuthorPublicationResult(queries), c);
+		} catch(Exception e) {
+			MessagePage message = new MessagePage(
+					MessagePage.ERROR,
+					"Failed to complete search",
+					"There was an error while attempting to complete your search (" +
+					e.getMessage() + ").",
+					MessagePage.GO_BACK);
+			message.addActionListener(new GoBackActionListener());
+			throw new PageLoadError(message);
+		}
 		
 		setLoaded();
 	}

@@ -53,17 +53,11 @@ class AuthorCoauthorResult extends JPanel {
      *
      * @param author the author that was entered as the query
      */
-    public AuthorCoauthorResult(String author) {
+    public AuthorCoauthorResult(String author) throws Exception {
     	setVisible(true);
         setLayout(new BorderLayout());
         List<String> n = null;
-        try {
-        	n = CDSI.getAuthors(author);
-        } catch (Exception e1) {
-           // TODO Go to the error page
-           JOptionPane.showMessageDialog(this, "Invalid Author Name!",
-             "Error!",JOptionPane.ERROR_MESSAGE);
-        }
+    	n = CDSI.getAuthors(author);
         if (n.size() > 0) {
         	String given = author.toLowerCase();
             for (int i = 0; i < n.size(); i++) {
@@ -73,9 +67,9 @@ class AuthorCoauthorResult extends JPanel {
                 } else
                 	theAuthor = n.get(0);
             }
-        } else
-            JOptionPane.showMessageDialog(this, "Invalid Author Name!",
-               "Error!",JOptionPane.ERROR_MESSAGE);            
+        } else {
+        	throw new Exception("invalid author name");
+        }
         singleEntryInitialize();
     }
        
@@ -95,7 +89,7 @@ class AuthorCoauthorResult extends JPanel {
 	/**
 	 * Internal helper method for single-author search result
 	 */
-	private void singleEntryInitialize() {
+	private void singleEntryInitialize() throws Exception {
 		singleEntryTop = new JPanel();
         singleEntryTop.setLayout(new BoxLayout(singleEntryTop, BoxLayout.Y_AXIS));
         singleEntryTop.setVisible(true);        
@@ -120,13 +114,7 @@ class AuthorCoauthorResult extends JPanel {
         //Coauthor list
         listModel = new DefaultListModel();
         coauthorList = new JList(listModel);
-        try {
-                theAuthorList = CDSI.getCoauthors(theAuthor);
-        } catch (RemoteException e) {
-                JOptionPane.showMessageDialog(this,
-                                "Um, this isn't really supposed to happen",
-                                "Error!",JOptionPane.ERROR_MESSAGE);
-        }                      
+        theAuthorList = CDSI.getCoauthors(theAuthor);
         buildCoauthorList();
         FilterPanel filterPanel = new FilterPanel(coauthorList, theAuthor);
         add(filterPanel);
