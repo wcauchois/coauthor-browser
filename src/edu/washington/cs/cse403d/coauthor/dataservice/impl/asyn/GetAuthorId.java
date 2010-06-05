@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import edu.washington.cs.cse403d.coauthor.dataservice.impl.PreparedStatementPool;
+import edu.washington.cs.cse403d.coauthor.shared.model.AuthorNotFoundException;
 
 public class GetAuthorId extends AsyncFetch<Long> {
 	private final PreparedStatementPool psp;
@@ -25,7 +26,7 @@ public class GetAuthorId extends AsyncFetch<Long> {
 			e = new IllegalArgumentException("Must provide a non-empty author name");
 			return;
 		}
-		
+
 		PreparedStatement getAuthorId = psp.leasePreparedStatement();
 
 		try {
@@ -35,7 +36,7 @@ public class GetAuthorId extends AsyncFetch<Long> {
 			if (rs.next()) {
 				result = rs.getLong(1);
 			} else {
-				this.e = new IllegalArgumentException("No author exists in DB with name: " + authorName);
+				this.e = new AuthorNotFoundException(authorName);
 			}
 			rs.close();
 		} catch (SQLException e) {
