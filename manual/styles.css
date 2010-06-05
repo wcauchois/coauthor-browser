@@ -26,6 +26,10 @@ p, li {
 	width: 30em;
 }
 
+p {
+	margin: 1em;
+}
+
 img {
 	vertical-align: middle;
 }
