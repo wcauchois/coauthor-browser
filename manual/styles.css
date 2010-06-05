@@ -1,0 +1,40 @@
+h1, h2, h3, h4, h5 {
+	font-family: sans-serif;
+	margin-bottom: 0;
+	margin-top: 0;
+}
+
+ul {
+	list-style-type: square;
+	margin: 0.5em 0 0.5em 0;
+}
+
+li {
+	color: #CCCCCC;
+}
+
+.backLink {
+	font-size: 0.8em;
+	margin: 0 0 0 2em;
+}
+
+a {
+	color: #2F4E6F;
+}
+
+a:link {
+	text-decoration: none
+}
+
+a:visited {
+	text-decoration: none
+}
+
+a:active {
+	text-decoration: none
+}
+
+a:hover {
+	text-decoration: underline;
+	color: #98B1C4;
+}
