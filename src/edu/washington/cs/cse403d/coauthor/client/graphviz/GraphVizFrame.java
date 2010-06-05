@@ -33,8 +33,11 @@ import prefuse.visual.VisualItem;
 
 
 public class GraphVizFrame extends JFrame implements ActionListener{
-	VisualExplorer visExp;
-	
+	private VisualExplorer visExp;
+	private JButton oneDg;
+	private JButton radial;
+	private JButton trim;
+	boolean isInFDLayout = true;
 	
 	public GraphVizFrame(String startingAuthor) {
 		getContentPane().add(new JLabel(" Co-Authors Graph for " + startingAuthor));
@@ -85,28 +88,23 @@ public class GraphVizFrame extends JFrame implements ActionListener{
         });
 		
 		
-		JButton oneDg = new JButton("Add One Degree to All");
+		oneDg = new JButton("Add One Degree to All");
 		oneDg.setToolTipText("Displays the co-authors of all nodes " +
 				" in the graph.");
 		oneDg.setActionCommand("onedg");
 		oneDg.addActionListener(this);
 		
-		JButton trim = new JButton("Trim by One Degree");
+		trim = new JButton("Trim by One Degree");
         trim.setActionCommand("trim");
         trim.setToolTipText("Remove all authors that have only " +
         		"one edge connecting them to the graph.");
         
 		trim.addActionListener(this);
 		
-		JButton radial = new JButton("Radial View");
+		radial = new JButton("Radial View");
 		radial.setActionCommand("rad");
 		radial.addActionListener(this);
 		radial.setToolTipText("Switch to a radial view of the co-author graph.");
-		
-		
-		JButton force = new JButton("Dynamic View");
-		force.setActionCommand("force");
-		force.addActionListener(this);
 		
 		
 		
@@ -115,7 +113,6 @@ public class GraphVizFrame extends JFrame implements ActionListener{
         box.add(oneDg);
         box.add(trim);
         box.add(radial);
-        box.add(force);
         box.add(search);
         
         box.add(Box.createHorizontalStrut(10));
@@ -140,7 +137,15 @@ public class GraphVizFrame extends JFrame implements ActionListener{
 						"the graph to add coauthors to all.","Warning!",JOptionPane.WARNING_MESSAGE);
 			}
 		}else if("rad".equals(e.getActionCommand())){
-			visExp.switchToRadialLayout();
+			if(isInFDLayout){
+				visExp.switchToRadialLayout();
+				this.radial.setText("Dynamic View");
+				isInFDLayout = false;
+			}else{
+				visExp.switchToFDL();
+				this.radial.setText("Radial View");
+				isInFDLayout = true;
+			}
 		}else if("trim".equals(e.getActionCommand())){
 			visExp.trimOneDegree();
 		}else if("force".equals(e.getActionCommand())){
