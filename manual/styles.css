@@ -9,7 +9,7 @@ ul {
 	margin: 0.5em 0 0.5em 0;
 }
 
-li {
+li.before {
 	color: #CCCCCC;
 }
 
@@ -22,19 +22,31 @@ a {
 	color: #2F4E6F;
 }
 
+p, li {
+	width: 30em;
+}
+
+img {
+	vertical-align: middle;
+}
+
 a:link {
+	border-bottom: 1px dashed;
 	text-decoration: none
 }
 
 a:visited {
+	border-bottom: 1px dashed;
 	text-decoration: none
 }
 
 a:active {
+	border-bottom: 1px dashed;
 	text-decoration: none
 }
 
 a:hover {
-	text-decoration: underline;
+	border-bottom: 1px solid;
+	text-decoration: none;
 	color: #98B1C4;
 }
