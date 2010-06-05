@@ -9,17 +9,41 @@
 <body>
 	<h3>Author Search</h3>
 	<p class="backLink"><a href="index.html">&raquo; Back to Getting Started</a></p>
-	<p>This feature displays information about one author. The results include a list of co-authors and a list of publications. Both of these lists have <a href="filterFields.html">Filter Fields</a>. In addition, the co-authors list has a <a href="graphVisualization.html">Graph Visualization</a> button <img src="img/VisualizeButton.png" />.</p>
+	<p>To search the database for one or more authors, use <strong>Author Search</strong>.</p>
+	<!-- TODO: screenshot of author search tab? -->
 	<h3>Using Author Search (Single Author)</h3>
+	<p>This feature displays information about one author. The results include a list of co-authors and a list of publications. Both of these lists have <a href="filterFields.html">Filter Fields</a>. In addition, the co-authors list has a <a href="graphVisualization.html">Graph Visualization</a> button (<img src="img/VisualizeButton.png" />).</p>
 	<ol>
-		<li>Start at the search page. Tip: You can always return to the search page by clicking <img src="img/returnToSearch.png" /></li>
-		<li>Select the <i>Author Search</i> tab.</li>
-		<li>Enter a valid author name in the first <i>Author</i> entry field. Tip: Utilize <a href="autoSuggest.html">Auto Suggestions</a> to ensure you have entered a valid author</li>
-		<li>Press enter or search.</li>
+		<li>Start at the search page.
+			<div class="tip">
+			Tip: You can always return to the search page by clicking <img src="img/returnToSearch.png" />.
+			</div>
+		</li>
+		<li>Select the <strong>Author Search</strong> tab.</li>
+		<li>Enter a valid author name in the first <em>Author</em> entry field.
+			<div class="tip">
+			Tip: Use <a href="autoSuggest.html">Auto Suggestions</a> to ensure you have entered a valid author.
+			</div>
+		</li>
+		<li>Press enter or click the search button.</li>
 	</ol>
 	<h3>Using Author Search (Two Authors)</h3>
-	<p>Content Here</p>
+	<p>This feature displays information about two authors. The results may include a list of publications that the two authors have worked on together.</p>
+	<p>If the two authors have not worked on any publications together, an <em>Author Chain</em> will be displayed, listing the shortest path from one author to the other in the authorship network. Using the <a href="graphVisualization.html">Graph Visualization</a> button (<img src="img/VisualizeButton.png" />) in this case will display the chain.</p>
+	<ol>
+		<li>Start at the search page.</li>
+		<li>Select the <strong>Author Search</strong> tab.</li>
+		<li>Enter a valid author name in the first <em>Author</em> entry field.</li>
+		<li>Click the plus button (<img src="img/plus.png" />) to add another author.</li>
+		<li>Enter a valid author name in the second <em>Author</em> entry field.
+			<div class="tip">
+			Tip: If you don't want to search for two authors anymore, use the minus button (<img src="img/minus.png" />) to revert to a single author search.
+			</div>
+		</li>
+		<li>Press enter or click the search button.</li>
+	</ol>
 	<h3>Using Author Search (Many Authors)</h3>
-	<p>Content Here</p>
+	<p>This feature displays information about multiple authors. The results include a list of publications that the authors have worked on together.</p>
+	<!-- TODO: pretty much the same thing as the other two cases right? -->
 </body>
 </html>

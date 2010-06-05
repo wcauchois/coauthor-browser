@@ -12,6 +12,12 @@ h1, h2, h3, h4, h5 {
 	margin-top: 0;
 }
 
+div.tip {
+	margin: 1em;
+	background-color: #FF3;
+	padding: 5px;
+}
+
 ul {
 	list-style-type: square;
 	margin: 0.5em 0 0.5em 0;
