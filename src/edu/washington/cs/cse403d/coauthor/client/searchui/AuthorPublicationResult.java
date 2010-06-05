@@ -43,7 +43,7 @@ class AuthorPublicationResult extends JPanel {
      * 
      * @param author the author name that was passed as the query
      */
-    public AuthorPublicationResult(String author) {
+    public AuthorPublicationResult(String author) throws Exception {
     	setLayout(new BorderLayout());
     	theAuthor = author;
     	singleEntryInitialize();
@@ -52,7 +52,7 @@ class AuthorPublicationResult extends JPanel {
     /**
      * constructor for multi-entry author search
      */
-    public AuthorPublicationResult(List<String> authors) {
+    public AuthorPublicationResult(List<String> authors) throws Exception {
     	setLayout(new BorderLayout());
     	theAuthor = authors.get(0);
     	authorList = authors;
@@ -62,7 +62,7 @@ class AuthorPublicationResult extends JPanel {
     /**
      * Internal helper method for single author search information display
      */
-    private void singleEntryInitialize() {
+    private void singleEntryInitialize() throws Exception {
     	setVisible(true);
     	
     	//Title
@@ -76,13 +76,7 @@ class AuthorPublicationResult extends JPanel {
     	//Build the list of publication
     	listModel = new DefaultListModel();
     	pubList = new JList(listModel);         
-    	try {
-    		publications = CDSI.getPublicationsForAnyAuthor(theAuthor);
-    	} catch (RemoteException e) {
-    		JOptionPane.showMessageDialog(this,
-    				"Um, this isn't really supposed to happen",
-    				"Error!",JOptionPane.ERROR_MESSAGE);
-    	}
+		publications = CDSI.getPublicationsForAnyAuthor(theAuthor);
     	buildPubList();
     	FilterPanel filterPanel = new FilterPanel(pubList, null);
     	buildNavigator(filterPanel);
@@ -155,7 +149,7 @@ class AuthorPublicationResult extends JPanel {
     /**
      * Internal helper method for multi-entry author search information display
      */
-    private void multiEntryInitialize() {
+    private void multiEntryInitialize() throws Exception {
     	setVisible(true);
     	
     	//Title
@@ -177,13 +171,7 @@ class AuthorPublicationResult extends JPanel {
     		authorArray[i] = authorList.get(i);
     	}
     	
-    	try {
-    		publications = CDSI.getPublicationsForAllAuthors(authorArray);
-    	} catch (RemoteException e) {
-    		JOptionPane.showMessageDialog(this,
-    				"Um, this isn't really supposed to happen",
-    				"Error!",JOptionPane.ERROR_MESSAGE);
-    	}	
+		publications = CDSI.getPublicationsForAllAuthors(authorArray);
     	if (publications.isEmpty()) {
     		add(new JLabel("There is no collaboration among these individuals")
     		, BorderLayout.PAGE_END);
