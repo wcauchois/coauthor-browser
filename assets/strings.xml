@@ -82,7 +82,7 @@
 	]]></string>
 
 	<string name="Visualizer.help"><![CDATA[
-		Click on this button to obtain a graphical representation of the result.
+		Click on this button to obtain a visual representation of the result. 
 		<ul>
 			<li>
 				<b>Perform a search on an article.</b>
