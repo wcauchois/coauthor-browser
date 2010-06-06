@@ -47,7 +47,11 @@ import prefuse.render.DefaultRendererFactory;
 import prefuse.render.EdgeRenderer;
 import prefuse.render.LabelRenderer;
 import prefuse.util.ColorLib;
+import prefuse.util.force.DragForce;
 import prefuse.util.force.ForceSimulator;
+import prefuse.util.force.NBodyForce;
+import prefuse.util.force.RungeKuttaIntegrator;
+import prefuse.util.force.SpringForce;
 import prefuse.visual.VisualGraph;
 import prefuse.visual.VisualItem;
 import prefuse.visual.expression.InGroupPredicate;
@@ -150,7 +154,6 @@ public abstract class VisualExplorer {
 			Node current = (Node) authItr.next();
 			if(current.get("name").equals(authorName)){
 				searchedFor = current;
-				System.out.println("Author node found! ID is: " + searchedFor.getRow());
 			}
 		}
 		return searchedFor;
@@ -167,12 +170,9 @@ public abstract class VisualExplorer {
 		synchronized (this.colorLayoutVis){
 			
 		Node addTo = findAuthor(authorName);
-		System.out.println("VISITED STATUS: " + addTo.getInt("visited"));
-		//addTo.setInt("visited", 1);
 		
 		// look for returned authors already in the graph; remove all authors already in
 		// the graph from the search results
-		System.out.println(moreAuthors);
 		Iterator authItr = this.coAuthors.nodes();
 		while(authItr.hasNext()){
 			Node current = (Node) authItr.next();
@@ -196,8 +196,6 @@ public abstract class VisualExplorer {
 			}
 			addTo.setInt("visited", 1);
 	}
-//		this.colorLayoutVis.removeAction("highlight");
-//		this.colorLayoutVis.putAction("highlight",this.highlightControl);
 		this.updateVis();
 	}
 	
@@ -208,7 +206,6 @@ public abstract class VisualExplorer {
 	* adds coauthor nodes to all nodes currently in the graph
 	*/
 	public boolean addCoAuthorsToAllNodes(){
-		System.out.println("Adding coauthors to all nodes in graph");
 		Iterator graphItr = this.coAuthors.nodes();
 	
 		int nodeCt = this.coAuthors.getNodeCount();
@@ -238,21 +235,6 @@ public abstract class VisualExplorer {
 	}
 	
 	/**
-	 * removes the passed parameter node from the current graph
-	 * @param toBeRemoved
-	 */
-	protected void removeNode(int toBeRemoved){
-		synchronized(this.colorLayoutVis){
-		if(this.coAuthors.getNode(toBeRemoved).getChildCount() == 0){
-			this.coAuthors.removeNode(toBeRemoved);
-		}else{
-			System.out.println("This node has children; it cannot be removed!");
-		}
-		this.updateVis();
-	}
-	}
-	
-	/**
 	 * removes all children at the node with the passed authorName, assumes that 
 	 * input is a valid node in the graph
 	 * @param authorName
@@ -264,14 +246,12 @@ public abstract class VisualExplorer {
 		Iterator childItr = removeCoAuthorsFrom.children();
 		while(childItr.hasNext()){
 			Node currentNode = (Node) childItr.next();
-			System.out.println("This node will be deleted: " + currentNode.getString("name"));
 			if (currentNode.getChildCount() > 0)
 				this.removeCoAuthors(currentNode.getString("name"));
 			this.coAuthors.removeNode(currentNode);
 
 		}
-		System.out.println("You are now removing the co-authors of " + authorName);
-
+	
 	}}
 
 	/**
@@ -284,18 +264,13 @@ public abstract class VisualExplorer {
 		List<Integer> toBeDeleted = new ArrayList<Integer>();
 		while(nodeItr.hasNext()){
 			Node currentNode = (Node) nodeItr.next();
-			System.out.println("This node will be deleted: " + currentNode.getString("name"));
 			if (currentNode.getDegree() == 1){
-				System.out.println("Degree of node is: " + currentNode.getDegree());
-				System.out.println("The name at this node is " + this.coAuthors.getNode(currentNode.getRow()).getString("name"));
-				System.out.println("The row of current node is " + currentNode.getRow());
 				toBeDeleted.add(currentNode.getRow());
 			}	
 		}
 		
 		for(int i =0; i<toBeDeleted.size();i++){
 			Node deleted = this.coAuthors.getNode(toBeDeleted.get(i));
-			System.out.println("@@@The name at node " + toBeDeleted.get(i) + " is " + deleted.getString("name"));
 			this.coAuthors.removeNode(deleted);
 		}
 		
@@ -363,7 +338,6 @@ public abstract class VisualExplorer {
         	@Override
 				public void tupleSetChanged(TupleSet arg0, Tuple[] arg1,
 						Tuple[] arg2) {
-					System.out.println("Tupule Set has changed!");
 					colorLayoutVis.cancel("highlight");
 					colorLayoutVis.run("highlight");
 					colorLayoutVis.repaint();
@@ -399,15 +373,30 @@ public abstract class VisualExplorer {
 	protected void initRadialAnimation(){
  
         Layout radialLayout = new RadialTreeLayout("graph");
-       
-        ActionList arrangement = new ActionList(100);
+        ActionList arrangement = new ActionList(500);
         arrangement.add(radialLayout);
   
         ActionList spacing = new ActionList(500);
-        spacing.add(this.spacingLayout);
+        //spacing.add(this.spacingLayout);
+        ForceSimulator fsim = new ForceSimulator(new RungeKuttaIntegrator());
+
+        float gravConstant = -10f;  // the more negative, the more repelling
+
+        float minDistance = 100f;	    // -1 for always on, the more positive, the more space between nodes
+
+        float theta = 0.3f;			// the lower, the more single-node repell calculation
+
+        float drag = 0.11f; 
+        fsim.addForce(new NBodyForce(gravConstant, minDistance, theta));
+
+        fsim.addForce(new DragForce(drag));
+
         
+        ForceDirectedLayout fd2 = new ForceDirectedLayout("graph", fsim, false);
+        spacing.add(fd2);
         this.radialAnimateActionsArrangement = arrangement;
-        
+        this.spacingLayout = fd2;
+        this.radialAnimateActionsSpacing = spacing;
 	}
 
 	
@@ -421,6 +410,7 @@ public abstract class VisualExplorer {
 		colorLayoutVis.run(draw);
 		if (!this.isInFDL){
 			this.colorLayoutVis.run("arrange");
+			this.colorLayoutVis.run("spacing");
 		}else{
 			this.colorLayoutVis.run("ForceLayout");
 		}
@@ -433,11 +423,10 @@ public abstract class VisualExplorer {
 	public void switchToRadialLayout(){
 	 
 	 	this.colorLayoutVis.removeAction("ForceLayout");
-	 	
-	
-		
 	 	this.colorLayoutVis.putAction("arrange", this.radialAnimateActionsArrangement);
+	 	this.colorLayoutVis.putAction("spacing", this.radialAnimateActionsSpacing);
         this.colorLayoutVis.runAfter(draw, "arrange");
+        this.colorLayoutVis.runAfter("arrange", "spacing");
 	 	this.updateVis();
 	 	this.isInFDL = false;
 	}
@@ -469,7 +458,7 @@ public abstract class VisualExplorer {
         	public void itemClicked(VisualItem item, MouseEvent e ){
         		VisualExplorer.this.coAuthors.nodes();
         		addCoAuthors(item.getString("name"));
-        		Services.getBrowser().go(new AuthorResult(item.getString("name")));
+   //     		Services.getBrowser().go(new AuthorResult(item.getString("name")));
            	}       
         };
         
@@ -484,6 +473,13 @@ public abstract class VisualExplorer {
         d.addControlListener(nodeClicked);
         
         JToolTip tip = d.createToolTip();
+        tip.setToolTipText("Visualization controls: ** Click on a node to expand its coauthors. ** Use mouse wheel to zoom in/out." +
+        		"** Right click to auto-zoom to size of graph.");
+        d.setCustomToolTip(tip);
+        d.setCustomToolTip(tip);
+        
+        d.setBackgroundImage("logo_bg.png", true, false);
+        
         
         this.dispCtrls = d;
         d.panTo(new Point(0,0));
