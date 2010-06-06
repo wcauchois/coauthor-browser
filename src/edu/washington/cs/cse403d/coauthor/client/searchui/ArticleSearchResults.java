@@ -152,7 +152,7 @@ public class ArticleSearchResults extends BrowserPage {
 		//Navigation
 		results.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
-				if(e.getClickCount() == 2) {
+				if(e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
 					String article = results.getSelectedValue().toString();
 					Services.getBrowser().go(new ArticleResult(article));
 				}
