@@ -153,6 +153,7 @@ public class BrowserFrame extends JFrame implements Browser {
 								MessagePage.OK);
 						message.addActionListener(new GoBackActionListener());
 						message.onEnter(history.push(message));
+						e.printStackTrace(System.err);
 					}
 					renderPage();
 				}
