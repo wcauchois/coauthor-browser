@@ -32,8 +32,8 @@ public class ChainSearchResult extends JPanel {
 	private DefaultListModel listModel;
 	private JList chainList;
 
-	private final String author1;
-	private final String author2;
+	private String author1;
+	private String author2;
 
 	/**
 	 * Constructor for single author search result screen
@@ -89,18 +89,26 @@ public class ChainSearchResult extends JPanel {
 			contentPanel.add(buildChain());
 
 			JPanel number = new JPanel();
-			JLabel numberText = new JLabel("The number of authors in this chain is: ");
-			JLabel numberVal = new JLabel("" + listModel.size());
+			JLabel numberText = new JLabel(author1 + " is ");
+			JLabel numberVal = new JLabel("" + (listModel.size()-1));
+			JLabel numberText2 = new JLabel(" degrees of ");
+			JPanel number2 = new JPanel();
+			JLabel numberText3 = new JLabel(" separation away from " + author2);
 			numberText.setFont(f.deriveFont(s));
 			numberVal.setFont(f.deriveFont(s));
+			numberText2.setFont(f.deriveFont(s));
+			numberText3.setFont(f.deriveFont(s));
 			number.add(numberText);
 			number.add(numberVal);
+			number.add(numberText2);
+			number2.add(numberText3);
 
 			FilterPanel filterPanel = new FilterPanel(chainList, author1, author2);
 			buildNavigator(filterPanel);
 			add(filterPanel);
 			add(contentPanel, BorderLayout.PAGE_START);
-			add(number, BorderLayout.PAGE_END);
+			add(number, BorderLayout.CENTER);
+			add(number2, BorderLayout.PAGE_END);
 		} catch (RemoteException e) {
 			System.out.println("Invalid author(s)");
 		}
@@ -187,9 +195,8 @@ public class ChainSearchResult extends JPanel {
 			i++;
 		}
 		listModel.add(i, chain.get(i - 1).toString().substring(chain.get(i - 1).toString().indexOf('>') + 1));
-		// author2 = chain.get(i - 1).toString().substring(chain.get(i -
-		// 1).toString().indexOf('>') + 1);
-		// this.author1 = (String) listModel.get(0);
+		author1 = listModel.get(0).toString();
+		author2 = listModel.get(i).toString();
 	}
 
 	public String getTitle() {
