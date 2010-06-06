@@ -405,7 +405,7 @@ public abstract class VisualExplorer {
 	 * underlying data structures, i.e. adding nodes to the table
 	 */
 	public void updateVis(){
-		
+		synchronized(this.colorLayoutVis){
 			
 		colorLayoutVis.run(draw);
 		if (!this.isInFDL){
@@ -417,11 +417,11 @@ public abstract class VisualExplorer {
 		
 		colorLayoutVis.setInteractive("graph.edges", null, false);
 		
-	}
+	}}
 	
 	
 	public void switchToRadialLayout(){
-	 
+		synchronized(this.colorLayoutVis){
 	 	this.colorLayoutVis.removeAction("ForceLayout");
 	 	this.colorLayoutVis.putAction("arrange", this.radialAnimateActionsArrangement);
 	 	this.colorLayoutVis.putAction("spacing", this.radialAnimateActionsSpacing);
@@ -429,17 +429,18 @@ public abstract class VisualExplorer {
         this.colorLayoutVis.runAfter("arrange", "spacing");
 	 	this.updateVis();
 	 	this.isInFDL = false;
-	}
+	}}
 	
 	public void switchToFDL(){
-	 	this.colorLayoutVis.removeAction("spacing");
+		synchronized(this.colorLayoutVis){
+		this.colorLayoutVis.removeAction("spacing");
         this.colorLayoutVis.removeAction("arrange");
         
 	 	this.colorLayoutVis.putAction("ForceLayout", this.fdlAnimateActions);
         this.colorLayoutVis.runAfter(draw, "ForceLayout");
 		this.updateVis();
 		this.isInFDL = true;
-	}
+	}}
 	
 	/**
 	 * initializes the display 
@@ -475,7 +476,6 @@ public abstract class VisualExplorer {
         JToolTip tip = d.createToolTip();
         tip.setToolTipText("Visualization controls: ** Click on a node to expand its coauthors. ** Use mouse wheel to zoom in/out." +
         		"** Right click to auto-zoom to size of graph.");
-        d.setCustomToolTip(tip);
         d.setCustomToolTip(tip);
         
         d.setBackgroundImage("logo_bg.png", true, false);
