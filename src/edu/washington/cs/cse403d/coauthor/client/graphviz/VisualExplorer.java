@@ -47,7 +47,11 @@ import prefuse.render.DefaultRendererFactory;
 import prefuse.render.EdgeRenderer;
 import prefuse.render.LabelRenderer;
 import prefuse.util.ColorLib;
+import prefuse.util.force.DragForce;
 import prefuse.util.force.ForceSimulator;
+import prefuse.util.force.NBodyForce;
+import prefuse.util.force.RungeKuttaIntegrator;
+import prefuse.util.force.SpringForce;
 import prefuse.visual.VisualGraph;
 import prefuse.visual.VisualItem;
 import prefuse.visual.expression.InGroupPredicate;
@@ -369,15 +373,30 @@ public abstract class VisualExplorer {
 	protected void initRadialAnimation(){
  
         Layout radialLayout = new RadialTreeLayout("graph");
-       
-        ActionList arrangement = new ActionList(100);
+        ActionList arrangement = new ActionList(500);
         arrangement.add(radialLayout);
   
         ActionList spacing = new ActionList(500);
-        spacing.add(this.spacingLayout);
+        //spacing.add(this.spacingLayout);
+        ForceSimulator fsim = new ForceSimulator(new RungeKuttaIntegrator());
+
+        float gravConstant = -10f;  // the more negative, the more repelling
+
+        float minDistance = 100f;	    // -1 for always on, the more positive, the more space between nodes
+
+        float theta = 0.3f;			// the lower, the more single-node repell calculation
+
+        float drag = 0.11f; 
+        fsim.addForce(new NBodyForce(gravConstant, minDistance, theta));
+
+        fsim.addForce(new DragForce(drag));
+
         
+        ForceDirectedLayout fd2 = new ForceDirectedLayout("graph", fsim, false);
+        spacing.add(fd2);
         this.radialAnimateActionsArrangement = arrangement;
-        
+        this.spacingLayout = fd2;
+        this.radialAnimateActionsSpacing = spacing;
 	}
 
 	
@@ -391,6 +410,7 @@ public abstract class VisualExplorer {
 		colorLayoutVis.run(draw);
 		if (!this.isInFDL){
 			this.colorLayoutVis.run("arrange");
+			this.colorLayoutVis.run("spacing");
 		}else{
 			this.colorLayoutVis.run("ForceLayout");
 		}
@@ -404,7 +424,9 @@ public abstract class VisualExplorer {
 	 
 	 	this.colorLayoutVis.removeAction("ForceLayout");
 	 	this.colorLayoutVis.putAction("arrange", this.radialAnimateActionsArrangement);
+	 	this.colorLayoutVis.putAction("spacing", this.radialAnimateActionsSpacing);
         this.colorLayoutVis.runAfter(draw, "arrange");
+        this.colorLayoutVis.runAfter("arrange", "spacing");
 	 	this.updateVis();
 	 	this.isInFDL = false;
 	}
