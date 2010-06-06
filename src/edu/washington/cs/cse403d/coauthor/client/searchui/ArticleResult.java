@@ -8,13 +8,9 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -53,7 +49,6 @@ public class ArticleResult extends BrowserPage {
 	private JPanel authorInfo;
 	private JPanel contentPane;
 	private JList authorList;
-	private DefaultListModel listModel;
 
 	/**
 	 * Constructor.
