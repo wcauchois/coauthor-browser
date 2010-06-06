@@ -17,13 +17,10 @@ import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JList;
 import javax.swing.JTextField;
-import javax.swing.ListModel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import edu.washington.cs.cse403d.coauthor.client.Services;
-import edu.washington.cs.cse403d.coauthor.client.searchui.ArticleResult;
-import edu.washington.cs.cse403d.coauthor.client.searchui.AuthorResult;
 
 /**
  * A text field, attached to a JList, that will filter the JList according to
