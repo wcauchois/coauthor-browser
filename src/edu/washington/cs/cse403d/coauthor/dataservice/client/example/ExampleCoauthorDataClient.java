@@ -19,7 +19,7 @@ import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
  * @author Jeff Prouty
  */
 public class ExampleCoauthorDataClient {
-	public static final String HOSTNAME = "localhost";
+	public static final String HOSTNAME = "attu2.cs.washington.edu";
 
 	public static void main(String[] args) {
 		final CoauthorDataServiceInterface c;
