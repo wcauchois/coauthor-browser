@@ -4,8 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.rmi.RemoteException;
 import java.util.List;
 
@@ -20,6 +18,7 @@ import javax.swing.ListSelectionModel;
 
 import edu.washington.cs.cse403d.coauthor.client.Services;
 import edu.washington.cs.cse403d.coauthor.client.utils.FilterPanel;
+import edu.washington.cs.cse403d.coauthor.client.utils.LineWrappedLabel;
 import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 import edu.washington.cs.cse403d.coauthor.shared.model.PathLink;
 
@@ -67,6 +66,16 @@ public class ChainSearchResult extends JPanel {
 			JPanel contentPanel = new JPanel();
 			contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
 			contentPanel.setVisible(true);
+			
+			if (chain.isEmpty()) {
+				// Title
+				LineWrappedLabel explanation = new LineWrappedLabel("These authors have not collaborated yet and are not connected via other authors");
+				explanation.setPreferredSize(new Dimension(400, explanation.getActualHeight(400)));
+				contentPanel.add(explanation);
+				contentPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+				add(contentPanel, BorderLayout.PAGE_START);
+				return;
+			}
 
 			// Title
 			JLabel explanation = new JLabel("These authors have not collaborated yet");
