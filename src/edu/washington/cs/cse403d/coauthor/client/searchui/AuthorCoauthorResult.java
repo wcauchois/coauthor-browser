@@ -8,7 +8,6 @@ import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
@@ -19,8 +18,6 @@ import javax.swing.ListSelectionModel;
 
 import edu.washington.cs.cse403d.coauthor.client.Services;
 import edu.washington.cs.cse403d.coauthor.client.utils.FilterPanel;
-import edu.washington.cs.cse403d.coauthor.client.utils.ListPopupMouseListener;
-import edu.washington.cs.cse403d.coauthor.client.utils.StringUtils;
 import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 
 /**
@@ -35,9 +32,7 @@ class AuthorCoauthorResult extends JPanel {
 	private final CoauthorDataServiceInterface CDSI = Services.getCoauthorDataServiceInterface();
 
 	private final String author;
-	private DefaultListModel listModel;
 	private JList coauthorList;
-	private List<String> coauthorNames;
 
 	/**
 	 * Constructor for single author search result screen
@@ -66,74 +61,37 @@ class AuthorCoauthorResult extends JPanel {
 		coauthorsTitle.setFont(f.deriveFont(s));
 		add(coauthorsTitle, BorderLayout.PAGE_START);
 
-		// Coauthor list
-		listModel = new DefaultListModel();
-		coauthorList = new JList(listModel);
-		coauthorNames = CDSI.getCoauthors(author);
+		coauthorList = new ListOfAuthors(CDSI.getCoauthors(author)) {
+			@Override
+			protected JPopupMenu buildContextMenu() {
+				JPopupMenu menu = super.buildContextMenu();
+				JMenuItem menuItem = new JMenuItem("Add author to search");
+				menuItem.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent evt) {
+						List<String> newAuthorSearch = Arrays.asList(author, (String)getSelectedValue());
+						Services.getBrowser().go(new AuthorResult(newAuthorSearch));
+					}
+				});
+				menu.insert(menuItem, 1);
+				return menu;
+			}
+		};
 		add(buildCoauthorList(), BorderLayout.CENTER);
 
 		FilterPanel filterPanel = new FilterPanel(coauthorList, author);
 		add(filterPanel, BorderLayout.PAGE_END);
-		buildContextMenu(filterPanel);
-	}
-
-	private void buildContextMenu(FilterPanel filterPanel) {
-		final JList theList = filterPanel.getList();
-		final JPopupMenu popupMenu = new JPopupMenu();
-		
-		JMenuItem menuItem;
-		menuItem = new JMenuItem("Search for this author");
-		menuItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				Services.getBrowser().go(new AuthorResult((String)theList.getSelectedValue()));
-			}
-		});
-		popupMenu.add(menuItem);
-		
-		menuItem = new JMenuItem("Add author to search");
-		menuItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				List<String> newAuthorSearch = Arrays.asList(author, (String)theList.getSelectedValue());
-				Services.getBrowser().go(new AuthorResult(newAuthorSearch));
-			}
-		});
-		popupMenu.add(menuItem);
-		
-		menuItem = new JMenuItem("Copy to clipboard");
-		menuItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				StringUtils.copyToClipboard(theList.getSelectedValue());
-			}
-		});
-		popupMenu.add(menuItem);
-		
-		theList.addMouseListener(new ListPopupMouseListener(popupMenu));
 	}
 
 	/**
 	 * Builds the co-author list for single author search result
 	 */
 	private JScrollPane buildCoauthorList() {
-		buildListHelper();
 		coauthorList.setLayoutOrientation(JList.VERTICAL);
 		coauthorList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		coauthorList.setVisibleRowCount(7);
 		JScrollPane listScroller = new JScrollPane(coauthorList);
 		listScroller.setAlignmentX(Component.LEFT_ALIGNMENT);
 		return listScroller;
-	}
-
-	/**
-	 * add author names to the JList, single author search case
-	 */
-	private void buildListHelper() {
-		int i = 0;
-		while (i < coauthorNames.size()) {
-			listModel.add(i, coauthorNames.get(i));
-			i++;
-		}
 	}
 }
