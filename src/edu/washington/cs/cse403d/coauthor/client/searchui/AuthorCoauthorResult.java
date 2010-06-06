@@ -65,7 +65,7 @@ class AuthorCoauthorResult extends JPanel {
 			@Override
 			protected JPopupMenu buildContextMenu() {
 				JPopupMenu menu = super.buildContextMenu();
-				JMenuItem menuItem = new JMenuItem("Add author to search");
+				JMenuItem menuItem = new JMenuItem("Add this author to search");
 				menuItem.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent evt) {

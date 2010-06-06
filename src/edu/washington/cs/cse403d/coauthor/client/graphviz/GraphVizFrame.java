@@ -63,8 +63,8 @@ public class GraphVizFrame extends JFrame implements ActionListener{
     	JPanel panel = new JPanel(new BorderLayout());
     	
     	final String label = "name";
-		final JFastLabel title = new JFastLabel("Author Name");
-		title.setPreferredSize(new Dimension(150, 20));
+		final JFastLabel title = new JFastLabel("Hover over a node!");
+		title.setPreferredSize(new Dimension(160, 20));
 		title.setVerticalAlignment(SwingConstants.BOTTOM);
 		title.setBorder(BorderFactory.createEmptyBorder(3,0,0,0));
 		title.setFont(FontLib.getFont("Tahoma", Font.PLAIN, 16));
