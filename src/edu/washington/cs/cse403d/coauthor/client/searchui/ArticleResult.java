@@ -10,7 +10,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.rmi.RemoteException;
 import java.util.List;
 
 import javax.swing.Box;
@@ -65,17 +64,16 @@ public class ArticleResult extends BrowserPage {
 	public ArticleResult(String query) {
 		articleTitle = query;
 	}
+	
+	public ArticleResult(Publication pub) {
+		publication = pub;
+	}
 
 	@Override
-	protected void load() {
-		try {
+	protected void load() throws Exception {
+		if(publication == null)
 			publication = CDSI.getPublication(articleTitle);
-		} catch (RemoteException e) {
-			JOptionPane.showMessageDialog(this, "Um, this isn't really supposed to happen", "Error!",
-					JOptionPane.ERROR_MESSAGE);
-		}
 		initialize();
-		// System.out.println(super.getContainerListeners().toString());
 		setLoaded();
 	}
 

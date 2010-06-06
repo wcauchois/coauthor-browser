@@ -16,6 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import edu.washington.cs.cse403d.coauthor.client.Services;
+import edu.washington.cs.cse403d.coauthor.client.utils.GoBackActionListener;
 
 /**
  * A frame that displays one BrowserPage at a time, and includes controls for
@@ -146,6 +147,12 @@ public class BrowserFrame extends JFrame implements Browser {
 						if(!e.getRedirect().isLoaded())
 							throw new RuntimeException("invalid redirect page");
 						e.getRedirect().onEnter(history.push(e.getRedirect()));
+					} catch(Exception e) {
+						MessagePage message = new MessagePage(MessagePage.ERROR, "Error",
+								"The operation could not be completed because an error was encountered (" + e.getMessage() + ").",
+								MessagePage.OK);
+						message.addActionListener(new GoBackActionListener());
+						message.onEnter(history.push(message));
 					}
 					renderPage();
 				}
