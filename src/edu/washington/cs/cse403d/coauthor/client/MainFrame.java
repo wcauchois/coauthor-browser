@@ -23,7 +23,6 @@ import javax.swing.KeyStroke;
 import edu.washington.cs.cse403d.coauthor.client.browser.BrowserFrame;
 import edu.washington.cs.cse403d.coauthor.client.browser.BrowserPage;
 import edu.washington.cs.cse403d.coauthor.client.graphviz.GraphVizManager;
-import edu.washington.cs.cse403d.coauthor.client.searchui.ArticleResult;
 import edu.washington.cs.cse403d.coauthor.client.searchui.SearchPage;
 import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 

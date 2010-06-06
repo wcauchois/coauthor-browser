@@ -31,11 +31,6 @@ import edu.washington.cs.cse403d.coauthor.client.utils.GoBackActionListener;
 public class BrowserFrame extends JFrame implements Browser {
 	private static final long serialVersionUID = 2084399509406597681L;
 
-	protected BrowserHistory history;
-	private JPanel pagePane = new JPanel();
-	private JPanel navPane = new JPanel();
-	private JPanel loadingPanel;
-
 	private abstract class NavButton extends JButton implements ActionListener {
 		private static final long serialVersionUID = 8896732421593552612L;
 
@@ -82,8 +77,65 @@ public class BrowserFrame extends JFrame implements Browser {
 		}
 	}
 
+	private class LoadPage extends Thread {
+		private final BrowserPage page;
+		private boolean isCancelled;
+
+		public LoadPage(BrowserPage page) {
+			this.page = page;
+			this.isCancelled = false;
+		}
+
+		/**
+		 * Cancels the currently loading page such that it will not be used when
+		 * this thread's execution is complete
+		 */
+		public void cancelRequest() {
+			this.isCancelled = true;
+		}
+
+		public void run() {
+			try {
+				page.load();
+				if (!isCancelled) {
+					page.onEnter(history.push(page));
+				}
+			} catch (PageLoadError e) {
+				if (!e.getRedirect().isLoaded()) {
+					throw new RuntimeException("invalid redirect page");
+				}
+				e.getRedirect().onEnter(history.push(e.getRedirect()));
+			} catch (Exception e) {
+				if (!isCancelled) {
+					MessagePage message = new MessagePage(MessagePage.ERROR,
+							"Error",
+							"The operation could not be completed because an error was encountered ("
+									+ e.getMessage() + ").", MessagePage.OK);
+					message.addActionListener(new GoBackActionListener());
+					message.onEnter(history.push(message));
+					e.printStackTrace(System.err);
+				}
+			}
+			if (!isCancelled) {
+				renderPage();
+				loadingThread = null;
+			} else {
+				System.out
+						.println("Page was cancelled. Didn't do anything with load of page: "
+								+ page.getTitle());
+			}
+		}
+	}
+
 	private ForwardButton forwardButton = new ForwardButton();
 	private BackButton backButton = new BackButton();
+
+	protected BrowserHistory history;
+	private JPanel pagePane = new JPanel();
+	private JPanel navPane = new JPanel();
+	private JPanel loadingPanel;
+
+	private LoadPage loadingThread;
 
 	public BrowserFrame(BrowserPage initialPage) {
 		history = new BrowserHistory(initialPage);
@@ -95,69 +147,68 @@ public class BrowserFrame extends JFrame implements Browser {
 		getContentPane().add(navPane, BorderLayout.NORTH);
 		getContentPane().add(pagePane, BorderLayout.CENTER);
 		Services.provideBrowser(this);
-		
+
 		loadingPanel = new JPanel();
 		loadingPanel.setLayout(new BoxLayout(loadingPanel, BoxLayout.Y_AXIS));
 
-		JLabel icon = new JLabel(Services.getResourceManager().loadImageIcon("Loading.gif"));
+		JLabel icon = new JLabel(Services.getResourceManager().loadImageIcon(
+				"Loading.gif"));
 		icon.setAlignmentX(Component.CENTER_ALIGNMENT);
 		JLabel text = new JLabel("Loading...");
 		text.setAlignmentX(Component.CENTER_ALIGNMENT);
 
 		loadingPanel.add(icon);
 		loadingPanel.add(text);
-		this.setIconImage(Services.getResourceManager().loadImageIcon("notkin.png").getImage());
+		this.setIconImage(Services.getResourceManager().loadImageIcon(
+				"notkin.png").getImage());
 		go(initialPage);
 	}
-	
+
 	private void renderPage() {
 		backButton.enableIfAvailable();
-		forwardButton.enableIfAvailable();
-		
+		forwardButton.enableIfAvailable();loadingThread = null;
+
 		pagePane.removeAll();
 		pagePane.add(history.getCurrent());
 		validate();
 		pagePane.setSize(this.getSize());
 		pagePane.repaint();
 	}
-	
+
 	private void renderLoadingScreen() {
-		backButton.setEnabled(false);
-		forwardButton.setEnabled(false);
-		
 		pagePane.removeAll();
 		pagePane.add(loadingPanel);
 		pagePane.repaint();
 	}
-	
+
 	protected JPanel getNavPane() {
 		return navPane;
 	}
 
+	/**
+	 * Cancels a loading page if one exists.
+	 * 
+	 * @return true if a loading page was canceled
+	 */
+	private boolean cancelLoadingPageIfExists() {
+		if (loadingThread != null) {
+			// Currently loading a page. Modify the background thread so it
+			// doesn't navigate to it on completion
+			loadingThread.cancelRequest();
+			loadingThread = null;
+			return true;
+		}
+		return false;
+	}
+
 	public void go(final BrowserPage page) {
+		cancelLoadingPageIfExists();
+
 		history.getCurrent().onExit(page);
-		if(!page.isLoaded()) {
+		if (!page.isLoaded()) {
 			renderLoadingScreen();
-			new Thread() {
-				public void run() {
-					try {
-						page.load();
-						page.onEnter(history.push(page));
-					} catch(PageLoadError e) {
-						if(!e.getRedirect().isLoaded())
-							throw new RuntimeException("invalid redirect page");
-						e.getRedirect().onEnter(history.push(e.getRedirect()));
-					} catch(Exception e) {
-						MessagePage message = new MessagePage(MessagePage.ERROR, "Error",
-								"The operation could not be completed because an error was encountered (" + e.getMessage() + ").",
-								MessagePage.OK);
-						message.addActionListener(new GoBackActionListener());
-						message.onEnter(history.push(message));
-						e.printStackTrace(System.err);
-					}
-					renderPage();
-				}
-			}.start();
+			loadingThread = new LoadPage(page);
+			loadingThread.start();
 		} else {
 			page.onEnter(history.push(page));
 			renderPage();
@@ -173,16 +224,20 @@ public class BrowserFrame extends JFrame implements Browser {
 	}
 
 	public void goForward() {
-		BrowserPage old = history.getCurrent();
-		old.onExit(history.forward());
-		history.getCurrent().onEnter(old);
+		if (!cancelLoadingPageIfExists()) {
+			BrowserPage old = history.getCurrent();
+			old.onExit(history.forward());
+			history.getCurrent().onEnter(old);
+		}
 		renderPage();
 	}
 
 	public void goBack() {
-		BrowserPage old = history.getCurrent();
-		old.onExit(history.back());
-		history.getCurrent().onEnter(old);
+		if (!cancelLoadingPageIfExists()) {
+			BrowserPage old = history.getCurrent();
+			old.onExit(history.back());
+			history.getCurrent().onEnter(old);
+		}
 		renderPage();
 	}
 }
