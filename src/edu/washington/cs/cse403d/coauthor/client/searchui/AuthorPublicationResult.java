@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 
 import javax.swing.DefaultListModel;
@@ -79,6 +81,11 @@ class AuthorPublicationResult extends JPanel {
 			add(filterPanel, BorderLayout.PAGE_END);
 		}
 	}
+	
+	private void goToSelectedArticle() {
+		Services.getBrowser().go(new ArticleResult(
+				pubList.getSelectedValue().toString()));
+	}
 
 	private void buildContextMenu(FilterPanel filterPanel) {
 		final JList theList = filterPanel.getList();
@@ -89,7 +96,7 @@ class AuthorPublicationResult extends JPanel {
 		menuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
-				Services.getBrowser().go(new ArticleResult((String)theList.getSelectedValue()));
+				goToSelectedArticle();
 			}
 		});
 		popupMenu.add(menuItem);
@@ -104,6 +111,13 @@ class AuthorPublicationResult extends JPanel {
 		popupMenu.add(menuItem);
 		
 		theList.addMouseListener(new ListPopupMouseListener(popupMenu));
+		theList.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent evt) {
+				if(evt.getButton() == MouseEvent.BUTTON1 && evt.getClickCount() == 2)
+					goToSelectedArticle();
+			}
+		});
 	}
 
 	/**

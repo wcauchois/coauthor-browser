@@ -2,6 +2,8 @@ package edu.washington.cs.cse403d.coauthor.client.searchui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 
 import javax.swing.DefaultListModel;
@@ -30,6 +32,16 @@ public class ListOfAuthors extends JList {
 			model.addElement(author);
 		
 		addMouseListener(new ListPopupMouseListener(buildContextMenu()));
+		addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent evt) {
+				if(evt.getButton() == MouseEvent.BUTTON1 && evt.getClickCount() == 2)
+					goToSelectedAuthor();
+			}
+		});
+	}
+	private void goToSelectedAuthor() {
+		Services.getBrowser().go(new AuthorResult(getSelectedValue().toString()));
 	}
 	protected JPopupMenu buildContextMenu() {
 		JPopupMenu menu = new JPopupMenu();
@@ -39,7 +51,7 @@ public class ListOfAuthors extends JList {
 		menuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
-				Services.getBrowser().go(new AuthorResult((String)getSelectedValue()));
+				goToSelectedAuthor();
 			}
 		});
 		menu.add(menuItem);
@@ -48,7 +60,7 @@ public class ListOfAuthors extends JList {
 		menuItem.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
-				StringUtils.copyToClipboard((String)getSelectedValue());
+				StringUtils.copyToClipboard(getSelectedValue());
 			}
 		});
 		menu.add(menuItem);
