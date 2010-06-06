@@ -97,6 +97,8 @@ public abstract class VisualExplorer {
 	protected ActionList radialAnimateActionsSpacing;
 	protected ForceDirectedLayout fdlLayout;
 	protected ForceDirectedLayout spacingLayout;
+	protected PrefixSearchTupleSet searchTupleSet;
+	
 	private boolean isInFDL;
 	protected ActionList highlightControl;
 	protected ActionList fdlAnimateActions;
@@ -215,11 +217,14 @@ public abstract class VisualExplorer {
 				String current = (String) coAuItr.next();
 				Node added = this.coAuthors.addNode();
 				added.set("name", current);
+				added.set("visited",0);
+				this.searchTupleSet.index(this.colorLayoutVis.getVisualItem("graph.nodes", added),"name");
 				this.coAuthors.addEdge(addTo, added);
 			}
 			addTo.setInt("visited", 1);
-	
 	}
+//		this.colorLayoutVis.removeAction("highlight");
+//		this.colorLayoutVis.putAction("highlight",this.highlightControl);
 		this.updateVis();
 	}
 	
@@ -369,58 +374,28 @@ public abstract class VisualExplorer {
         DataColorAction fill = new DataColorAction("graph.nodes", "visited",
                 Constants.NOMINAL, VisualItem.FILLCOLOR, palette);
         fill.add("_fixed", ColorLib.rgb(255,0,255));
-        fill.add("_highlight", ColorLib.rgb(255,100,100));
-        fill.add("ingroup('_search_')", ColorLib.rgb(255,190,190));
+        fill.add("ingroup('_search_')", ColorLib.rgb(100,240,75));
     
+        fill.add("_highlight", ColorLib.rgb(255,100,100));
+        
         this.highlightControl = new ActionList(Activity.INFINITY);
         highlightControl.add(new RepaintAction());
         highlightControl.add(fill);
 
-        ItemAction nodeColor = new NodeColorAction("graph.nodes");
-        ItemAction textColor = new TextColorAction("graph.nodes");
-        // recolor
-        ActionList recolor = new ActionList();
-        recolor.add(nodeColor);
-        recolor.add(textColor);
-        recolor.add(fill);
-        recolor.add(new RepaintAction());
-        this.colorLayoutVis.putAction("recolor", recolor);
         
-        
-        // repaint
-      /*  ActionList repaint = new ActionList();
-        repaint.add(recolor);
-        repaint.add(new RepaintAction());
-        m_vis.putAction("repaint", repaint);*/
-        
-        // animate paint change
-        ActionList animatePaint = new ActionList(400);
-        animatePaint.add(new ColorAnimator("graph.nodes"));
-        animatePaint.add(new RepaintAction());
-        this.colorLayoutVis.putAction("animatePaint", animatePaint);
-        
-        SearchTupleSet search = new PrefixSearchTupleSet();
-        this.colorLayoutVis.addFocusGroup(Visualization.SEARCH_ITEMS, search);
-        search.addTupleSetListener(new TupleSetListener(){
+        searchTupleSet = new PrefixSearchTupleSet();
+        searchTupleSet.setDelimiterString(", ");
+        this.colorLayoutVis.addFocusGroup(Visualization.SEARCH_ITEMS, searchTupleSet);
+        searchTupleSet.addTupleSetListener(new TupleSetListener(){
         	@Override
-			public void tupleSetChanged(TupleSet arg0, Tuple[] arg1,
-					Tuple[] arg2) {
-				System.out.println("Tupule Set has changed!");
-				synchronized(colorLayoutVis){
-				if(arg0.getTupleCount() > 0){
-					System.out.println("Number of tupules in returned search is non 0");
-					//colorLayoutVis.cancel("highlight");
-					//colorLayoutVis.removeAction("highlight");
-					colorLayoutVis.cancel("animatePaint");
-					colorLayoutVis.run("recolor");
-					colorLayoutVis.run("animatePaint");
-				}else{
-					System.out.println("number of tupules in returned search is 0");
-					//colorLayoutVis.run("highlight");
-					colorLayoutVis.putAction("highlight", highlightControl);
-				}
-			}
-        	}});
+				public void tupleSetChanged(TupleSet arg0, Tuple[] arg1,
+						Tuple[] arg2) {
+					System.out.println("Tupule Set has changed!");
+					colorLayoutVis.cancel("highlight");
+					colorLayoutVis.run("highlight");
+					colorLayoutVis.repaint();
+        		}
+        	});
         
         this.colorLayoutVis.putAction("draw", draw);
         this.colorLayoutVis.putAction("highlight", highlightControl);
@@ -429,21 +404,7 @@ public abstract class VisualExplorer {
 
 	}
 	
-	   public static class NodeColorAction extends ColorAction {
-	        public NodeColorAction(String group) {
-	            super(group, VisualItem.FILLCOLOR, ColorLib.rgba(0,0,0,0));
-	            add("ingroup('_search_')", ColorLib.rgb(255,190,190));
-	          }
-	                
-	    }
-	   
-	   public static class TextColorAction extends ColorAction {
-	        public TextColorAction(String group) {
-	            super(group, VisualItem.TEXTCOLOR, ColorLib.gray(0));
-	            add("_hover", ColorLib.rgb(255,0,0));
-	        }
-	    }
-	protected void initFdlAnimation(){
+		protected void initFdlAnimation(){
 
         // default behavior returns a force-directed layout
         fdlLayout = new ForceDirectedLayout("graph");
@@ -456,7 +417,8 @@ public abstract class VisualExplorer {
         
         Force[] forces = fsim.getForces();
                      
-        ActionList fdlAnimate = new ActionList(5000);
+        ActionList fdlAnimate = new ActionList(10000);
+        fdlAnimate.setPacingFunction(new SlowInSlowOutPacer());
         fdlAnimate.add(fdlLayout);
 
         this.fdlAnimateActions = fdlAnimate;
