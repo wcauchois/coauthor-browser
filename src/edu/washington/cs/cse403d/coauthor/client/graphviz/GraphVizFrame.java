@@ -48,7 +48,7 @@ public class GraphVizFrame extends JFrame implements ActionListener{
 		this.setContentPane(this.setupButtons(visExp));
 		this.visExp.updateVis();
 		this.add(visExp.getDisplay());
-		this.setIconImage(Services.getResourceManager().loadImageIcon("notkin.png").getImage());
+	//	this.setIconImage(Services.getResourceManager().loadImageIcon("notkin.png").getImage());
 	}
 	
 	public GraphVizFrame(String startingAuthor, String endingAuthor) throws RemoteException{
