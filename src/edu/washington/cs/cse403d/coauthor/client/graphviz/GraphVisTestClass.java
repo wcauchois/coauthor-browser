@@ -53,7 +53,7 @@ public class GraphVisTestClass {
 		List<PathLink> chain= backend.getOneShortestPathBetweenAuthors("Jessica Miller", "Ross Tate", true); // Jessica Miller->Stephen G. Kobourov-> Michael Stepp-> Ross Tate
 		System.out.println(chain);
 	//	String s = "Jessica Miller";
-		VisualCoAuthorExplorer vx = new VisualCoAuthorExplorer("David Notkin");
+	//	VisualCoAuthorExplorer vx = new VisualCoAuthorExplorer("David Notkin");
 		//VisualChainExplorer vx = new VisualChainExplorer("Jessica Miller", "David Notkin");
 		
 /*		List<String> authors = new ArrayList<String>();
@@ -73,7 +73,8 @@ public class GraphVisTestClass {
 		frame.setVisible(true); // show the window
 		vx.updateVis();
 */
-		GraphVizFrame fr = new GraphVizFrame("David Notkin"); 
+		GraphVizFrame fr = new GraphVizFrame("Jessica Miller", "Marty Stepp"); 
+		//GraphVizFrame fr = new GraphVizFrame("David Notkin");
 		fr.pack();
 		fr.setVisible(true);
 	}
