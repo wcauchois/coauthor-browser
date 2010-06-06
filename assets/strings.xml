@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<strings>
+	<string name="AuthorSearchPane.help"><![CDATA[
+		From this screen you may:
+		<ul>
+			<li>
+				<b>Perform a search on a single author.</b>
+				Enter the author's name in the text field below, then click the search button to see which publications that author has worked on.
+			</li>
+			<li>
+				<b>Perform a search on multiple authors.</b>
+				Enter the first author's name in the text field below, then click on the plus to add another author. Repeat until all of the authors have been specified, and then click the search button to see which publications these authors have collaborated on.
+			</li>
+			<li>
+				<b>Find out about the co-author chain of two unrealted authors.</b>
+				Perform a search on two authors. If they haven't collaborated, you will obtain the co-author chain that exists between the two authors.
+			</li>
+		</ul>
+		<i>Tip:</i> Use suggestions (displayed while you are typing in a box below the text field) to make sure you enter the author's name correctly.
+	]]></string>
+
+	<string name="CoauthorFilter.help"><![CDATA[
+		This is a list of coauthors of the author you searched for. From this section, you can:
+		<ul>
+			<li>
+				Perform a new search on a specific coauthor in the list. Right-click on any item to bring up the context menu.
+			</li>
+			<li>
+				Obtain a graphical respresntation of the result by clicking on the visualize button, right next to the filter bar.
+			</li>		
+			<li>
+				Filter the list to find a specific coauthor in the list.
+			</li>
+				<ul>
+					<li>
+						Click on the filter box to remove help text and begin your search. 
+					</li>
+
+					<li>
+						Click the X button at the end of the filter box to get the original result.
+					</li>
+
+				</ul>
+		</ul>
+	]]></string>
+
+	<string name="PublicationFilter.help"><![CDATA[
+		This is a list of publication of the author you searched for. From this section, you can:
+		<ul>
+			<li>
+				Perform a new search on a specific article in the list. Right-click on any item to bring up the context menu.
+			</li>
+		
+			<li>
+				Filter the list to find a specific article in the list.
+			</li>
+				<ul>
+					<li>
+						Click on the filter box to remove help text and begin your search. 
+					</li>
+
+					<li>
+						Click the X button at the end of the filter box to get the original result.
+					</li>
+
+				</ul>
+		</ul>
+	]]></string>
+
+	<string name="ArticleSearchPane.help"><![CDATA[
+		From this screen you may:
+		<ul>
+			<li>
+				<b>Perform a search on an article.</b>
+				Enter a part of any article's title in the text field below, then click the search button to see the list of articles containing your search query.
+			</li>
+			<li>
+				<b>Filter the result by publication year.</b>
+				Enter a starting year and/or an ending year to filter your result within given limits. Valid input range is from 1800 to 2010.
+			</li>
+		</ul>
+	]]></string>
+
+	<string name="Visualizer.help"><![CDATA[
+		Click on this button to obtain a visual representation of the result. 
+		<ul>
+			<li>
+				From this visualization, you will be able to run new searches and see how authors are connected through their works.
+			</li>
+		</ul>
+	]]></string>
+</strings>
