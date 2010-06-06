@@ -37,8 +37,6 @@ class AuthorPublicationResult extends JPanel {
 		setVisible(true);
 		
 		this.authorList = authorList;
-
-		Thread.sleep(10000);
 		
 		initialize();
 	}

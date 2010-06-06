@@ -119,10 +119,6 @@ public class BrowserFrame extends JFrame implements Browser {
 			if (!isCancelled) {
 				renderPage();
 				loadingThread = null;
-			} else {
-				System.out
-						.println("Page was cancelled. Didn't do anything with load of page: "
-								+ page.getTitle());
 			}
 		}
 	}
