@@ -3,20 +3,23 @@
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
 import edu.washington.cs.cse403d.coauthor.client.Services;
 import edu.washington.cs.cse403d.coauthor.client.utils.FilterPanel;
+import edu.washington.cs.cse403d.coauthor.client.utils.ListPopupMouseListener;
 import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 
 /**
@@ -75,83 +78,29 @@ class AuthorCoauthorResult extends JPanel {
 
 	private void buildNavigator(FilterPanel filterPanel) {
 		final JList theList = filterPanel.getList();
-		theList.addMouseListener(new MouseAdapter() {
+		final JPopupMenu popupMenu = new JPopupMenu();
+		
+		JMenuItem menuItem;
+		menuItem = new JMenuItem("Search for this author");
+		menuItem.addActionListener(new ActionListener() {
 			@Override
-			public void mouseClicked(MouseEvent evt) {
-				int selected = theList.getSelectedIndex();
-
-				String searchFor = ("<html><i>→Search for this author</i></html>");
-				String coauthorSearchFor = ("<html><i>→Perform coauthor search on this author</i></html>");
-				String closeMenu = ("<html><i>→Close this submenu</i></html>");
-				if (!theList.isSelectionEmpty() && !theList.getSelectedValue().equals(closeMenu)
-						&& !theList.getSelectedValue().equals(searchFor)
-						&& !theList.getSelectedValue().equals(coauthorSearchFor)) {
-					if (selected + 1 == listModel.getSize() || listModel.getElementAt(selected + 1) != searchFor) {
-
-						selected = theList.getSelectedIndex();
-						listModel.insertElementAt(searchFor, selected + 1);
-						listModel.insertElementAt(coauthorSearchFor, selected + 2);
-						listModel.insertElementAt(closeMenu, selected + 3);
-
-						theList.setModel(listModel);
-						theList.setSelectedIndex(selected);
-					}
-				}
-
-				if (!theList.isSelectionEmpty() && theList.getSelectedValue().equals(closeMenu)) {
-					listModel.remove(selected);
-					theList.setSelectedIndex(selected - 1);
-					listModel.remove(theList.getSelectedIndex());
-					theList.setSelectedIndex(selected - 2);
-					listModel.remove(theList.getSelectedIndex());
-					theList.setModel(listModel);
-				}
-
-				int subMenuSelection;
-				String selectedItem;
-				if (!theList.isSelectionEmpty()) {
-					subMenuSelection = theList.getSelectedIndex();
-					selectedItem = (String) listModel.getElementAt(subMenuSelection);
-				} else {
-					subMenuSelection = selected - 2;
-					selectedItem = "";
-				}
-
-				if (selectedItem.equals(searchFor)) {
-					String author = (String) listModel.getElementAt(subMenuSelection - 1);
-
-					// Remove the submenu before navigating
-					listModel.remove(subMenuSelection);
-					theList.setSelectedIndex(subMenuSelection);
-					listModel.remove(theList.getSelectedIndex());
-					theList.setSelectedIndex(subMenuSelection);
-					listModel.remove(theList.getSelectedIndex());
-					theList.setModel(listModel);
-
-					Services.getBrowser().go(new AuthorResult(author));
-
-				} else if (selectedItem.equals(coauthorSearchFor)) {
-					List<String> selectedList = new ArrayList<String>(2);
-					selectedList.add(author);
-					selectedList.add((String) listModel.getElementAt(subMenuSelection - 2));
-
-					// Remove the submenu before navigating
-					subMenuSelection--;
-					listModel.remove(subMenuSelection);
-					theList.setSelectedIndex(subMenuSelection);
-					listModel.remove(theList.getSelectedIndex());
-					theList.setSelectedIndex(subMenuSelection);
-					listModel.remove(theList.getSelectedIndex());
-
-					Services.getBrowser().go(new AuthorResult(selectedList));
-				}
-
-				if (evt.getClickCount() == 2) {
-					String author = (String) theList.getSelectedValue();
-					Services.getBrowser().go(new AuthorResult(author));
-				}
+			public void actionPerformed(ActionEvent evt) {
+				Services.getBrowser().go(new AuthorResult((String)theList.getSelectedValue()));
 			}
 		});
+		popupMenu.add(menuItem);
+		
+		menuItem = new JMenuItem("Add author to search");
+		menuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				List<String> newAuthorSearch = Arrays.asList(author, (String)theList.getSelectedValue());
+				Services.getBrowser().go(new AuthorResult(newAuthorSearch));
+			}
+		});
+		popupMenu.add(menuItem);
+		
+		theList.addMouseListener(new ListPopupMouseListener(popupMenu));
 	}
 
 	/**

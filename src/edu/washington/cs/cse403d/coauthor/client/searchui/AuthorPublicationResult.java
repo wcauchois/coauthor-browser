@@ -3,19 +3,22 @@ package edu.washington.cs.cse403d.coauthor.client.searchui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
 import edu.washington.cs.cse403d.coauthor.client.Services;
 import edu.washington.cs.cse403d.coauthor.client.utils.FilterPanel;
+import edu.washington.cs.cse403d.coauthor.client.utils.ListPopupMouseListener;
 import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
 
 /**
@@ -78,62 +81,19 @@ class AuthorPublicationResult extends JPanel {
 
 	private void buildNavigator(FilterPanel filterPanel) {
 		final JList theList = filterPanel.getList();
-		theList.addMouseListener(new MouseAdapter() {
+		final JPopupMenu popupMenu = new JPopupMenu();
+		
+		JMenuItem menuItem;
+		menuItem = new JMenuItem("Search for this publication");
+		menuItem.addActionListener(new ActionListener() {
 			@Override
-			public void mouseClicked(MouseEvent evt) {
-				int selected = theList.getSelectedIndex();
-
-				String searchFor = ("<html><i>°ÊSearch for this article</i></html>");
-				String closeMenu = ("<html><i>°ÊClose this submenu</i></html>");
-				if (!theList.isSelectionEmpty() && !theList.getSelectedValue().equals(closeMenu)
-						&& !theList.getSelectedValue().equals(searchFor)) {
-					if (selected + 1 == listModel.getSize() || listModel.getElementAt(selected + 1) != searchFor) {
-
-						selected = theList.getSelectedIndex();
-						listModel.insertElementAt(searchFor, selected + 1);
-						listModel.insertElementAt(closeMenu, selected + 2);
-
-						theList.setModel(listModel);
-						theList.setSelectedIndex(selected);
-					}
-				}
-
-				if (!theList.isSelectionEmpty() && theList.getSelectedValue().equals(closeMenu)) {
-					listModel.remove(selected);
-					theList.setSelectedIndex(selected - 1);
-					listModel.remove(theList.getSelectedIndex());
-					theList.setModel(listModel);
-				}
-
-				int subMenuSelection;
-				String selectedItem;
-				if (!theList.isSelectionEmpty()) {
-					subMenuSelection = theList.getSelectedIndex();
-					selectedItem = (String) listModel.getElementAt(subMenuSelection);
-				} else {
-					subMenuSelection = selected - 2;
-					selectedItem = "";
-				}
-
-				if (selectedItem.equals(searchFor)) {
-					String articleTitle = (String) listModel.getElementAt(subMenuSelection - 1);
-
-					// Remove the submenu before navigating
-					listModel.remove(subMenuSelection);
-					theList.setSelectedIndex(subMenuSelection);
-					listModel.remove(theList.getSelectedIndex());
-					theList.setModel(listModel);
-
-					Services.getBrowser().go(new ArticleResult(articleTitle));
-
-				}
-
-				if (evt.getClickCount() == 2) {
-					String author = (String) theList.getSelectedValue();
-					Services.getBrowser().go(new ArticleResult(author));
-				}
+			public void actionPerformed(ActionEvent evt) {
+				Services.getBrowser().go(new ArticleResult((String)theList.getSelectedValue()));
 			}
 		});
+		popupMenu.add(menuItem);
+		
+		theList.addMouseListener(new ListPopupMouseListener(popupMenu));
 	}
 
 	/**
