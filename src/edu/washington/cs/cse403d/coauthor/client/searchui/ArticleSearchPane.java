@@ -29,7 +29,8 @@ public class ArticleSearchPane extends JPanel {
 	public ArticleSearchPane() {
 		JPanel topPart = new JPanel();
 		topPart.add(new JLabel("Please enter your search terms below"));
-		topPart.add(new HelpMarker("Click here for more information."));
+		topPart.add(new HelpMarker(Services.getResourceManager().loadStrings("strings.xml").get(
+				"ArticleSearchPane.help")));
 
 		final JPanel bottomPart = new JPanel();
 		query.setPreferredSize(new Dimension(100, query.getPreferredSize().height));
@@ -55,10 +56,10 @@ public class ArticleSearchPane extends JPanel {
 							JOptionPane.ERROR_MESSAGE);
 				} else if (!isNumber(startYear.getText())) {
 					JOptionPane.showMessageDialog(bottomPart, "Starting year must be a number.\n"
-							+ "Valid Input Range: 0 - 9999", "Error!", JOptionPane.ERROR_MESSAGE);
+							+ "Valid Input Range: 1800 - 2010", "Error!", JOptionPane.ERROR_MESSAGE);
 				} else if (!isNumber(startYear.getText())) {
 					JOptionPane.showMessageDialog(bottomPart, "Ending year must be a number.\n"
-							+ "Valid Input Range: 0 - 9999", "Error!", JOptionPane.ERROR_MESSAGE);
+							+ "Valid Input Range: 1800 - 2010", "Error!", JOptionPane.ERROR_MESSAGE);
 				} else if (startYear.getText().length() > 0
 						&& (Integer.parseInt(startYear.getText()) > 2010 || Integer.parseInt(startYear.getText()) < 1800)) {
 					JOptionPane.showMessageDialog(bottomPart, "Incorrect starting year.\n"
