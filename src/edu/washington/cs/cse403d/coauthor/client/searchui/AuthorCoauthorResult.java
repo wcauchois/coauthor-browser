@@ -74,10 +74,10 @@ class AuthorCoauthorResult extends JPanel {
 
 		FilterPanel filterPanel = new FilterPanel(coauthorList, author);
 		add(filterPanel, BorderLayout.PAGE_END);
-		buildNavigator(filterPanel);
+		buildContextMenu(filterPanel);
 	}
 
-	private void buildNavigator(FilterPanel filterPanel) {
+	private void buildContextMenu(FilterPanel filterPanel) {
 		final JList theList = filterPanel.getList();
 		final JPopupMenu popupMenu = new JPopupMenu();
 		

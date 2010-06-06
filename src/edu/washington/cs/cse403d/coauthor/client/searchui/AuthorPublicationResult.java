@@ -74,13 +74,13 @@ class AuthorPublicationResult extends JPanel {
 		} else {
 			buildPubList();
 			FilterPanel filterPanel = new FilterPanel(pubList, null);
-			buildNavigator(filterPanel);
+			buildContextMenu(filterPanel);
 			// Add the filter panel
 			add(filterPanel, BorderLayout.PAGE_END);
 		}
 	}
 
-	private void buildNavigator(FilterPanel filterPanel) {
+	private void buildContextMenu(FilterPanel filterPanel) {
 		final JList theList = filterPanel.getList();
 		final JPopupMenu popupMenu = new JPopupMenu();
 		
