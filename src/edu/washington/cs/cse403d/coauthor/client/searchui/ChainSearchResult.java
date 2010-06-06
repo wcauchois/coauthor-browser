@@ -104,7 +104,6 @@ public class ChainSearchResult extends JPanel {
 			number2.add(numberText3);
 
 			FilterPanel filterPanel = new FilterPanel(chainList, author1, author2);
-			buildNavigator(filterPanel);
 			add(filterPanel);
 			add(contentPanel, BorderLayout.PAGE_START);
 			add(number, BorderLayout.CENTER);
@@ -112,64 +111,6 @@ public class ChainSearchResult extends JPanel {
 		} catch (RemoteException e) {
 			System.out.println("Invalid author(s)");
 		}
-	}
-
-	private void buildNavigator(FilterPanel filterPanel) {
-		final JList theList = filterPanel.getList();
-		theList.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent evt) {
-				int selected = theList.getSelectedIndex();
-
-				String searchFor = ("<html><i>°ÊSearch for this author</i></html>");
-				String closeMenu = ("<html><i>°ÊClose this submenu</i></html>");
-				if (!theList.isSelectionEmpty() && !theList.getSelectedValue().equals(closeMenu)
-						&& !theList.getSelectedValue().equals(searchFor)) {
-					if (selected + 1 == listModel.getSize() || listModel.getElementAt(selected + 1) != searchFor) {
-
-						selected = theList.getSelectedIndex();
-						listModel.insertElementAt(searchFor, selected + 1);
-						listModel.insertElementAt(closeMenu, selected + 2);
-
-						theList.setModel(listModel);
-						theList.setSelectedIndex(selected);
-					}
-				}
-
-				if (!theList.isSelectionEmpty() && theList.getSelectedValue().equals(closeMenu)) {
-					listModel.remove(selected);
-					theList.setSelectedIndex(selected - 1);
-					listModel.remove(theList.getSelectedIndex());
-					theList.setModel(listModel);
-				}
-
-				int subMenuSelection;
-				String selectedItem;
-				if (!theList.isSelectionEmpty()) {
-					subMenuSelection = theList.getSelectedIndex();
-					selectedItem = (String) listModel.getElementAt(subMenuSelection);
-				} else {
-					subMenuSelection = selected - 2;
-					selectedItem = "";
-				}
-
-				if (selectedItem.equals(searchFor)) {
-					String author = (String) listModel.getElementAt(subMenuSelection - 1);
-
-					// Remove the submenu before navigating
-					listModel.remove(subMenuSelection);
-					theList.setSelectedIndex(subMenuSelection);
-					listModel.remove(theList.getSelectedIndex());
-					theList.setModel(listModel);
-
-					Services.getBrowser().go(new AuthorResult(author));
-				}
-				if (evt.getClickCount() == 2) {
-					String author = (String) theList.getSelectedValue();
-					Services.getBrowser().go(new AuthorResult(author));
-				}
-			}
-		});
 	}
 
 	/**
