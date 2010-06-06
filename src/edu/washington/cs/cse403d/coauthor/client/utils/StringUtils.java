@@ -1,5 +1,8 @@
 package edu.washington.cs.cse403d.coauthor.client.utils;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.util.Iterator;
 
 /**
@@ -8,9 +11,17 @@ import java.util.Iterator;
  * @author William Cauchois
  */
 
-// TODO(wcauchois): is this the right place to put these?
-
 public class StringUtils {
+	/**
+	 * Copy the string representation of the specified object to the system
+	 * clipboard.
+	 */
+	public static void copyToClipboard(Object obj) {
+		Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
+		StringSelection data = new StringSelection(obj.toString());
+		clip.setContents(data, data);
+	}
+	
 	/**
 	 * Join a collection of strings into a single string, where the individual
 	 * strings are separated by the specified delimiter.
@@ -29,6 +40,7 @@ public class StringUtils {
 		}
 		return buf.toString();
 	}
+	
 	/**
 	 * Truncate a string so that if it is over a certain length it will be
 	 * "elided" by replacing the overflow with an ellipsis ("...").

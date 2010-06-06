@@ -20,6 +20,7 @@ import javax.swing.ListSelectionModel;
 import edu.washington.cs.cse403d.coauthor.client.Services;
 import edu.washington.cs.cse403d.coauthor.client.utils.FilterPanel;
 import edu.washington.cs.cse403d.coauthor.client.utils.ListPopupMouseListener;
+import edu.washington.cs.cse403d.coauthor.client.utils.StringUtils;
 import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 
 /**
@@ -96,6 +97,15 @@ class AuthorCoauthorResult extends JPanel {
 			public void actionPerformed(ActionEvent evt) {
 				List<String> newAuthorSearch = Arrays.asList(author, (String)theList.getSelectedValue());
 				Services.getBrowser().go(new AuthorResult(newAuthorSearch));
+			}
+		});
+		popupMenu.add(menuItem);
+		
+		menuItem = new JMenuItem("Copy to clipboard");
+		menuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				StringUtils.copyToClipboard(theList.getSelectedValue());
 			}
 		});
 		popupMenu.add(menuItem);
