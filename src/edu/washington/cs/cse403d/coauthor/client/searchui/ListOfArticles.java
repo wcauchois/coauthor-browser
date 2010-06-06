@@ -6,6 +6,8 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -38,6 +40,13 @@ public class ListOfArticles extends JList {
 		authorsFont = dialogFont.deriveFont(Font.ITALIC);
 		
 		addMouseListener(new ListPopupMouseListener(buildContextMenu()));
+		addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent evt) {
+				if(evt.getButton() == MouseEvent.BUTTON1 && evt.getClickCount() == 2)
+					goToSelectedArticle();
+			}
+		});
 	}
 	
 	public void setTitleFont(Font font) {
@@ -87,7 +96,7 @@ public class ListOfArticles extends JList {
 		}
 	}
 	
-	protected void goToSelectedArticle() {
+	private void goToSelectedArticle() {
 		Services.getBrowser().go(new ArticleResult(
 				getSelectedValue().toString()));
 	}
