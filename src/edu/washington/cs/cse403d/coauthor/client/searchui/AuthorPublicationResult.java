@@ -3,25 +3,15 @@ package edu.washington.cs.cse403d.coauthor.client.searchui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.List;
 
-import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.ListSelectionModel;
 
 import edu.washington.cs.cse403d.coauthor.client.Services;
 import edu.washington.cs.cse403d.coauthor.client.utils.FilterPanel;
-import edu.washington.cs.cse403d.coauthor.client.utils.ListPopupMouseListener;
-import edu.washington.cs.cse403d.coauthor.client.utils.StringUtils;
 import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
 
 /**
@@ -38,7 +28,6 @@ class AuthorPublicationResult extends JPanel {
 	private final List<String> authorList;
 	private JList pubList;
 	private List<Publication> publications;
-	private DefaultListModel listModel;
 
 	/**
 	 * constructor for multi-entry author search
@@ -64,10 +53,6 @@ class AuthorPublicationResult extends JPanel {
 		title.setFont(f.deriveFont(s));
 		add(title, BorderLayout.PAGE_START);
 
-		// Build the list of publication
-		listModel = new DefaultListModel();
-		pubList = new JList(listModel);
-
 		publications = CDSI.getPublicationsForAllAuthors(authorList.toArray(new String[0]));
 
 		if (publications.isEmpty()) {
@@ -76,64 +61,17 @@ class AuthorPublicationResult extends JPanel {
 		} else {
 			buildPubList();
 			FilterPanel filterPanel = new FilterPanel(pubList, null);
-			buildContextMenu(filterPanel);
-			// Add the filter panel
 			add(filterPanel, BorderLayout.PAGE_END);
 		}
 	}
 	
-	private void goToSelectedArticle() {
-		Services.getBrowser().go(new ArticleResult(
-				pubList.getSelectedValue().toString()));
-	}
-
-	private void buildContextMenu(FilterPanel filterPanel) {
-		final JList theList = filterPanel.getList();
-		final JPopupMenu popupMenu = new JPopupMenu();
-		
-		JMenuItem menuItem;
-		menuItem = new JMenuItem("Search for this publication");
-		menuItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				goToSelectedArticle();
-			}
-		});
-		popupMenu.add(menuItem);
-		
-		menuItem = new JMenuItem("Copy to clipboard");
-		menuItem.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent evt) {
-				StringUtils.copyToClipboard(theList.getSelectedValue());
-			}
-		});
-		popupMenu.add(menuItem);
-		
-		theList.addMouseListener(new ListPopupMouseListener(popupMenu));
-		theList.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent evt) {
-				if(evt.getButton() == MouseEvent.BUTTON1 && evt.getClickCount() == 2)
-					goToSelectedArticle();
-			}
-		});
-	}
-
 	/**
 	 * Internal helper method that builds a scrollable list of publication
 	 */
 	private void buildPubList() {
-		int i = 0;
-		while (i < publications.size()) {
-			listModel.add(i, publications.get(i).getTitle());
-			i++;
-		}
-		pubList.setLayoutOrientation(JList.VERTICAL);
-		pubList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		pubList.setVisibleRowCount(6);
+		pubList = new ListOfArticles(publications, 360);
 		JScrollPane listScroller = new JScrollPane(pubList);
-		listScroller.setPreferredSize(new Dimension(400, 140));
+		listScroller.setPreferredSize(new Dimension(400, 200));
 		add(listScroller, BorderLayout.CENTER);
 	}
 }
