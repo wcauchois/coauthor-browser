@@ -70,15 +70,16 @@ public abstract class VisualExplorer {
 	protected Visualization colorLayoutVis;
 	protected Display dispCtrls;
 	protected CoauthorDataServiceInterface backend;
-	protected ActionList radialAnimateActionsArrangement;
-	protected ActionList radialAnimateActionsSpacing;
+	protected ActionList radialActionsArrangement;
+	protected ActionList radialActionsSpacing;
+	protected ActionList fdlActionsArrangement;
+	protected ActionList fdlActionsRuntime;
 	protected ForceDirectedLayout fdlLayout;
 	protected ForceDirectedLayout spacingLayout;
 	protected PrefixSearchTupleSet searchTupleSet;
 	
 	private boolean isInFDL;
 	protected ActionList highlightControl;
-	protected ActionList fdlAnimateActions;
 	
 	private String draw = "draw";
 	
@@ -170,6 +171,7 @@ public abstract class VisualExplorer {
 		synchronized (this.colorLayoutVis){
 			
 		Node addTo = findAuthor(authorName);
+		VisualItem addToVisItem = this.colorLayoutVis.getVisualItem("graph.nodes", addTo);
 		
 		// look for returned authors already in the graph; remove all authors already in
 		// the graph from the search results
@@ -191,7 +193,10 @@ public abstract class VisualExplorer {
 				Node added = this.coAuthors.addNode();
 				added.set("name", current);
 				added.set("visited",0);
-				this.searchTupleSet.index(this.colorLayoutVis.getVisualItem("graph.nodes", added),"name");
+				VisualItem addedVisItem = this.colorLayoutVis.getVisualItem("graph.nodes", added);
+				addedVisItem.setEndX(addToVisItem.getX());
+				addedVisItem.setEndY(addToVisItem.getY());
+				this.searchTupleSet.index(addedVisItem,"name");
 				this.coAuthors.addEdge(addTo, added);
 			}
 			addTo.setInt("visited", 1);
@@ -352,8 +357,9 @@ public abstract class VisualExplorer {
 	}
 	
 		protected void initFdlAnimation(){
-
-        // default behavior returns a force-directed layout
+		Layout radialLayout = new RadialTreeLayout("graph", 200);
+        this.fdlActionsArrangement = new ActionList(500);			
+            // default behavior returns a force-directed layout
         fdlLayout = new ForceDirectedLayout("graph");
         ForceSimulator fsim = ((ForceDirectedLayout) fdlLayout).getForceSimulator();
         fsim.getForces()[0].setParameter(0, -8f);
@@ -362,12 +368,10 @@ public abstract class VisualExplorer {
         fsim.getForces()[1].setParameter(0, .02f);
         fsim.getForces()[2].setParameter(1, 100);
         
-                    
-        ActionList fdlAnimate = new ActionList(15000);
-        fdlAnimate.setPacingFunction(new SlowInSlowOutPacer());
-        fdlAnimate.add(fdlLayout);
+        this.fdlActionsRuntime = new ActionList(15000);
+        this.fdlActionsRuntime.setPacingFunction(new SlowInSlowOutPacer());
+        this.fdlActionsRuntime.add(fdlLayout);
 
-        this.fdlAnimateActions = fdlAnimate;
 	}
 	
 	protected void initRadialAnimation(){
@@ -387,9 +391,9 @@ public abstract class VisualExplorer {
         
         ForceDirectedLayout fd2 = new ForceDirectedLayout("graph", fsim, false);
         spacing.add(fd2);
-        this.radialAnimateActionsArrangement = arrangement;
+        this.radialActionsArrangement = arrangement;
         this.spacingLayout = fd2;
-        this.radialAnimateActionsSpacing = spacing;
+        this.radialActionsSpacing = spacing;
 	}
 
 	
@@ -417,8 +421,8 @@ public abstract class VisualExplorer {
 	public void switchToRadialLayout(){
 		synchronized(this.colorLayoutVis){
 	 	this.colorLayoutVis.removeAction("ForceLayout");
-	 	this.colorLayoutVis.putAction("arrange", this.radialAnimateActionsArrangement);
-	 	this.colorLayoutVis.putAction("spacing", this.radialAnimateActionsSpacing);
+	 	this.colorLayoutVis.putAction("arrange", this.radialActionsArrangement);
+	 	this.colorLayoutVis.putAction("spacing", this.radialActionsSpacing);
         this.colorLayoutVis.runAfter(draw, "arrange");
         this.colorLayoutVis.runAfter("arrange", "spacing");
 	 	this.updateVis();
@@ -430,7 +434,7 @@ public abstract class VisualExplorer {
 		this.colorLayoutVis.removeAction("spacing");
         this.colorLayoutVis.removeAction("arrange");
         
-	 	this.colorLayoutVis.putAction("ForceLayout", this.fdlAnimateActions);
+	 	this.colorLayoutVis.putAction("ForceLayout", this.fdlActionsRuntime);
         this.colorLayoutVis.runAfter(draw, "ForceLayout");
 		this.updateVis();
 		this.isInFDL = true;
