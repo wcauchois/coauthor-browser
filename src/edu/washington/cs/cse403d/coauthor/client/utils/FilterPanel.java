@@ -1,7 +1,9 @@
 package edu.washington.cs.cse403d.coauthor.client.utils;	
 
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.rmi.RemoteException;
@@ -15,7 +17,12 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
+import javax.swing.JTextPane;
+import javax.swing.Popup;
+import javax.swing.PopupFactory;
 import javax.swing.SwingConstants;
+import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.HTMLEditorKit;
 
 import edu.washington.cs.cse403d.coauthor.client.Services;
 import edu.washington.cs.cse403d.coauthor.client.ResourceManager;
@@ -34,6 +41,12 @@ public class FilterPanel extends JPanel {
 	private String theAuthor;
 	private JList list;
 	private String author2 = null;
+	private static final String[] CSS_RULES = new String[] {
+		"body { background-color: #eeeeff; width: 250px }",
+		"body { font-family: Dialog; font-size: 12 }",
+		"ul { margin-left: 15px }"
+	};
+	
 	/**
 	 * Constructor
 	 * 
@@ -77,7 +90,8 @@ public class FilterPanel extends JPanel {
 		filterPanel.add(Box.createHorizontalStrut(5));
 		
 		if(theAuthor != null) {
-			filterPanel.add(new VisualizeButton());
+			filterPanel.add(new VisualizeButton(Services.getResourceManager().loadStrings("strings.xml").get(
+			"Visualizer.help")));
 			filterPanel.add(Box.createHorizontalStrut(5));
 			filterPanel.add(new JSeparator(SwingConstants.VERTICAL));
 			filterPanel.add(Box.createHorizontalStrut(5));
@@ -97,11 +111,15 @@ public class FilterPanel extends JPanel {
 		private ImageIcon visualizeButton, hoverButton;
 		final Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
 		final Cursor defaultCursor = new Cursor(Cursor.DEFAULT_CURSOR);
+		private PopupFactory popupFactory;
+		private Popup popup = null;
+		private ToolTip toolTip;
 		ResourceManager resourceManager;
 		
-		public VisualizeButton() {
+		public VisualizeButton(String tooltip) {
+			popupFactory = PopupFactory.getSharedInstance();
 			resourceManager = Services.getResourceManager();
-			this.setToolTipText("Click this button to visualize");
+			toolTip = new ToolTip(tooltip);
 			visualizeButton = resourceManager.loadImageIcon("VisualizeButton.png");
 			hoverButton = resourceManager.loadImageIcon("VisualizeButtonHover.png");
 			setIcon(visualizeButton);
@@ -120,11 +138,17 @@ public class FilterPanel extends JPanel {
 				public void mouseEntered(MouseEvent evt) {
 					setCursor(handCursor);
 					setIcon(hoverButton);
+					Point loc = VisualizeButton.this.getLocationOnScreen();
+					popup = popupFactory.getPopup(VisualizeButton.this, toolTip,
+								loc.x + VisualizeButton.this.getWidth(), loc.y);
+					popup.show();
 				}
 				@Override
 				public void mouseExited(MouseEvent evt) {
 					setCursor(defaultCursor);
 					setIcon(visualizeButton);
+					popup.hide();
+					popup = null;
 				}
 				
 			});
@@ -134,95 +158,27 @@ public class FilterPanel extends JPanel {
 	public JList getList() {
 		return filterField.getList();
 	}
+	
+	private class ToolTip extends JPanel {
+		private static final long serialVersionUID = -1589166890467253186L;
+
+		public ToolTip(String htmlContent) {
+			JTextPane text = new JTextPane();
+			HTMLEditorKit kit = new HTMLEditorKit();
+			text.setEditorKit(kit);
+			HTMLDocument doc = (HTMLDocument)text.getDocument();
+			for(String rule : CSS_RULES)
+				kit.getStyleSheet().addRule(rule);
+			try {
+				doc.setInnerHTML(doc.getRootElements()[0],
+						"<body>" + htmlContent + "</body>");
+			} catch(Throwable t) {
+				System.err.println("HelpMarker.ToolTip: Failed to parse HTML");
+				return;
+			}
+			add(text);
+			text.setBorder(null); // There's an annoying white border by default
+			setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		}
+	}
 }
-
-/*
-filterQuery = new JTextField(30);
-
-//Default message
-String filterHelp = "Type query here to filter the result";		
-filterQuery.setText(filterHelp);
-
-filterQuery.addMouseListener(new MouseAdapter () {
-	public void mouseClicked(MouseEvent evt) {
-		filterQuery.setText(null);
-		filterFlag = true;
-	}
-});
-
-filterQuery.getDocument().addDocumentListener(new DocumentListener() { 
-	@Override
-	public void changedUpdate(DocumentEvent arg0) {
-		int length = filterQuery.getDocument().getLength();
-		String query = "";
-		if (filterFlag) {
-			try {
-				query = filterQuery.getDocument().getText(0, length);
-			} catch (BadLocationException e) {
-				System.out.println("String Fetch Failed");
-			}
-			list.setModel(getFilteredResult(query));
-		}
-		}
-	@Override
-	public void insertUpdate(DocumentEvent arg0) {
-		int length = filterQuery.getDocument().getLength();
-		String query = "";
-		if (filterFlag) {
-			try {
-				query = filterQuery.getDocument().getText(0, length);
-			} catch (BadLocationException e) {
-				// TODO Auto-generated catch block
-				System.out.println("String Fetch Failed");
-			}
-			list.setModel(getFilteredResult(query));
-		}
-	}
-	@Override
-	public void removeUpdate(DocumentEvent arg0) {
-		int length = filterQuery.getDocument().getLength();
-		String query = "";
-		if (filterFlag) {
-			try {
-				query = filterQuery.getDocument().getText(0, length);
-			} catch (BadLocationException e) {
-				// TODO Auto-generated catch block
-				System.out.println("String Fetch Failed");
-			}
-			list.setModel(getFilteredResult(query));
-		}		
-	}
-});
-
-	private DefaultListModel getFilteredResult(String query) {
-		if (query == null)
-			return listModel;
-		
-		DefaultListModel filteredModel = new DefaultListModel();
-		CharSequence newQuery = (CharSequence) query.toLowerCase();
-		
-		//sequence to get the filtered results.		
-		int i = 0;
-		int j = 0;
-		if (flag == "Pub") {
-			while (i < publications.size()){
-				String compare = publications.get(i).getTitle().toLowerCase();
-				if (compare.contains(newQuery)) {
-					filteredModel.add(j, publications.get(i).getTitle());
-					j++;
-				}
-				i++;
-			}
-		} else {
-			while (i < coauthors.size()){
-				String compare = coauthors.get(i).toLowerCase();
-				if (compare.contains(newQuery)) {
-					filteredModel.add(j, coauthors.get(i));
-					j++;
-				}
-				i++;
-			}
-		}		
-		return filteredModel;		
-	}
-*/

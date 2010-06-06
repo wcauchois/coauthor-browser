@@ -62,7 +62,7 @@ public class VisualChainExplorer extends VisualExplorer{
 		//System.out.println(authorChain);
 		Table nodes = new Table();
 		nodes.addColumn("name", String.class);
-		nodes.addColumn("visited", int.class, 0);
+		nodes.addColumn("visited", int.class);
 		
 		// table of edges; source and target refer to row index in the table of
 		// nodes

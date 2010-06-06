@@ -48,7 +48,6 @@ public class SearchPage extends BrowserPage {
 
 		tabbedPane.addTab("Author Search", new AuthorSearchPane(this));
 		tabbedPane.addTab("Article Search", new ArticleSearchPane());
-		tabbedPane.addTab("Chain Search", new ChainSearchPane(this));
 		tabbedPane.addTab("Help", new HelpPane());
 
 		if (searchType == AUTHOR_SEARCH)

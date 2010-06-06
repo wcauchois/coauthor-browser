@@ -1,9 +1,12 @@
 package edu.washington.cs.cse403d.coauthor.client;
 
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.net.URI;
 import java.rmi.Naming;
 import java.util.Iterator;
 
@@ -20,6 +23,7 @@ import javax.swing.KeyStroke;
 import edu.washington.cs.cse403d.coauthor.client.browser.BrowserFrame;
 import edu.washington.cs.cse403d.coauthor.client.browser.BrowserPage;
 import edu.washington.cs.cse403d.coauthor.client.graphviz.GraphVizManager;
+import edu.washington.cs.cse403d.coauthor.client.searchui.ArticleResult;
 import edu.washington.cs.cse403d.coauthor.client.searchui.SearchPage;
 import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 
@@ -91,6 +95,19 @@ public class MainFrame extends BrowserFrame {
 		menuBar.add(menu);
 		
 		menuItem = new JMenuItem("User Manual");
+		final URI manualURI = URI.create("http://coauthor-browser.googlecode.com/hg/manual/index.html");
+		menuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					Desktop.getDesktop().browse(manualURI);
+				} catch(IOException e) {
+					JOptionPane.showMessageDialog(MainFrame.this, "Error",
+							"An error was encountered while trying to open your web browser.",
+							JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
 		menu.add(menuItem);
 		
 		menuItem = new JMenuItem("About");
@@ -112,6 +129,8 @@ public class MainFrame extends BrowserFrame {
 	private static final boolean USE_CACHE = false;
 
 	private class ReturnToSearchAction extends AbstractAction {
+		private static final long serialVersionUID = -8179539673875361719L;
+		
 		public ReturnToSearchAction() {
 			putValue(Action.NAME, "Return to Search");
 		}
