@@ -56,7 +56,7 @@ public class AuthorResult extends BrowserPage {
 	}
 
 	@Override
-	protected void load() throws PageLoadError {
+	protected void load() throws Exception {
 		setVisible(true);
 		setLayout(new GridBagLayout());
 
@@ -117,13 +117,7 @@ public class AuthorResult extends BrowserPage {
 					MessagePage.GO_BACK);
 			message.addActionListener(new GoBackActionListener());
 			throw new PageLoadError(message);
-		} catch (Exception e) {
-			MessagePage message = new MessagePage(MessagePage.ERROR, "Failed to complete search",
-					"There was an error while attempting to complete your search (" + e.getMessage() + ").",
-					MessagePage.GO_BACK);
-			message.addActionListener(new GoBackActionListener());
-			throw new PageLoadError(message);
-		} 
+		}
 
 		setLoaded();
 	}
