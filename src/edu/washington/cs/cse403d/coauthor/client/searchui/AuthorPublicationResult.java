@@ -49,7 +49,7 @@ class AuthorPublicationResult extends JPanel {
 		JLabel title = new JLabel(authorList.size() == 1 ? "Publications" : "Collaborations");
 		Font f = title.getFont();
 		Float s = title.getFont().getSize2D();
-		s += 6.0f;
+		s += 8.0f;
 		title.setFont(f.deriveFont(s));
 		add(title, BorderLayout.PAGE_START);
 
