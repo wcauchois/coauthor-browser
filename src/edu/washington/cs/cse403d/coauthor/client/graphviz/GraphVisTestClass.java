@@ -76,6 +76,7 @@ public class GraphVisTestClass {
 		//GraphVizFrame fr = new GraphVizFrame("Jessica Miller", "Marty Stepp"); 
 		GraphVizFrame fr = new GraphVizFrame("David Notkin");
 		fr.pack();
+		fr.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		fr.setVisible(true);
 	}
 	

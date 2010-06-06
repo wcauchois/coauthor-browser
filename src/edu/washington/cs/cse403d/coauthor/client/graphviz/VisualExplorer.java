@@ -363,7 +363,7 @@ public abstract class VisualExplorer {
         fsim.getForces()[2].setParameter(1, 100);
         
                     
-        ActionList fdlAnimate = new ActionList(10000);
+        ActionList fdlAnimate = new ActionList(15000);
         fdlAnimate.setPacingFunction(new SlowInSlowOutPacer());
         fdlAnimate.add(fdlLayout);
 
@@ -372,24 +372,17 @@ public abstract class VisualExplorer {
 	
 	protected void initRadialAnimation(){
  
-        Layout radialLayout = new RadialTreeLayout("graph");
+        Layout radialLayout = new RadialTreeLayout("graph", 200);
         ActionList arrangement = new ActionList(500);
         arrangement.add(radialLayout);
   
-        ActionList spacing = new ActionList(500);
+        ActionList spacing = new ActionList(2000);
         //spacing.add(this.spacingLayout);
         ForceSimulator fsim = new ForceSimulator(new RungeKuttaIntegrator());
 
-        float gravConstant = -10f;  // the more negative, the more repelling
+        fsim.addForce(new NBodyForce(-0.4f, 25f, NBodyForce.DEFAULT_THETA));
 
-        float minDistance = 100f;	    // -1 for always on, the more positive, the more space between nodes
-
-        float theta = 0.3f;			// the lower, the more single-node repell calculation
-
-        float drag = 0.11f; 
-        fsim.addForce(new NBodyForce(gravConstant, minDistance, theta));
-
-        fsim.addForce(new DragForce(drag));
+        fsim.addForce(new DragForce(0.11f));
 
         
         ForceDirectedLayout fd2 = new ForceDirectedLayout("graph", fsim, false);
@@ -410,6 +403,7 @@ public abstract class VisualExplorer {
 		colorLayoutVis.run(draw);
 		if (!this.isInFDL){
 			this.colorLayoutVis.run("arrange");
+			this.colorLayoutVis.runAfter("arrange", "spacing");
 			this.colorLayoutVis.run("spacing");
 		}else{
 			this.colorLayoutVis.run("ForceLayout");
