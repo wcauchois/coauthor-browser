@@ -23,6 +23,7 @@ import edu.washington.cs.cse403d.coauthor.client.browser.PageLoadError;
 import edu.washington.cs.cse403d.coauthor.client.utils.GoBackActionListener;
 import edu.washington.cs.cse403d.coauthor.client.utils.HyperLinkButton;
 import edu.washington.cs.cse403d.coauthor.client.utils.StringUtils;
+import edu.washington.cs.cse403d.coauthor.shared.model.AuthorNotFoundException;
 import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
 
 /**
@@ -110,13 +111,19 @@ public class AuthorResult extends BrowserPage {
 				add(new AuthorPublicationResult(authorNames), c);
 				break;
 			}
+		} catch(AuthorNotFoundException e) {
+			MessagePage message = new MessagePage(MessagePage.WARNING, "Author not found",
+					"Sorry, but the author you requested (" + e.getMessage() + ") was not found. Please make sure you entered their full name correctly and try again.",
+					MessagePage.GO_BACK);
+			message.addActionListener(new GoBackActionListener());
+			throw new PageLoadError(message);
 		} catch (Exception e) {
 			MessagePage message = new MessagePage(MessagePage.ERROR, "Failed to complete search",
 					"There was an error while attempting to complete your search (" + e.getMessage() + ").",
 					MessagePage.GO_BACK);
 			message.addActionListener(new GoBackActionListener());
 			throw new PageLoadError(message);
-		}
+		} 
 
 		setLoaded();
 	}
