@@ -4,12 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.Box;
@@ -22,186 +19,113 @@ import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
 import edu.washington.cs.cse403d.coauthor.client.Services;
-import edu.washington.cs.cse403d.coauthor.client.browser.BrowserPage;
 import edu.washington.cs.cse403d.coauthor.client.utils.FilterPanel;
-import edu.washington.cs.cse403d.coauthor.client.utils.HyperLinkButton;
+import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 import edu.washington.cs.cse403d.coauthor.shared.model.PathLink;
 
-public class ChainSearchResult extends BrowserPage {
+public class ChainSearchResult extends JPanel {
 	private static final long serialVersionUID = 7570009274799150945L;
-	
-	private edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface CDSI = Services
-		.getCoauthorDataServiceInterface();
-	
+
+	private CoauthorDataServiceInterface CDSI = Services.getCoauthorDataServiceInterface();
+
 	private List<PathLink> chain;
 	private DefaultListModel listModel;
 	private JList chainList;
-	
-	private JPanel contentPanel;
-	
+
 	private String author1;
 	private String author2;
-	
+
 	/**
 	 * Constructor for single author search result screen
-	 *
+	 * 
 	 * @param author
 	 *            the author that was entered as the query
 	 */
-	public ChainSearchResult(final String author1, final String author2) {
+	public ChainSearchResult(String author1, String author2) {
+		setLayout(new BorderLayout());
+		setVisible(true);
+
 		this.author1 = author1;
 		this.author2 = author2;
-	}
 
-	@Override
-	protected void load() {
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		setVisible(true);
-		setLayout(new BorderLayout());
-		boolean valid = true;
-		try {
-			chain = CDSI.getOneShortestPathBetweenAuthors(author1, author2, getAutoscrolls());
-		} catch (RemoteException e) {
-			System.out.println("Invalid author(s)");
-			valid = false;
-		}
-		if (valid)
-			singleEntryInitialize();
-		
-		setLoaded();
+		createChainPanel();
 	}
 
 	/**
 	 * Constructor for multi-entry author search result screen
-	 *
+	 * 
 	 * @param authorList
 	 *            list of queries(author names)
 	 */
 	/**
 	 * Internal helper method for single-author search result
 	 */
-	private void singleEntryInitialize() {
-		contentPanel = new JPanel();
-		contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
-		contentPanel.setVisible(true);
-		
-		// Title
-		JLabel title = new JLabel("Results for Chain Search: ");
-		Font f = title.getFont();
-		float s = title.getFont().getSize2D();
-		s += 10.0f;
-		title.setFont(f.deriveFont(s));
-		contentPanel.add(title);
-		contentPanel.add(Box.createRigidArea(new Dimension(0, 5)));
-		
-		// Coauthor list label
-		JLabel authorChainLabel = new JLabel("Author Chain:");
-		f = authorChainLabel.getFont();
-		s = authorChainLabel.getFont().getSize2D();
-		s += 6.0f;
-		authorChainLabel.setFont(f.deriveFont(s));
-		contentPanel.add(authorChainLabel);
-		
-		// Coauthor list
-		listModel = new DefaultListModel();
-		chainList = new JList(listModel);
-		chainList.setFont(chainList.getFont().deriveFont(Font.PLAIN));
-		
-		buildChain();
-		
-		JPanel number = new JPanel();
-		JLabel numberText = new JLabel("The number of authors in this chain is: ");
-		JLabel numberVal = new JLabel("" + listModel.size());
-		numberText.setFont(f.deriveFont(s));
-		numberVal.setFont(f.deriveFont(s));
-		number.add(numberText);
-		number.add(numberVal);
-		
-		FilterPanel filterPanel = new FilterPanel(chainList, author1, author2);
-		buildNavigator(filterPanel);
-		add(filterPanel);
-		add(contentPanel, BorderLayout.PAGE_START);
-		add(number, BorderLayout.PAGE_END);
-	}
+	private void createChainPanel() {
+		try {
+			chain = CDSI.getOneShortestPathBetweenAuthors(author1, author2, getAutoscrolls());
 
-	private void buildNavigator(FilterPanel filterPanel) {
-		final JList theList = filterPanel.getList();
-		theList.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent evt) {
-				int selected = theList.getSelectedIndex();
-				
-				String searchFor = ("<html><i>°ÊSearch for this author</i></html>");
-				String closeMenu = ("<html><i>°ÊClose this submenu</i></html>");
-					if(!theList.isSelectionEmpty() && !theList.getSelectedValue().equals(closeMenu) &&
-							!theList.getSelectedValue().equals(searchFor)){
-						if( selected + 1 == listModel.getSize() ||
-								listModel.getElementAt(selected + 1) != searchFor) {
-							
-							selected = theList.getSelectedIndex();
-							listModel.insertElementAt(searchFor, selected + 1);
-							listModel.insertElementAt(closeMenu, selected + 2);
-							
-							theList.setModel(listModel);
-							theList.setSelectedIndex(selected);
-						}
-					}
-					
-					if(!theList.isSelectionEmpty() && theList.getSelectedValue().equals(closeMenu)){
-						listModel.remove(selected);
-						theList.setSelectedIndex(selected -1);
-						listModel.remove(theList.getSelectedIndex());
-						theList.setModel(listModel);
-					}
-					
-					int subMenuSelection;
-					String selectedItem;
-					if(!theList.isSelectionEmpty()) {
-						subMenuSelection = theList.getSelectedIndex();
-						selectedItem = (String) listModel.getElementAt(subMenuSelection);
-					} else {
-						subMenuSelection = selected - 2;
-						selectedItem = "";
-					}                              
-					
-					if (selectedItem.equals(searchFor)) {
-						String author = (String) listModel.getElementAt(subMenuSelection - 1);
-						
-						//Remove the submenu before navigating
-						listModel.remove(subMenuSelection);
-						theList.setSelectedIndex(subMenuSelection);
-						listModel.remove(theList.getSelectedIndex());
-						theList.setModel(listModel);
-						
-						Services.getBrowser().go(new AuthorResult(author));                            
-					}
-					if(evt.getClickCount() == 2) {
-						String author = (String)theList.getSelectedValue();
-						Services.getBrowser().go(new AuthorResult(author));
-					}
-			}
-		});
+			JPanel contentPanel = new JPanel();
+			contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
+			contentPanel.setVisible(true);
+
+			// Title
+			JLabel explanation = new JLabel("These authors have not collaborated yet");
+			contentPanel.add(explanation);
+			contentPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+
+			// Coauthor list label
+			JLabel authorChainLabel = new JLabel("Author Chain:");
+			Font f = authorChainLabel.getFont();
+			float s = authorChainLabel.getFont().getSize2D();
+			s += 8.0f;
+			authorChainLabel.setFont(f.deriveFont(s));
+			contentPanel.add(authorChainLabel);
+
+			// Coauthor list
+			listModel = new DefaultListModel();
+			chainList = new JList(listModel);
+			chainList.setFont(chainList.getFont().deriveFont(Font.PLAIN));
+
+			contentPanel.add(buildChain());
+
+			JPanel number = new JPanel();
+			JLabel numberText = new JLabel(author1 + " is ");
+			JLabel numberVal = new JLabel("" + (listModel.size()-1));
+			JLabel numberText2 = new JLabel(" degrees of ");
+			JPanel number2 = new JPanel();
+			JLabel numberText3 = new JLabel(" separation away from " + author2);
+			numberText.setFont(f.deriveFont(s));
+			numberVal.setFont(f.deriveFont(s));
+			numberText2.setFont(f.deriveFont(s));
+			numberText3.setFont(f.deriveFont(s));
+			number.add(numberText);
+			number.add(numberVal);
+			number.add(numberText2);
+			number2.add(numberText3);
+
+			FilterPanel filterPanel = new FilterPanel(chainList, author1, author2);
+			add(filterPanel);
+			add(contentPanel, BorderLayout.PAGE_START);
+			add(number, BorderLayout.CENTER);
+			add(number2, BorderLayout.PAGE_END);
+		} catch (RemoteException e) {
+			System.out.println("Invalid author(s)");
+		}
 	}
 
 	/**
 	 * Builds the co-author list for single author search result
 	 */
-	private void buildChain() {
+	private JScrollPane buildChain() {
 		buildListHelper();
 		chainList.setLayoutOrientation(JList.VERTICAL);
 		chainList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		chainList.setVisibleRowCount(5);
 		JScrollPane listScroller = new JScrollPane(chainList);
 		listScroller.setAlignmentX(Component.LEFT_ALIGNMENT);
-		contentPanel.add(listScroller);
+		return listScroller;
 	}
-	
-	
+
 	/**
 	 * add author names to the JList, single author search case
 	 */
@@ -212,8 +136,8 @@ public class ChainSearchResult extends BrowserPage {
 			i++;
 		}
 		listModel.add(i, chain.get(i - 1).toString().substring(chain.get(i - 1).toString().indexOf('>') + 1));
-		author2 = chain.get(i - 1).toString().substring(chain.get(i - 1).toString().indexOf('>') + 1);
-		this.author1 = (String) listModel.get(0);
+		author1 = listModel.get(0).toString();
+		author2 = listModel.get(i).toString();
 	}
 
 	public String getTitle() {

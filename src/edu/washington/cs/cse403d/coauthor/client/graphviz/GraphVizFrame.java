@@ -19,6 +19,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import edu.washington.cs.cse403d.coauthor.client.Services;
+
 import prefuse.Visualization;
 import prefuse.controls.ControlAdapter;
 import prefuse.data.Table;
@@ -46,6 +48,7 @@ public class GraphVizFrame extends JFrame implements ActionListener{
 		this.setContentPane(this.setupButtons(visExp));
 		this.visExp.updateVis();
 		this.add(visExp.getDisplay());
+	//	this.setIconImage(Services.getResourceManager().loadImageIcon("notkin.png").getImage());
 	}
 	
 	public GraphVizFrame(String startingAuthor, String endingAuthor) throws RemoteException{
@@ -55,6 +58,7 @@ public class GraphVizFrame extends JFrame implements ActionListener{
 		this.setContentPane(this.setupButtons(visExp));
 		this.visExp.updateVis();
 		this.add(visExp.getDisplay());
+		this.setIconImage(Services.getResourceManager().loadImageIcon("notkin.png").getImage());
 	}
 	
     public JPanel setupButtons(VisualExplorer vx){
@@ -63,8 +67,8 @@ public class GraphVizFrame extends JFrame implements ActionListener{
     	JPanel panel = new JPanel(new BorderLayout());
     	
     	final String label = "name";
-		final JFastLabel title = new JFastLabel("Author Name");
-		title.setPreferredSize(new Dimension(150, 20));
+		final JFastLabel title = new JFastLabel("Hover over a node!");
+		title.setPreferredSize(new Dimension(160, 20));
 		title.setVerticalAlignment(SwingConstants.BOTTOM);
 		title.setBorder(BorderFactory.createEmptyBorder(3,0,0,0));
 		title.setFont(FontLib.getFont("Tahoma", Font.PLAIN, 16));
@@ -104,7 +108,7 @@ public class GraphVizFrame extends JFrame implements ActionListener{
 		radial = new JButton("Radial View");
 		radial.setActionCommand("rad");
 		radial.addActionListener(this);
-		radial.setToolTipText("Switch to a radial view of the co-author graph.");
+		radial.setToolTipText("Toggle between different graph views.");
 		
 		
 		

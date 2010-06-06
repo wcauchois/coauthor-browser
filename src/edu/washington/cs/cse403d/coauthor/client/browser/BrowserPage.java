@@ -97,8 +97,16 @@ public abstract class BrowserPage extends JPanel {
 	 * load method is executing. Derived classes should call setLoaded() at the
 	 * end of their load() method to ensure that load() is not called multiple
 	 * times.
+	 * 
+	 * This method may throw an exception, in which case a generic page displaying
+	 * the error message will be constructed by the Browser -- unless the exception
+	 * is an instance of PageLoadError, in which case the user will redirected to
+	 * the page provided in the constructor for PageLoadError (this can be used to
+	 * implement custom error pages).
+	 * 
+	 * @see PageLoadError
 	 */
-	protected void load() throws PageLoadError {
+	protected void load() throws Exception {
 		setLoaded();
 	}
 }

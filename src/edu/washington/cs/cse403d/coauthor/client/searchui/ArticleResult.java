@@ -1,21 +1,16 @@
 package edu.washington.cs.cse403d.coauthor.client.searchui;
 
 import java.awt.BorderLayout;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.rmi.RemoteException;
-import java.util.List;
+import java.io.IOException;
+import java.net.URI;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -54,7 +49,6 @@ public class ArticleResult extends BrowserPage {
 	private JPanel authorInfo;
 	private JPanel contentPane;
 	private JList authorList;
-	private DefaultListModel listModel;
 
 	/**
 	 * Constructor.
@@ -65,17 +59,16 @@ public class ArticleResult extends BrowserPage {
 	public ArticleResult(String query) {
 		articleTitle = query;
 	}
+	
+	public ArticleResult(Publication pub) {
+		publication = pub;
+	}
 
 	@Override
-	protected void load() {
-		try {
+	protected void load() throws Exception {
+		if(publication == null)
 			publication = CDSI.getPublication(articleTitle);
-		} catch (RemoteException e) {
-			JOptionPane.showMessageDialog(this, "Um, this isn't really supposed to happen", "Error!",
-					JOptionPane.ERROR_MESSAGE);
-		}
 		initialize();
-		// System.out.println(super.getContainerListeners().toString());
 		setLoaded();
 	}
 
@@ -199,10 +192,13 @@ public class ArticleResult extends BrowserPage {
 			// Accesses the clipboard when URL is clicked
 			EE.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					StringSelection data = new StringSelection(EE.getText());
-					Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-					clipboard.setContents(data, data);
-					showCopyNotice();
+					try {
+						Desktop.getDesktop().browse(URI.create(EE.getText()));
+					} catch(IOException e) {
+						JOptionPane.showMessageDialog(ArticleResult.this, "Error",
+								"An error was encountered while trying to open your web browser.",
+								JOptionPane.ERROR_MESSAGE);
+					}
 				}
 			});
 		}
@@ -223,83 +219,13 @@ public class ArticleResult extends BrowserPage {
 		s += 4.0f;
 		authorLabel.setFont(f.deriveFont(s));
 
-		// Add list of authors
-		buildList();
-		authorList = new JList(listModel);
-		authorList.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent evt) {
-				int selected = authorList.getSelectedIndex();
-				
-				String searchFor = ("<html><i>°ÊSearch for this author</i></html>");
-				String closeMenu = ("<html><i>°ÊClose this submenu</i></html>");
-				if(!authorList.getSelectedValue().equals(closeMenu) &&
-						!authorList.getSelectedValue().equals(searchFor)){
-					if( selected + 1 == listModel.size() ||
-							listModel.getElementAt(selected + 1) != searchFor) {
-						selected = authorList.getSelectedIndex();
-						listModel.insertElementAt(searchFor, selected + 1);
-						listModel.insertElementAt(closeMenu, selected + 2);
-						authorList.setModel(listModel);
-						authorList.setSelectedIndex(selected);
-					}
-				}
-				
-				if(authorList.getSelectedValue().equals(closeMenu)){
-					listModel.remove(selected);
-					authorList.setSelectedIndex(selected -1);
-					listModel.remove(authorList.getSelectedIndex());
-					authorList.setModel(listModel);
-				}
-				
-				int subMenuSelection;
-				
-				if(!authorList.isSelectionEmpty())
-					subMenuSelection = authorList.getSelectedIndex();
-				else
-					subMenuSelection = selected - 2;
-				
-				String selectedItem = (String) listModel.getElementAt(subMenuSelection);
-				
-				if (selectedItem.equals(searchFor)) {
-					String articleTitle = (String) listModel.getElementAt(subMenuSelection - 1);
-					Services.getBrowser().go(new AuthorResult(articleTitle));
-				}				
-			
-				if (evt.getClickCount() == 2) {
-					String author = (String) authorList.getSelectedValue();
-					Services.getBrowser().go(new AuthorResult(author));
-				}
-			}
-		});
+		authorList = new ListOfAuthors(publication.getAuthors());
 		authorList.setLayoutOrientation(JList.VERTICAL);
 		authorList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane listScroller = new JScrollPane(authorList);
 		listScroller.setPreferredSize(new Dimension(60, 60));
 		authorInfo.add(listScroller);
 		authorInfo.add(Box.createVerticalStrut(10));
-
-	}
-
-	/**
-	 * Internal helper method that builds a JList containing author names
-	 */
-	private void buildList() {
-		listModel = new DefaultListModel();
-		List<String> list = publication.getAuthors();
-		int i = 0;
-		while (i < list.size()) {
-			listModel.add(i, list.get(i));
-			i++;
-		}
-	}
-
-	/**
-	 * Displays a notice message regarding clipboard interaction
-	 */
-	private void showCopyNotice() {
-		JOptionPane.showMessageDialog(this, "The URL has been copied to the clipboard.", "Notice",
-				JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	/**
