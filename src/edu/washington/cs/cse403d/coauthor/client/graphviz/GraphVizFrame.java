@@ -104,7 +104,7 @@ public class GraphVizFrame extends JFrame implements ActionListener{
 		radial = new JButton("Radial View");
 		radial.setActionCommand("rad");
 		radial.addActionListener(this);
-		radial.setToolTipText("Switch to a radial view of the co-author graph.");
+		radial.setToolTipText("Toggle between different graph views.");
 		
 		
 		
