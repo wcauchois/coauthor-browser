@@ -112,6 +112,8 @@ public class MainFrame extends BrowserFrame {
 	private static final boolean USE_CACHE = false;
 
 	private class ReturnToSearchAction extends AbstractAction {
+		private static final long serialVersionUID = -8179539673875361719L;
+		
 		public ReturnToSearchAction() {
 			putValue(Action.NAME, "Return to Search");
 		}
