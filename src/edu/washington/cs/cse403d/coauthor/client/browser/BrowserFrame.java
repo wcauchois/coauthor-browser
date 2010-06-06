@@ -106,7 +106,7 @@ public class BrowserFrame extends JFrame implements Browser {
 
 		loadingPanel.add(icon);
 		loadingPanel.add(text);
-		
+		this.setIconImage(Services.getResourceManager().loadImageIcon("notkin.png").getImage());
 		go(initialPage);
 	}
 	

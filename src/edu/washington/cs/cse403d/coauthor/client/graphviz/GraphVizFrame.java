@@ -19,6 +19,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import edu.washington.cs.cse403d.coauthor.client.Services;
+
 import prefuse.Visualization;
 import prefuse.controls.ControlAdapter;
 import prefuse.data.Table;
@@ -46,6 +48,7 @@ public class GraphVizFrame extends JFrame implements ActionListener{
 		this.setContentPane(this.setupButtons(visExp));
 		this.visExp.updateVis();
 		this.add(visExp.getDisplay());
+		this.setIconImage(Services.getResourceManager().loadImageIcon("notkin.png").getImage());
 	}
 	
 	public GraphVizFrame(String startingAuthor, String endingAuthor) throws RemoteException{
@@ -55,6 +58,7 @@ public class GraphVizFrame extends JFrame implements ActionListener{
 		this.setContentPane(this.setupButtons(visExp));
 		this.visExp.updateVis();
 		this.add(visExp.getDisplay());
+		this.setIconImage(Services.getResourceManager().loadImageIcon("notkin.png").getImage());
 	}
 	
     public JPanel setupButtons(VisualExplorer vx){

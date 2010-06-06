@@ -72,7 +72,7 @@
 		<ul>
 			<li>
 				<b>Perform a search on an article.</b>
-				Enter a part of any article's title in the text field below, then click the search button to see the list of articles containing your search query. To get more detailed information of the selected article, right-click on any article to bring up the context menu.
+				Enter a part of any article's title in the text field below, then click the search button to see the list of articles containing your search query.
 			</li>
 			<li>
 				<b>Filter the result by publication year.</b>
@@ -85,12 +85,7 @@
 		Click on this button to obtain a visual representation of the result. 
 		<ul>
 			<li>
-				<b>Perform a search on an article.</b>
-				Enter a part of any article's title in the text field below, then click the search button to see the list of articles containing your search query. To get more detailed information of the selected article, right-click on any article to bring up the context menu.
-			</li>
-			<li>
-				<b>Filter the result by publication year.</b>
-				Enter a starting year and/or an ending year to filter your result within given limits. Valid input range is from 1800 to 2010.
+				From this visualization, you will be able to run new searches and see how authors are connected through their works.
 			</li>
 		</ul>
 	]]></string>
