@@ -43,7 +43,7 @@ public class AuthorResult extends BrowserPage {
 	 *            the query
 	 */
 	public AuthorResult(String singleAuthor) {
-		this(Arrays.asList(singleAuthor));
+		this(getProperName(Arrays.asList(singleAuthor)));
 	}
 
 	/**
@@ -52,7 +52,7 @@ public class AuthorResult extends BrowserPage {
 	 * @param queries
 	 */
 	public AuthorResult(List<String> queries) {
-		this.authorNames = queries;
+		this.authorNames = getProperName(queries);
 	}
 
 	@Override
@@ -196,5 +196,30 @@ public class AuthorResult extends BrowserPage {
 		} else {
 			return StringUtils.elide(StringUtils.join(", ", authorNames), 20);
 		}
+	}
+	
+	private static List<String> getProperName(List<String> names) {
+		for (int i = 0; i < names.size(); i++) {
+			String newName = toTitleCase(names.get(i));
+			names.set(i, newName);			
+		}		
+		return names;
+		
+	}
+	
+	private static String toTitleCase(String s) {
+		char[] chars = s.trim().toLowerCase().toCharArray();
+		boolean found = false;
+	 
+		for (int i=0; i<chars.length; i++) {
+			if (!found && Character.isLetter(chars[i])) {
+				chars[i] = Character.toUpperCase(chars[i]);
+				found = true;
+			} else if (Character.isWhitespace(chars[i])) {
+				found = false;
+			}
+		}
+	 
+		return String.valueOf(chars);
 	}
 }
