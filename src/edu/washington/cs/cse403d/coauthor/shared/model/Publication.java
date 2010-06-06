@@ -9,6 +9,7 @@ public class Publication implements Serializable {
 
 	private List<String> authors;
 
+	private Long id;
 	private String title;
 	private String pages;
 	private Integer year;
@@ -20,11 +21,9 @@ public class Publication implements Serializable {
 	private String publisher;
 	private Integer number;
 
-	public Publication() {
-	}
-
-	public Publication(String title, String pages, Integer year, String url, String ee, Integer volume, String journal,
+	public Publication(Long id, String title, String pages, Integer year, String url, String ee, Integer volume, String journal,
 			String isbn, String publisher, Integer number) {
+		setId(id);
 		setTitle(title);
 		setPages(pages);
 		setYear(year);
@@ -51,6 +50,14 @@ public class Publication implements Serializable {
 
 	public void setAuthors(List<String> authors) {
 		this.authors = authors;
+	}
+	
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getTitle() {

@@ -22,6 +22,7 @@ import org.neo4j.kernel.EmbeddedGraphDatabase;
 import edu.washington.cs.cse403d.coauthor.dataservice.datasources.dblp.Parse;
 import edu.washington.cs.cse403d.coauthor.dataservice.impl.asyn.GetAuthorId;
 import edu.washington.cs.cse403d.coauthor.dataservice.impl.asyn.GetAuthorName;
+import edu.washington.cs.cse403d.coauthor.dataservice.impl.asyn.GetPublicationAuthors;
 import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 import edu.washington.cs.cse403d.coauthor.shared.model.PathLink;
 import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
@@ -31,7 +32,7 @@ import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
  * graph.
  * 
  * @author Jeff Prouty
- * @version 2
+ * @version 3
  */
 public class CoauthorDataService extends UnicastRemoteObject implements CoauthorDataServiceInterface {
 	private static final long serialVersionUID = -5396719662952291707L;
@@ -93,42 +94,23 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 				sqlConnection);
 	}
 
-	private List<String> getPublicationAuthors(long publicationId) {
-		logStream.println("getPublicationAuthors(" + publicationId + ")");
-
-		List<String> result = new ArrayList<String>();
-
-		PreparedStatement getPubs = psp_getPublicationAuthors.leasePreparedStatement();
-		try {
-			getPubs.setLong(1, publicationId);
-			ResultSet rs = getPubs.executeQuery();
-
-			while (rs.next()) {
-				result.add(rs.getString(1));
-			}
-			rs.close();
-		} catch (SQLException e) {
-			e.printStackTrace(logStream);
-			throw new IllegalStateException("SQL Error: " + e.getLocalizedMessage() + " SQLSTATE: " + e.getSQLState());
-		} finally {
-			psp_getPublicationAuthors.returnPreparedStatement(getPubs);
-		}
-
-		return result;
-	}
-
-	private Publication createPublicationFromCurrentResult(ResultSet results, boolean populateAuthors)
-			throws SQLException {
-		Publication result = new Publication(results.getString("title"), results.getString("pages"), results
+	private Publication createPublicationFromCurrentResult(ResultSet results) throws SQLException {
+		return new Publication(results.getLong("id"), results.getString("title"), results.getString("pages"), results
 				.getInt("year"), results.getString("url"), results.getString("ee"), results.getInt("volume"), results
 				.getString("journal"), results.getString("isbn"), results.getString("publisher"), results
 				.getInt("number"));
+	}
 
-		if (populateAuthors) {
-			result.setAuthors(getPublicationAuthors(results.getLong("id")));
+	private void populatePublicationListWithAuthors(List<Publication> result) {
+		GetPublicationAuthors[] async = new GetPublicationAuthors[result.size()];
+
+		for (int i = 0; i < result.size(); ++i) {
+			async[i] = new GetPublicationAuthors(result.get(i).getId(), psp_getPublicationAuthors);
 		}
 
-		return result;
+		for (int i = 0; i < result.size(); ++i) {
+			result.get(i).setAuthors(async[i].blockForResult());
+		}
 	}
 
 	private void processPath(List<Node> nodeList, List<PathLink> resultPath, boolean populatePublications) {
@@ -372,9 +354,11 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 			ResultSet results = preparedStatement.executeQuery();
 
 			while (results.next()) {
-				result.add(createPublicationFromCurrentResult(results, false));
+				result.add(createPublicationFromCurrentResult(results));
 			}
 			results.close();
+
+			populatePublicationListWithAuthors(result);
 		} catch (SQLException e) {
 			e.printStackTrace(logStream);
 			throw new IllegalStateException("SQL Error: " + e.getLocalizedMessage() + " SQLSTATE: " + e.getSQLState());
@@ -417,9 +401,11 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 			ResultSet results = sqlConnection.createStatement().executeQuery(query);
 
 			while (results.next()) {
-				result.add(createPublicationFromCurrentResult(results, false));
+				result.add(createPublicationFromCurrentResult(results));
 			}
 			results.close();
+
+			populatePublicationListWithAuthors(result);
 		} catch (SQLException e) {
 			e.printStackTrace(logStream);
 			throw new IllegalStateException("SQL Error: " + e.getLocalizedMessage() + " SQLSTATE: " + e.getSQLState());
@@ -497,9 +483,11 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 				throw new IllegalArgumentException("No publication exists in the database with title: "
 						+ publicationTitle);
 			} else {
-				result = createPublicationFromCurrentResult(queryResults, true);
+				result = createPublicationFromCurrentResult(queryResults);
 			}
 			queryResults.close();
+
+			populatePublicationListWithAuthors(Arrays.asList(result));
 		} catch (SQLException e) {
 			e.printStackTrace(logStream);
 			throw new IllegalStateException("Error querying data service: " + e.getMessage());
@@ -535,9 +523,11 @@ public class CoauthorDataService extends UnicastRemoteObject implements Coauthor
 			ResultSet queryResults = getPublications.executeQuery();
 
 			while (queryResults.next()) {
-				result.add(createPublicationFromCurrentResult(queryResults, true));
+				result.add(createPublicationFromCurrentResult(queryResults));
 			}
 			queryResults.close();
+
+			populatePublicationListWithAuthors(result);
 		} catch (SQLException e) {
 			e.printStackTrace(logStream);
 			throw new IllegalStateException("Error querying data service: " + e.getMessage());
