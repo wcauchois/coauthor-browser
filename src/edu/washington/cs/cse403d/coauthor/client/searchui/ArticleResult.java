@@ -1,6 +1,7 @@
 package edu.washington.cs.cse403d.coauthor.client.searchui;
 
 import java.awt.BorderLayout;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
@@ -8,6 +9,8 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.URI;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -192,10 +195,13 @@ public class ArticleResult extends BrowserPage {
 			// Accesses the clipboard when URL is clicked
 			EE.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					StringSelection data = new StringSelection(EE.getText());
-					Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-					clipboard.setContents(data, data);
-					showCopyNotice();
+					try {
+						Desktop.getDesktop().browse(URI.create(EE.getText()));
+					} catch(IOException e) {
+						JOptionPane.showMessageDialog(ArticleResult.this, "Error",
+								"An error was encountered while trying to open your web browser.",
+								JOptionPane.ERROR_MESSAGE);
+					}
 				}
 			});
 		}
@@ -223,15 +229,6 @@ public class ArticleResult extends BrowserPage {
 		listScroller.setPreferredSize(new Dimension(60, 60));
 		authorInfo.add(listScroller);
 		authorInfo.add(Box.createVerticalStrut(10));
-
-	}
-
-	/**
-	 * Displays a notice message regarding clipboard interaction
-	 */
-	private void showCopyNotice() {
-		JOptionPane.showMessageDialog(this, "The URL has been copied to the clipboard.", "Notice",
-				JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	/**
