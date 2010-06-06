@@ -221,9 +221,7 @@ public class ArticleResult extends BrowserPage {
 		s += 4.0f;
 		authorLabel.setFont(f.deriveFont(s));
 
-		// Add list of authors
-		buildList();
-		authorList = new JList(listModel);
+		authorList = new ListOfAuthors(publication.getAuthors());
 		authorList.setLayoutOrientation(JList.VERTICAL);
 		authorList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane listScroller = new JScrollPane(authorList);
@@ -231,19 +229,6 @@ public class ArticleResult extends BrowserPage {
 		authorInfo.add(listScroller);
 		authorInfo.add(Box.createVerticalStrut(10));
 
-	}
-
-	/**
-	 * Internal helper method that builds a JList containing author names
-	 */
-	private void buildList() {
-		listModel = new DefaultListModel();
-		List<String> list = publication.getAuthors();
-		int i = 0;
-		while (i < list.size()) {
-			listModel.add(i, list.get(i));
-			i++;
-		}
 	}
 
 	/**
