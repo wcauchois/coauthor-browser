@@ -13,10 +13,10 @@ import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JList;
 import javax.swing.JTextField;
+import javax.swing.ListModel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -36,7 +36,6 @@ public class FilterField extends JTextField {
 	private static final long serialVersionUID = 3250394717406844585L;
 	
 	private JList theList;
-	private DefaultListModel model;
 	private Font italicFont, defaultFont;
 	private boolean isPristine;
 	private ImageIcon cancelFilterIcon;
@@ -61,7 +60,7 @@ public class FilterField extends JTextField {
 	 */
 	public FilterField(JList list, String author) {
 		theList = list;
-		model = (DefaultListModel) theList.getModel();
+		ListModel model = theList.getModel();
 		unfilteredData = new ArrayList<Object>(model.getSize());
 		for(int i = 0; i < model.getSize(); i++)
 			unfilteredData.add(model.getElementAt(i));
@@ -125,7 +124,7 @@ public class FilterField extends JTextField {
 	}
 	private void updateResults(String filter) {
 		if(filter.length() == 0) {
-			addToModel(model, unfilteredData);
+			theList.setListData(unfilteredData.toArray());
 			return;
 		}
 		filter = filter.toLowerCase();
@@ -134,20 +133,12 @@ public class FilterField extends JTextField {
 			if(o.toString().toLowerCase().contains(filter))
 				filteredData.add(o);
 		}
-		addToModel(model, filteredData);
+		theList.setListData(filteredData.toArray());
 	}
 	public List<Object> getUnfilteredData() {
 		return unfilteredData;
 	}
 	public JList getList() {
 		return theList;
-	}
-       
-	//manually add to listModel
-	private void addToModel(DefaultListModel listModel, List<Object> list) {
-		listModel.clear();
-		for (int i = 0; i < list.size(); i++) {
-			listModel.add(i, list.get(i));
-		}
 	}
 }
