@@ -1,7 +1,5 @@
 package edu.washington.cs.cse403d.coauthor.client.graphviz;
 
-import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.rmi.Naming;
@@ -12,39 +10,22 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JPanel;
-import javax.swing.JSplitPane;
 import javax.swing.JToolTip;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
+
+import edu.washington.cs.cse403d.coauthor.client.Services;
+import edu.washington.cs.cse403d.coauthor.client.searchui.AuthorResult;
 import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 import prefuse.Constants;
 import prefuse.Display;
 import prefuse.Visualization;
-import prefuse.action.Action;
 import prefuse.action.ActionList;
-import prefuse.action.ItemAction;
 import prefuse.action.RepaintAction;
-import prefuse.action.animate.ColorAnimator;
-import prefuse.action.animate.PolarLocationAnimator;
-import prefuse.action.animate.VisibilityAnimator;
 import prefuse.action.assignment.ColorAction;
 import prefuse.action.assignment.DataColorAction;
-import prefuse.action.assignment.FontAction;
-import prefuse.action.filter.GraphDistanceFilter;
-import prefuse.action.layout.CircleLayout;
-import prefuse.action.layout.CollapsedSubtreeLayout;
 import prefuse.action.layout.Layout;
-import prefuse.action.layout.RandomLayout;
-import prefuse.action.layout.graph.BalloonTreeLayout;
 import prefuse.action.layout.graph.ForceDirectedLayout;
-import prefuse.action.layout.graph.NodeLinkTreeLayout;
 import prefuse.action.layout.graph.RadialTreeLayout;
-import prefuse.action.layout.graph.SquarifiedTreeMapLayout;
 import prefuse.activity.Activity;
 import prefuse.activity.SlowInSlowOutPacer;
 import prefuse.controls.Control;
@@ -56,25 +37,17 @@ import prefuse.controls.PanControl;
 import prefuse.controls.WheelZoomControl;
 import prefuse.controls.ZoomControl;
 import prefuse.controls.ZoomToFitControl;
-import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Node;
 import prefuse.data.Tuple;
 import prefuse.data.event.TupleSetListener;
 import prefuse.data.search.PrefixSearchTupleSet;
-import prefuse.data.search.SearchTupleSet;
 import prefuse.data.tuple.TupleSet;
 import prefuse.render.DefaultRendererFactory;
 import prefuse.render.EdgeRenderer;
 import prefuse.render.LabelRenderer;
 import prefuse.util.ColorLib;
-import prefuse.util.FontLib;
-import prefuse.util.PrefuseLib;
-import prefuse.util.force.Force;
 import prefuse.util.force.ForceSimulator;
-import prefuse.util.ui.JForcePanel;
-import prefuse.util.ui.JValueSlider;
-import prefuse.visual.NodeItem;
 import prefuse.visual.VisualGraph;
 import prefuse.visual.VisualItem;
 import prefuse.visual.expression.InGroupPredicate;
@@ -384,7 +357,7 @@ public abstract class VisualExplorer {
 
         
         searchTupleSet = new PrefixSearchTupleSet();
-        searchTupleSet.setDelimiterString(", ");
+        searchTupleSet.setDelimiterString(",");
         this.colorLayoutVis.addFocusGroup(Visualization.SEARCH_ITEMS, searchTupleSet);
         searchTupleSet.addTupleSetListener(new TupleSetListener(){
         	@Override
@@ -415,8 +388,7 @@ public abstract class VisualExplorer {
         fsim.getForces()[1].setParameter(0, .02f);
         fsim.getForces()[2].setParameter(1, 100);
         
-        Force[] forces = fsim.getForces();
-                     
+                    
         ActionList fdlAnimate = new ActionList(10000);
         fdlAnimate.setPacingFunction(new SlowInSlowOutPacer());
         fdlAnimate.add(fdlLayout);
@@ -430,25 +402,11 @@ public abstract class VisualExplorer {
        
         ActionList arrangement = new ActionList(100);
         arrangement.add(radialLayout);
-        
-        
-        /*spacingLayout = new ForceDirectedLayout("graph");
-        ForceSimulator fsim = ((ForceDirectedLayout) spacingLayout).getForceSimulator();
-        fsim.getForces()[0].setParameter(0, -.1f);
-        fsim.getForces()[0].setParameter(1, 20);
-        
-        fsim.getForces()[1].setParameter(0, .001f);
-        fsim.getForces()[2].setParameter(0, 0.0000000001f);
-        fsim.getForces()[2].setParameter(1, 5);
-        
-        Force[] forces = fsim.getForces();
-        spacingLayout.setPacingFunction((new SlowInSlowOutPacer()));
-        */
+  
         ActionList spacing = new ActionList(500);
         spacing.add(this.spacingLayout);
         
         this.radialAnimateActionsArrangement = arrangement;
-       // this.radialAnimateActionsSpacing = spacing;
         
 	}
 
@@ -463,7 +421,6 @@ public abstract class VisualExplorer {
 		colorLayoutVis.run(draw);
 		if (!this.isInFDL){
 			this.colorLayoutVis.run("arrange");
-		//	this.colorLayoutVis.run("spacing");
 		}else{
 			this.colorLayoutVis.run("ForceLayout");
 		}
@@ -480,8 +437,6 @@ public abstract class VisualExplorer {
 	
 		
 	 	this.colorLayoutVis.putAction("arrange", this.radialAnimateActionsArrangement);
-//		this.colorLayoutVis.putAction("spacing", this.radialAnimateActionsSpacing);
-//	 	this.colorLayoutVis.alwaysRunAfter("arrange","spacing");
         this.colorLayoutVis.runAfter(draw, "arrange");
 	 	this.updateVis();
 	 	this.isInFDL = false;
@@ -491,8 +446,7 @@ public abstract class VisualExplorer {
 	 	this.colorLayoutVis.removeAction("spacing");
         this.colorLayoutVis.removeAction("arrange");
         
-//	 	ActionList animate = this.setupAnimate("fdl");
-		this.colorLayoutVis.putAction("ForceLayout", this.fdlAnimateActions);
+	 	this.colorLayoutVis.putAction("ForceLayout", this.fdlAnimateActions);
         this.colorLayoutVis.runAfter(draw, "ForceLayout");
 		this.updateVis();
 		this.isInFDL = true;
@@ -513,27 +467,10 @@ public abstract class VisualExplorer {
         
         Control nodeClicked = new ControlAdapter(){
         	public void itemClicked(VisualItem item, MouseEvent e ){
-       
+        		VisualExplorer.this.coAuthors.nodes();
         		addCoAuthors(item.getString("name"));
-           	}
-        	public void keyTyped(java.awt.event.KeyEvent e){
-        		if(e.getKeyChar() == '1'){
-        			addCoAuthorsToAllNodes();
-        		}else if(e.getKeyChar() == '2'){
-        			trimOneDegree();
-        		} else if(e.getKeyChar() == '4'){
-        			switchToRadialLayout();
-        		} else if(e.getKeyChar() == '5'){
-        			switchToFDL();
-        		}
-        	}
-        	public void itemKeyTyped(VisualItem item, java.awt.event.KeyEvent e){
-        		if(e.getKeyChar() == '2'){
-        			removeCoAuthors(item.getString("name"));
-        		}else if(e.getKeyChar() == '3'){
-        			removeNode(item.getRow());
-        		}
-        	}
+        		Services.getBrowser().go(new AuthorResult(item.getString("name")));
+           	}       
         };
         
         d.setSize(500, 500); 
@@ -552,28 +489,5 @@ public abstract class VisualExplorer {
         d.panTo(new Point(0,0));
 	}
 	
-	public JSplitPane forceTweaking(){
-	    ForceSimulator fsim = ((ForceDirectedLayout)this.fdlAnimateActions.get(0)).getForceSimulator();
-        JForcePanel fpanel = new JForcePanel(fsim);
 
-
-        
-        Box cf = new Box(BoxLayout.Y_AXIS);
-      //  cf.add(slider);
-        cf.setBorder(BorderFactory.createTitledBorder("Connectivity Filter"));
-        fpanel.add(cf);
-
- 
-        
-        fpanel.add(Box.createVerticalGlue());
-        
-        JSplitPane split = new JSplitPane();
-        split.setLeftComponent(this.dispCtrls);
-        split.setRightComponent(fpanel);
-        split.setOneTouchExpandable(true);
-        split.setContinuousLayout(false);
-        split.setDividerLocation(700);
-        
-        return split;
-	}
 }
