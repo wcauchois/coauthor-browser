@@ -1,5 +1,8 @@
 package edu.washington.cs.cse403d.coauthor.client.searchui;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -11,8 +14,11 @@ import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 
@@ -53,6 +59,47 @@ public class AuthorResult extends BrowserPage {
 	 */
 	public AuthorResult(List<String> queries) {
 		this.authorNames = getProperName(queries);
+	}
+	
+	private class AuthorSuggestions extends JPanel {
+		public AuthorSuggestions(String searchQuery) {
+			setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+			List<String> suggestions = null;
+			try {
+				suggestions = Services.getCoauthorDataServiceInterface(
+						).getAuthorSuggestions(searchQuery);
+			} catch(Exception e) {
+				e.printStackTrace(System.err);
+			}
+			
+			add(Box.createVerticalStrut(20));
+			JLabel didYouMean = new JLabel("Did you mean...");
+			didYouMean.setHorizontalAlignment(JLabel.CENTER);
+			didYouMean.setFont(didYouMean.getFont().deriveFont(Font.BOLD, 16));
+			add(didYouMean);
+			add(Box.createVerticalStrut(10));
+			
+			final JList suggestionsList = new JList(suggestions.toArray());
+			JScrollPane suggestionsScroller = new JScrollPane(suggestionsList);
+			add(suggestionsScroller);
+			
+			JButton search = new JButton("Search");
+			JPanel justifier = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+			justifier.add(search);
+			add(justifier);
+			
+			search.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent evt) {
+					if(suggestionsList.getSelectedIndex() >= 0) {
+						Services.getBrowser().go(
+								new AuthorResult(suggestionsList.getSelectedValue().toString()));
+					}
+				}
+			});
+			
+			setPreferredSize(new Dimension(200, 300));
+		}
 	}
 
 	@Override
@@ -116,6 +163,11 @@ public class AuthorResult extends BrowserPage {
 					"Sorry, but the author you requested (" + e.getMessage() + ") was not found. Please make sure you entered their full name correctly and try again.",
 					MessagePage.GO_BACK);
 			message.addActionListener(new GoBackActionListener());
+			if(authorNames.size() == 1) {
+				JPanel wrapper = new JPanel();
+				wrapper.add(new AuthorSuggestions(authorNames.get(0)));
+				message.add(wrapper, BorderLayout.SOUTH);
+			}
 			throw new PageLoadError(message);
 		}
 
