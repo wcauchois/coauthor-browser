@@ -1,9 +1,7 @@
 package edu.washington.cs.cse403d.coauthor.client.graphviz;
 
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
-import java.awt.geom.Point2D;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -14,7 +12,6 @@ import java.util.concurrent.Executors;
 
 import javax.swing.JToolTip;
 
-import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 import prefuse.Constants;
 import prefuse.Display;
 import prefuse.Visualization;
@@ -24,7 +21,6 @@ import prefuse.action.animate.LocationAnimator;
 import prefuse.action.animate.PolarLocationAnimator;
 import prefuse.action.assignment.ColorAction;
 import prefuse.action.assignment.DataColorAction;
-import prefuse.action.layout.Layout;
 import prefuse.action.layout.graph.ForceDirectedLayout;
 import prefuse.action.layout.graph.RadialTreeLayout;
 import prefuse.activity.Activity;
@@ -49,13 +45,13 @@ import prefuse.render.EdgeRenderer;
 import prefuse.render.LabelRenderer;
 import prefuse.util.ColorLib;
 import prefuse.util.display.DisplayLib;
-import prefuse.util.force.DragForce;
 import prefuse.util.force.ForceSimulator;
-import prefuse.util.force.NBodyForce;
-import prefuse.util.force.RungeKuttaIntegrator;
 import prefuse.visual.VisualGraph;
 import prefuse.visual.VisualItem;
 import prefuse.visual.expression.InGroupPredicate;
+import edu.washington.cs.cse403d.coauthor.client.Services;
+import edu.washington.cs.cse403d.coauthor.client.searchui.AuthorResult;
+import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 
 /**
  * @author Sergey
