@@ -98,25 +98,15 @@ public class ChainSearchResult extends JPanel {
 			contentPanel.add(buildChain());
 
 			JPanel number = new JPanel();
-			JLabel numberText = new JLabel(author1 + " is ");
-			JLabel numberVal = new JLabel("" + (listModel.size()-1));
-			JLabel numberText2 = new JLabel(" degrees of ");
-			JPanel number2 = new JPanel();
-			JLabel numberText3 = new JLabel(" separation away from " + author2);
-			numberText.setFont(f.deriveFont(s));
-			numberVal.setFont(f.deriveFont(s));
-			numberText2.setFont(f.deriveFont(s));
-			numberText3.setFont(f.deriveFont(s));
-			number.add(numberText);
-			number.add(numberVal);
-			number.add(numberText2);
-			number2.add(numberText3);
+			LineWrappedLabel label = new LineWrappedLabel(author1 + " is " + (listModel.size()-1) + " degrees of separation away from " + author2);
+			label.setFont(f.deriveFont(s));
+			label.setPreferredSize(new Dimension(400, label.getActualHeight(400)));
+			number.add(label);
 
 			FilterPanel filterPanel = new FilterPanel(chainList, author1, author2);
-			add(filterPanel);
 			add(contentPanel, BorderLayout.PAGE_START);
-			add(number, BorderLayout.CENTER);
-			add(number2, BorderLayout.PAGE_END);
+			add(filterPanel, BorderLayout.CENTER);
+			add(number, BorderLayout.PAGE_END);
 		} catch (RemoteException e) {
 			System.out.println("Invalid author(s)");
 		}
