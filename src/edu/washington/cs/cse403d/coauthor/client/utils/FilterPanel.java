@@ -7,7 +7,6 @@ import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.rmi.RemoteException;
-import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -106,6 +105,12 @@ public class FilterPanel extends JPanel {
 		filterPanel.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
 	}
 	
+	/**
+	 * A button for initiating a visualizer. 
+	 * 
+	 * @author Kevin
+	 *
+	 */
 	private class VisualizeButton extends JLabel {
 		private static final long serialVersionUID = 8024005710286098259L;
 		private ImageIcon visualizeButton, hoverButton;

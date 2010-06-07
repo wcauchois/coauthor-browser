@@ -62,6 +62,8 @@ class AuthorCoauthorResult extends JPanel {
 		add(coauthorsTitle, BorderLayout.PAGE_START);
 
 		coauthorList = new ListOfAuthors(CDSI.getCoauthors(author)) {
+			private static final long serialVersionUID = 4263410863781212853L;
+
 			@Override
 			protected JPopupMenu buildContextMenu() {
 				JPopupMenu menu = super.buildContextMenu();
