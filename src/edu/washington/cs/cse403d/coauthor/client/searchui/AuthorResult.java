@@ -98,7 +98,7 @@ public class AuthorResult extends BrowserPage {
 				}
 			});
 			
-			setPreferredSize(new Dimension(200, 150));
+			setPreferredSize(new Dimension(200, 300));
 		}
 	}
 
