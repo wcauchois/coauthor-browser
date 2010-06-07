@@ -27,6 +27,7 @@ import edu.washington.cs.cse403d.coauthor.client.utils.StringUtils;
 import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
 
 public class ListOfArticles extends JList {
+	private static final long serialVersionUID = -6209107594856311760L;
 	private int preferredWidth;
 	private Font titleFont, authorsFont;
 	

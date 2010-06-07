@@ -22,6 +22,7 @@ import edu.washington.cs.cse403d.coauthor.client.utils.StringUtils;
  * @author William Cauchois
  */
 public class ListOfAuthors extends JList {
+	private static final long serialVersionUID = 6179753518400223457L;
 	public ListOfAuthors(List<String> theAuthors) {
 		// setListData(theAuthors.toArray());
 		// HACK(wcauchois): The above doesn't work because FilterPanel expects lists to use DefaultListModel.

@@ -1,11 +1,8 @@
 package edu.washington.cs.cse403d.coauthor.client.graphviz;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.rmi.RemoteException;
 
-import javax.swing.JButton;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 

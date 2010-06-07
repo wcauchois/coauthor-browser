@@ -9,6 +9,7 @@ import javax.swing.JTextArea;
  * @author William Cauchois
  */
 public class LineWrappedLabel extends JTextArea {
+	private static final long serialVersionUID = -2521508440088589555L;
 	public LineWrappedLabel(String text) {
 		setText(text);
 		

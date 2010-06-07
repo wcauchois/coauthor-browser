@@ -1,31 +1,22 @@
 package edu.washington.cs.cse403d.coauthor.client.searchui;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Dictionary;
+
 import java.util.Hashtable;
 import java.util.List;
 
-import javax.swing.BorderFactory;
+
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
-import javax.swing.ListCellRenderer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -33,10 +24,7 @@ import edu.washington.cs.cse403d.coauthor.client.Services;
 import edu.washington.cs.cse403d.coauthor.client.browser.BrowserPage;
 import edu.washington.cs.cse403d.coauthor.client.browser.MessagePage;
 import edu.washington.cs.cse403d.coauthor.client.browser.PageLoadError;
-import edu.washington.cs.cse403d.coauthor.client.utils.Fonts;
 import edu.washington.cs.cse403d.coauthor.client.utils.GoBackActionListener;
-import edu.washington.cs.cse403d.coauthor.client.utils.LineWrappedLabel;
-import edu.washington.cs.cse403d.coauthor.client.utils.StringUtils;
 import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
 
@@ -92,6 +80,7 @@ public class ArticleSearchResults extends BrowserPage {
 		setLoaded();
 	}
 	private class YearFilterPanel extends JPanel {
+		private static final long serialVersionUID = 6846853590031989030L;
 		private void initYearSlider(JSlider slider, int minimum, int maximum) {
 			slider.setMinimum(minimum);
 			slider.setMaximum(maximum);
