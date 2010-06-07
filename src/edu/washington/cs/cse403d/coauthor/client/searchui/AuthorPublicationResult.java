@@ -71,7 +71,7 @@ class AuthorPublicationResult extends JPanel {
 	private void buildPubList() {
 		pubList = new ListOfArticles(publications, 360);
 		JScrollPane listScroller = new JScrollPane(pubList);
-		listScroller.setPreferredSize(new Dimension(400, 200));
+		listScroller.setPreferredSize(new Dimension(400, 175));
 		add(listScroller, BorderLayout.CENTER);
 	}
 }
