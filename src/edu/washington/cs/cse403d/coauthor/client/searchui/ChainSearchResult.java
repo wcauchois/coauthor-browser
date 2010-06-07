@@ -94,7 +94,7 @@ public class ChainSearchResult extends JPanel {
 			listModel = new DefaultListModel();
 			chainList = new JList(listModel);
 			chainList.setFont(chainList.getFont().deriveFont(Font.PLAIN));
-
+			
 			contentPanel.add(buildChain());
 
 			JPanel number = new JPanel();
