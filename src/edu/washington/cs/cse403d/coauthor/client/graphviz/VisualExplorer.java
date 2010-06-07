@@ -14,9 +14,6 @@ import java.util.concurrent.Executors;
 
 import javax.swing.JToolTip;
 
-
-import edu.washington.cs.cse403d.coauthor.client.Services;
-import edu.washington.cs.cse403d.coauthor.client.searchui.AuthorResult;
 import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 import prefuse.Constants;
 import prefuse.Display;
@@ -56,7 +53,6 @@ import prefuse.util.force.DragForce;
 import prefuse.util.force.ForceSimulator;
 import prefuse.util.force.NBodyForce;
 import prefuse.util.force.RungeKuttaIntegrator;
-import prefuse.util.force.SpringForce;
 import prefuse.visual.VisualGraph;
 import prefuse.visual.VisualItem;
 import prefuse.visual.expression.InGroupPredicate;

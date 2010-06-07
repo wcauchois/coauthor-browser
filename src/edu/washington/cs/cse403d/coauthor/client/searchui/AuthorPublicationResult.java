@@ -49,7 +49,7 @@ class AuthorPublicationResult extends JPanel {
 		JLabel title = new JLabel(authorList.size() == 1 ? "Publications" : "Collaborations");
 		Font f = title.getFont();
 		Float s = title.getFont().getSize2D();
-		s += 6.0f;
+		s += 8.0f;
 		title.setFont(f.deriveFont(s));
 		add(title, BorderLayout.PAGE_START);
 
@@ -71,7 +71,7 @@ class AuthorPublicationResult extends JPanel {
 	private void buildPubList() {
 		pubList = new ListOfArticles(publications, 360);
 		JScrollPane listScroller = new JScrollPane(pubList);
-		listScroller.setPreferredSize(new Dimension(400, 200));
+		listScroller.setPreferredSize(new Dimension(400, 175));
 		add(listScroller, BorderLayout.CENTER);
 	}
 }
