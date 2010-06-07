@@ -22,7 +22,6 @@ import javax.swing.SwingConstants;
 
 import edu.washington.cs.cse403d.coauthor.client.Services;
 import edu.washington.cs.cse403d.coauthor.client.browser.BrowserPage;
-import edu.washington.cs.cse403d.coauthor.client.utils.BareBonesBrowserLaunch;
 import edu.washington.cs.cse403d.coauthor.client.utils.HyperLinkButton;
 import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 import edu.washington.cs.cse403d.coauthor.shared.model.Publication;
