@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="createDataProvider" name="Create DataProvider for the Coauthorship network">
+    <target name="createDataProvider">
+        <jar destfile="dataProvider.jar" filesetmanifest="mergewithoutmain">
+            <manifest>
+                <attribute name="Main-Class" value="edu.washington.cs.cse403d.coauthor.dataservice.CoauthorDataServiceMain"/>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+            <fileset dir="classes"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/sqljdbc4.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/geronimo-jta_1.1_spec-1.1.1.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/neo4j-commons-1.0.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/neo4j-graph-algo-0.3.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/neo4j-kernel-1.0.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/neo4j-shell-1.0.jar"/>
+        </jar>
+    </target>
+</project>
