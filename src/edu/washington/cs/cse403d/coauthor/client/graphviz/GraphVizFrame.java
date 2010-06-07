@@ -27,7 +27,6 @@ import prefuse.data.Table;
 import prefuse.data.query.SearchQueryBinding;
 import prefuse.data.search.SearchTupleSet;
 import prefuse.util.FontLib;
-import prefuse.util.force.ForceConfigAction;
 import prefuse.util.ui.JFastLabel;
 import prefuse.util.ui.JSearchPanel;
 import prefuse.util.ui.UILib;
@@ -35,6 +34,7 @@ import prefuse.visual.VisualItem;
 
 
 public class GraphVizFrame extends JFrame implements ActionListener{
+	private static final long serialVersionUID = 2683728659576309633L;
 	private VisualExplorer visExp;
 	private JButton oneDg;
 	private JButton radial;

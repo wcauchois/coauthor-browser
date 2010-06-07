@@ -23,7 +23,7 @@
 		This is a list of coauthors of the author you searched for. From this section, you can:
 		<ul>
 			<li>
-				Perform a new search on a specific coauthor in the list. Right-click on any item to bring up the context menu.
+				Perform a new search on a specific coauthor in the list. Right-click on any item to bring up the context menu, or double-click on any item to perform a new search on the selected author..
 			</li>
 			<li>
 				Obtain a graphical respresntation of the result by clicking on the visualize button, right next to the filter bar.
@@ -48,7 +48,7 @@
 		This is a list of publication of the author you searched for. From this section, you can:
 		<ul>
 			<li>
-				Perform a new search on a specific article in the list. Right-click on any item to bring up the context menu.
+				Perform a new search on a specific article in the list. Right-click on any item to bring up the context menu, or double-click on any item to perform a new search on the selected article.
 			</li>
 		
 			<li>
@@ -73,10 +73,6 @@
 			<li>
 				<b>Perform a search on an article.</b>
 				Enter a part of any article's title in the text field below, then click the search button to see the list of articles containing your search query.
-			</li>
-			<li>
-				<b>Filter the result by publication year.</b>
-				Enter a starting year and/or an ending year to filter your result within given limits. Valid input range is from 1800 to 2010.
 			</li>
 		</ul>
 	]]></string>

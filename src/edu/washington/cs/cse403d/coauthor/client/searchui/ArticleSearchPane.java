@@ -9,13 +9,11 @@ import java.awt.event.KeyEvent;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import edu.washington.cs.cse403d.coauthor.client.Services;
 import edu.washington.cs.cse403d.coauthor.client.utils.Fonts;
-import edu.washington.cs.cse403d.coauthor.client.utils.HelpMarker;
 
 public class ArticleSearchPane extends JPanel {
 	private static final long serialVersionUID = -2380014657227857630L;

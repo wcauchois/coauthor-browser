@@ -189,7 +189,7 @@ public class ArticleResult extends BrowserPage {
 		else {
 			EE = new HyperLinkButton(publication.getEe());
 
-			// Accesses the clipboard when URL is clicked
+			// Open the web-browser when URL is clicked
 			EE.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					try {
@@ -223,7 +223,7 @@ public class ArticleResult extends BrowserPage {
 		authorList.setLayoutOrientation(JList.VERTICAL);
 		authorList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane listScroller = new JScrollPane(authorList);
-		listScroller.setPreferredSize(new Dimension(60, 60));
+		listScroller.setPreferredSize(new Dimension(60, 50));
 		authorInfo.add(listScroller);
 		authorInfo.add(Box.createVerticalStrut(10));
 	}

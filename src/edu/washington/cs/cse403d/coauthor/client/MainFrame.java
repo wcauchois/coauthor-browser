@@ -23,7 +23,6 @@ import javax.swing.KeyStroke;
 import edu.washington.cs.cse403d.coauthor.client.browser.BrowserFrame;
 import edu.washington.cs.cse403d.coauthor.client.browser.BrowserPage;
 import edu.washington.cs.cse403d.coauthor.client.graphviz.GraphVizManager;
-import edu.washington.cs.cse403d.coauthor.client.searchui.ArticleResult;
 import edu.washington.cs.cse403d.coauthor.client.searchui.SearchPage;
 import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 
@@ -39,7 +38,6 @@ public class MainFrame extends BrowserFrame {
 	private static final long serialVersionUID = 2460404616036718278L;
 	
 	public JMenuBar createMenuBar() {
-		// TODO(wcauchois): the menu bar is vastly out of sync with the features we've been implementing.
 		JMenuBar menuBar;
 		JMenu menu;
 		JMenuItem menuItem;
@@ -81,14 +79,6 @@ public class MainFrame extends BrowserFrame {
 		});
 		menu.add(menuItem);
 		
-		/************** Tools **************/
-		menu = new JMenu("Tools");
-		menu.setMnemonic(KeyEvent.VK_T);
-		menuBar.add(menu);
-		
-		menuItem = new JMenuItem("Preferences");
-		menu.add(menuItem);
-		
 		/*************** Help **************/
 		menu = new JMenu("Help");
 		menu.setMnemonic(KeyEvent.VK_H);
@@ -114,7 +104,7 @@ public class MainFrame extends BrowserFrame {
 		menuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				JOptionPane.showMessageDialog(mainFrame, 
-						"Author Network\nConstant Time Algorithms, Inc.",
+						"Author Network v1.00\nConstant Time Algorithms, Inc.",
 						"About",
 						JOptionPane.PLAIN_MESSAGE);
 			}
@@ -177,9 +167,9 @@ public class MainFrame extends BrowserFrame {
 		MainFrame mainFrame = new MainFrame();
 
 		// restrict resizing
-		mainFrame.setMinimumSize(new Dimension(480, 620));
-		mainFrame.setSize(new Dimension(480, 620));
-		mainFrame.setMaximumSize(new Dimension(480, 620));
+		mainFrame.setMinimumSize(new Dimension(480, 650));
+		mainFrame.setSize(new Dimension(480, 650));
+		mainFrame.setMaximumSize(new Dimension(480, 650));
 		mainFrame.setVisible(true);
 		mainFrame.setResizable(false);
 	}

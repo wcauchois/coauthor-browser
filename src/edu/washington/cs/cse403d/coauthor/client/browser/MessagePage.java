@@ -34,6 +34,7 @@ import edu.washington.cs.cse403d.coauthor.client.utils.Fonts;
  * @author William Cauchois
  */
 public class MessagePage extends BrowserPage {
+	private static final long serialVersionUID = -1890629326186933763L;
 	private String title;
 
 	@Override
@@ -45,6 +46,8 @@ public class MessagePage extends BrowserPage {
 	// our
 	// needs (as a read-only word-wrapping text container).
 	private class DetailsText extends JTextArea {
+		private static final long serialVersionUID = -7134672004682642913L;
+
 		public DetailsText(String theText) {
 			setText(theText);
 			setLineWrap(true);
