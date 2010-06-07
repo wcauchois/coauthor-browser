@@ -12,15 +12,15 @@ import java.util.concurrent.Executors;
 
 import javax.swing.JToolTip;
 
-import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 import prefuse.Constants;
 import prefuse.Display;
 import prefuse.Visualization;
 import prefuse.action.ActionList;
 import prefuse.action.RepaintAction;
+import prefuse.action.animate.LocationAnimator;
+import prefuse.action.animate.PolarLocationAnimator;
 import prefuse.action.assignment.ColorAction;
 import prefuse.action.assignment.DataColorAction;
-import prefuse.action.layout.Layout;
 import prefuse.action.layout.graph.ForceDirectedLayout;
 import prefuse.action.layout.graph.RadialTreeLayout;
 import prefuse.activity.Activity;
@@ -44,13 +44,14 @@ import prefuse.render.DefaultRendererFactory;
 import prefuse.render.EdgeRenderer;
 import prefuse.render.LabelRenderer;
 import prefuse.util.ColorLib;
-import prefuse.util.force.DragForce;
+import prefuse.util.display.DisplayLib;
 import prefuse.util.force.ForceSimulator;
-import prefuse.util.force.NBodyForce;
-import prefuse.util.force.RungeKuttaIntegrator;
 import prefuse.visual.VisualGraph;
 import prefuse.visual.VisualItem;
 import prefuse.visual.expression.InGroupPredicate;
+import edu.washington.cs.cse403d.coauthor.client.Services;
+import edu.washington.cs.cse403d.coauthor.client.searchui.AuthorResult;
+import edu.washington.cs.cse403d.coauthor.shared.CoauthorDataServiceInterface;
 
 /**
  * @author Sergey
@@ -66,15 +67,17 @@ public abstract class VisualExplorer {
 	protected Visualization colorLayoutVis;
 	protected Display dispCtrls;
 	protected CoauthorDataServiceInterface backend;
-	protected ActionList radialAnimateActionsArrangement;
-	protected ActionList radialAnimateActionsSpacing;
+	protected ActionList radialActionsArrangement;
+	protected ActionList radialActionsSpacing;
+	protected ActionList fdlActionsArrangement;
+	protected ActionList fdlActionsRuntime;
 	protected ForceDirectedLayout fdlLayout;
 	protected ForceDirectedLayout spacingLayout;
+	protected RadialTreeLayout radialArrangementLayout;
 	protected PrefixSearchTupleSet searchTupleSet;
-	
+	protected DisplayLib dispActions;
 	private boolean isInFDL;
 	protected ActionList highlightControl;
-	protected ActionList fdlAnimateActions;
 	
 	private String draw = "draw";
 	
@@ -166,6 +169,7 @@ public abstract class VisualExplorer {
 		synchronized (this.colorLayoutVis){
 			
 		Node addTo = findAuthor(authorName);
+		VisualItem addToVisItem = this.colorLayoutVis.getVisualItem("graph.nodes", addTo);
 		
 		// look for returned authors already in the graph; remove all authors already in
 		// the graph from the search results
@@ -187,9 +191,13 @@ public abstract class VisualExplorer {
 				Node added = this.coAuthors.addNode();
 				added.set("name", current);
 				added.set("visited",0);
-				this.searchTupleSet.index(this.colorLayoutVis.getVisualItem("graph.nodes", added),"name");
+				VisualItem addedVisItem = this.colorLayoutVis.getVisualItem("graph.nodes", added);
+				addedVisItem.setEndX(addToVisItem.getX());
+				addedVisItem.setEndY(addToVisItem.getY());
+				this.searchTupleSet.index(addedVisItem,"name");
 				this.coAuthors.addEdge(addTo, added);
 			}
+		
 			addTo.setInt("visited", 1);
 	}
 		this.updateVis();
@@ -348,8 +356,8 @@ public abstract class VisualExplorer {
 	}
 	
 		protected void initFdlAnimation(){
-
-        // default behavior returns a force-directed layout
+	    this.fdlActionsArrangement = new ActionList(500);			
+            // default behavior returns a force-directed layout
         fdlLayout = new ForceDirectedLayout("graph");
         ForceSimulator fsim = ((ForceDirectedLayout) fdlLayout).getForceSimulator();
         fsim.getForces()[0].setParameter(0, -8f);
@@ -357,35 +365,31 @@ public abstract class VisualExplorer {
         
         fsim.getForces()[1].setParameter(0, .02f);
         fsim.getForces()[2].setParameter(1, 100);
+        LocationAnimator transition = new LocationAnimator();
+        transition.setPacingFunction(new SlowInSlowOutPacer());
         
-                    
-        ActionList fdlAnimate = new ActionList(15000);
-        fdlAnimate.setPacingFunction(new SlowInSlowOutPacer());
-        fdlAnimate.add(fdlLayout);
+        this.fdlActionsRuntime = new ActionList(3000);
+        this.fdlActionsRuntime.add(transition);
+        this.fdlActionsRuntime.setPacingFunction(new SlowInSlowOutPacer());
+        this.fdlActionsRuntime.add(fdlLayout);
 
-        this.fdlAnimateActions = fdlAnimate;
 	}
 	
 	protected void initRadialAnimation(){
  
-        Layout radialLayout = new RadialTreeLayout("graph", 200);
+        this.radialArrangementLayout = new RadialTreeLayout("graph", 200);
+        this.radialArrangementLayout.setAutoScale(false);
         ActionList arrangement = new ActionList(500);
-        arrangement.add(radialLayout);
-  
-        ActionList spacing = new ActionList(2000);
-        //spacing.add(this.spacingLayout);
-        ForceSimulator fsim = new ForceSimulator(new RungeKuttaIntegrator());
+        arrangement.add(this.radialArrangementLayout);
+        PolarLocationAnimator pl = new PolarLocationAnimator();
+        pl.setPacingFunction(new SlowInSlowOutPacer());
+        arrangement.add(pl);
+        
+        
 
-        fsim.addForce(new NBodyForce(-0.4f, 25f, NBodyForce.DEFAULT_THETA));
-
-        fsim.addForce(new DragForce(0.11f));
 
         
-        ForceDirectedLayout fd2 = new ForceDirectedLayout("graph", fsim, false);
-        spacing.add(fd2);
-        this.radialAnimateActionsArrangement = arrangement;
-        this.spacingLayout = fd2;
-        this.radialAnimateActionsSpacing = spacing;
+        this.radialActionsArrangement = arrangement;
 	}
 
 	
@@ -399,8 +403,6 @@ public abstract class VisualExplorer {
 		colorLayoutVis.run(draw);
 		if (!this.isInFDL){
 			this.colorLayoutVis.run("arrange");
-			this.colorLayoutVis.runAfter("arrange", "spacing");
-			this.colorLayoutVis.run("spacing");
 		}else{
 			this.colorLayoutVis.run("ForceLayout");
 		}
@@ -413,9 +415,8 @@ public abstract class VisualExplorer {
 	public void switchToRadialLayout(){
 		synchronized(this.colorLayoutVis){
 	 	this.colorLayoutVis.removeAction("ForceLayout");
-	 	this.colorLayoutVis.putAction("arrange", this.radialAnimateActionsArrangement);
-	 	this.colorLayoutVis.putAction("spacing", this.radialAnimateActionsSpacing);
-        this.colorLayoutVis.runAfter(draw, "arrange");
+	 	this.colorLayoutVis.putAction("arrange", this.radialActionsArrangement);
+	    this.colorLayoutVis.runAfter(draw, "arrange");
         this.colorLayoutVis.runAfter("arrange", "spacing");
 	 	this.updateVis();
 	 	this.isInFDL = false;
@@ -423,10 +424,9 @@ public abstract class VisualExplorer {
 	
 	public void switchToFDL(){
 		synchronized(this.colorLayoutVis){
-		this.colorLayoutVis.removeAction("spacing");
-        this.colorLayoutVis.removeAction("arrange");
+	    this.colorLayoutVis.removeAction("arrange");
         
-	 	this.colorLayoutVis.putAction("ForceLayout", this.fdlAnimateActions);
+	 	this.colorLayoutVis.putAction("ForceLayout", this.fdlActionsRuntime);
         this.colorLayoutVis.runAfter(draw, "ForceLayout");
 		this.updateVis();
 		this.isInFDL = true;
@@ -439,7 +439,7 @@ public abstract class VisualExplorer {
 	 * @param initialVis
 	 */
 	protected void displayInit(){
-		  
+		
         // -- 5. the display and interactive controls -------------------------
         
         Display d = new Display(this.colorLayoutVis);
@@ -449,7 +449,7 @@ public abstract class VisualExplorer {
         	public void itemClicked(VisualItem item, MouseEvent e ){
         		VisualExplorer.this.coAuthors.nodes();
         		addCoAuthors(item.getString("name"));
-   //     		Services.getBrowser().go(new AuthorResult(item.getString("name")));
+        		Services.getBrowser().go(new AuthorResult(item.getString("name")));
            	}       
         };
         
